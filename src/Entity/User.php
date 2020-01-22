@@ -76,9 +76,9 @@ class User implements UserInterface
     private $registration_date;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="boolean", options={"default":"0"})
      */
-    private $is_block;
+    private $is_block = false;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Product", mappedBy="user_id")

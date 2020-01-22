@@ -32,14 +32,14 @@ class ProductImage
     private $alt;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="boolean", options={"default":"0"})
      */
-    private $is_main;
+    private $is_main = false;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="boolean", options={"default":"0"})
      */
-    private $is_visible;
+    private $is_visible = false;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Product", inversedBy="images")

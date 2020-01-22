@@ -34,9 +34,9 @@ class Tag
     private $description;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="boolean", options={"default":"0"})
      */
-    private $is_visible;
+    private $is_visible = false;
 
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Product", mappedBy="tags")

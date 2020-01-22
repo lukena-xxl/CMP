@@ -39,9 +39,9 @@ class Category
     private $image;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="boolean", options={"default":"0"})
      */
-    private $is_visible;
+    private $is_visible = false;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Product", mappedBy="category_id")

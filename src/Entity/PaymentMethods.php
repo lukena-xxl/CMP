@@ -44,9 +44,9 @@ class PaymentMethods
     private $image;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="boolean", options={"default":"0"})
      */
-    private $is_visible;
+    private $is_visible = false;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)

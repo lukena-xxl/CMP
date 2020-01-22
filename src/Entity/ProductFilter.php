@@ -22,9 +22,9 @@ class ProductFilter
     private $description;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="boolean", options={"default":"0"})
      */
-    private $is_visible;
+    private $is_visible = false;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Product", inversedBy="filters")
