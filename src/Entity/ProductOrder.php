@@ -41,6 +41,18 @@ class ProductOrder
      */
     private $availability;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Product", inversedBy="orders")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $product_id;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Order", inversedBy="products")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $order_id;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -102,6 +114,30 @@ class ProductOrder
     public function setAvailability(?string $availability): self
     {
         $this->availability = $availability;
+
+        return $this;
+    }
+
+    public function getProductId(): ?Product
+    {
+        return $this->product_id;
+    }
+
+    public function setProductId(?Product $product_id): self
+    {
+        $this->product_id = $product_id;
+
+        return $this;
+    }
+
+    public function getOrderId(): ?Order
+    {
+        return $this->order_id;
+    }
+
+    public function setOrderId(?Order $order_id): self
+    {
+        $this->order_id = $order_id;
 
         return $this;
     }

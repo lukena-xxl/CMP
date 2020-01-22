@@ -26,6 +26,18 @@ class ProductFilter
      */
     private $is_visible;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Product", inversedBy="filters")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $product_id;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Filter", inversedBy="productFilters")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $filter_id;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -51,6 +63,30 @@ class ProductFilter
     public function setIsVisible(bool $is_visible): self
     {
         $this->is_visible = $is_visible;
+
+        return $this;
+    }
+
+    public function getProductId(): ?Product
+    {
+        return $this->product_id;
+    }
+
+    public function setProductId(?Product $product_id): self
+    {
+        $this->product_id = $product_id;
+
+        return $this;
+    }
+
+    public function getFilterId(): ?Filter
+    {
+        return $this->filter_id;
+    }
+
+    public function setFilterId(?Filter $filter_id): self
+    {
+        $this->filter_id = $filter_id;
 
         return $this;
     }

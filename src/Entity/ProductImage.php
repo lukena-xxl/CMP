@@ -41,6 +41,12 @@ class ProductImage
      */
     private $is_visible;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Product", inversedBy="images")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $product_id;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -102,6 +108,18 @@ class ProductImage
     public function setIsVisible(bool $is_visible): self
     {
         $this->is_visible = $is_visible;
+
+        return $this;
+    }
+
+    public function getProductId(): ?Product
+    {
+        return $this->product_id;
+    }
+
+    public function setProductId(?Product $product_id): self
+    {
+        $this->product_id = $product_id;
 
         return $this;
     }

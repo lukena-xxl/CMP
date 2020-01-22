@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -75,6 +77,28 @@ class DeliveryMethods
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $note_api_key_3;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Product", mappedBy="deliveries")
+     */
+    private $products;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Order", mappedBy="delivery_method_id")
+     */
+    private $orders;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\PostNumber", mappedBy="delivery_method_id")
+     */
+    private $postNumbers;
+
+    public function __construct()
+    {
+        $this->products = new ArrayCollection();
+        $this->orders = new ArrayCollection();
+        $this->postNumbers = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -221,6 +245,96 @@ class DeliveryMethods
     public function setNoteApiKey3(?string $note_api_key_3): self
     {
         $this->note_api_key_3 = $note_api_key_3;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Product[]
+     */
+    public function getProducts(): Collection
+    {
+        return $this->products;
+    }
+
+    public function addProduct(Product $product): self
+    {
+        if (!$this->products->contains($product)) {
+            $this->products[] = $product;
+            $product->addDelivery($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProduct(Product $product): self
+    {
+        if ($this->products->contains($product)) {
+            $this->products->removeElement($product);
+            $product->removeDelivery($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Order[]
+     */
+    public function getOrders(): Collection
+    {
+        return $this->orders;
+    }
+
+    public function addOrder(Order $order): self
+    {
+        if (!$this->orders->contains($order)) {
+            $this->orders[] = $order;
+            $order->setDeliveryMethodId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrder(Order $order): self
+    {
+        if ($this->orders->contains($order)) {
+            $this->orders->removeElement($order);
+            // set the owning side to null (unless already changed)
+            if ($order->getDeliveryMethodId() === $this) {
+                $order->setDeliveryMethodId(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|PostNumber[]
+     */
+    public function getPostNumbers(): Collection
+    {
+        return $this->postNumbers;
+    }
+
+    public function addPostNumber(PostNumber $postNumber): self
+    {
+        if (!$this->postNumbers->contains($postNumber)) {
+            $this->postNumbers[] = $postNumber;
+            $postNumber->setDeliveryMethodId($this);
+        }
+
+        return $this;
+    }
+
+    public function removePostNumber(PostNumber $postNumber): self
+    {
+        if ($this->postNumbers->contains($postNumber)) {
+            $this->postNumbers->removeElement($postNumber);
+            // set the owning side to null (unless already changed)
+            if ($postNumber->getDeliveryMethodId() === $this) {
+                $postNumber->setDeliveryMethodId(null);
+            }
+        }
 
         return $this;
     }

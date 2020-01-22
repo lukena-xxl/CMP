@@ -26,6 +26,18 @@ class ProductParameter
      */
     private $is_visible;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Product", inversedBy="parameters")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $product_id;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Parameter", inversedBy="productParameters")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $parameter_id;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -51,6 +63,30 @@ class ProductParameter
     public function setIsVisible(bool $is_visible): self
     {
         $this->is_visible = $is_visible;
+
+        return $this;
+    }
+
+    public function getProductId(): ?Product
+    {
+        return $this->product_id;
+    }
+
+    public function setProductId(?Product $product_id): self
+    {
+        $this->product_id = $product_id;
+
+        return $this;
+    }
+
+    public function getParameterId(): ?Parameter
+    {
+        return $this->parameter_id;
+    }
+
+    public function setParameterId(?Parameter $parameter_id): self
+    {
+        $this->parameter_id = $parameter_id;
 
         return $this;
     }
