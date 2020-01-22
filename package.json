@@ -4,7 +4,7 @@
         "core-js": "^3.0.0",
         "node-sass": "^4.13.1",
         "regenerator-runtime": "^0.13.2",
-        "sass-loader": "8.0.2",
+        "sass-loader": "^7.0.1",
         "webpack-notifier": "^1.6.0"
     },
     "license": "UNLICENSED",
@@ -21,6 +21,7 @@
         "jquery": "^3.4.1",
         "jquery-confirm": "^3.3.4",
         "popper.js": "^1.16.0",
+        "rfs": "^9.0.2",
         "yarn": "1.21.1"
     }
 }

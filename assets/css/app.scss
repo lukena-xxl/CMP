@@ -1,5 +1,138 @@
-/*$danger: darken(#CD5C5C, 1%);*/
+$primary: darken(#4b7d8d, 1%);
+$danger: darken(#CD5C5C, 1%);
+$warning: darken(#EC962C, 1%);
+$secondary: darken(#d7e0df, 1%);
+$enable-responsive-font-sizes: true;
 
 @import "~bootstrap/scss/bootstrap";
 @import "~@fortawesome/fontawesome-free/css/all.css";
 @import "~jquery-confirm/css/jquery-confirm.css";
+
+@import "~rfs/scss";
+
+body {
+  font-family: Segoe UI,Helvetica,Arial,sans-serif;;
+  font-size: 1rem;
+}
+
+.header {}
+.content {
+  padding: 15px;
+}
+.footer {}
+
+/*Каталог*/
+.a-title {
+  @include font-size(1.3rem);
+  line-height: 1.2;
+}
+
+.card-title-expansion {
+  padding-left: .8rem;
+  border-left: .3rem solid $gray-300;
+}
+
+.price-block {
+  @include font-size(1.5rem);
+  color: $danger;
+}
+
+.price-block .price-old {
+  @include font-size(.9rem);
+  color: $gray-500;
+}
+
+.price-old-percent {
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  padding: 3px 10px;
+  background-color: $danger;
+  color: $white;
+  opacity: 0.8;
+  border-radius: 0 0 15px 0;
+}
+
+.gift-block {
+  position: absolute;
+  bottom: 0;
+  right: -1px;
+}
+
+.gift-block .gift {
+  padding: 2px 10px;
+  background-color: $info;
+  color: $white;
+  opacity: 0.8;
+  margin-top: .3rem;
+}
+
+.card .list-group-item {
+  border-style: dotted!important;
+}
+
+.tag-block {
+  margin-top: .8rem;
+  padding-top: .8rem;
+  border-top: .1rem dotted $gray-300;
+}
+
+.tag-block .tag {
+  display: inline-block;
+  padding: .2rem .5rem;
+  background-color: $secondary;
+  color: $dark;
+  @include font-size(.7rem);
+  margin: .1rem;
+  text-decoration: none;
+}
+
+.tag-block .tag-big {
+  @include font-size(.9rem);
+}
+
+.tag-block .tag::before {
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  content: "\f02b";
+  margin-right: .5rem;
+}
+
+.filters-block {
+  padding: .2rem .5rem;
+  margin-bottom: .5rem;
+  background-color: #FFFACD;
+}
+
+.filters-block label{
+  color: $primary;
+  font-weight: bold;
+}
+
+.filters-block a.name-block {
+  @include font-size(1.3rem);
+  text-decoration: none;
+}
+
+.parameter-block {
+  display: inline-block;
+  padding: .2rem .9rem;
+  background-color: $white;
+  border-radius: .5rem;
+  margin-bottom: .2rem;
+}
+
+.sorting-block {
+  margin-bottom: .5rem;
+  padding: .8rem .5rem;
+  background-color: $gray-100;
+}
+
+.card-block .card-product:hover {
+  box-shadow: $box-shadow;
+}
+
+.card-category {
+  background-color: $gray-100;
+  border: none;
+}
