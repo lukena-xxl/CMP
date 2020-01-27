@@ -1,0 +1,214 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% endblock %}
+
+{% block body %}
+    <div class="product-block">
+
+        <div class="filters-block">
+            <a class="btn btn-link name-block text-dark" data-toggle="collapse" href="#collapseParameters" aria-expanded="false" aria-controls="collapseExample" role="button">Подобрать по параметрам<i class="fas fa-angle-down ml-2 align-middle"></i></a>
+            <div class="collapse my-2 mx-3" id="collapseParameters">
+
+                <form>
+                    <div class="form-row">
+                        <div class="col-md-4 mb-1">
+                            <div class="form-group">
+                                <label for="select1">Материал</label>
+                                <select class="form-control rounded-0" id="select1">
+                                    <option selected>все</option>
+                                    <option value="1">One</option>
+                                    <option value="2">Two</option>
+                                    <option value="3">Three</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-1">
+                            <div class="form-group">
+                                <label for="select1">Цвет</label>
+                                <select class="form-control rounded-0" id="select1">
+                                    <option selected>все</option>
+                                    <option value="1">One</option>
+                                    <option value="2">Two</option>
+                                    <option value="3">Three</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-1">
+                            <div class="form-group">
+                                <label for="select1">Размер</label>
+                                <select class="form-control rounded-0" id="select1">
+                                    <option selected>все</option>
+                                    <option value="1">One</option>
+                                    <option value="2">Two</option>
+                                    <option value="3">Three</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+            <div class="m-2">
+                <div class="parameter-block text-muted">
+                    <span>Материал</span>
+                    <i class="fas fa-angle-right mx-1 align-middle"></i>
+                    <span class="font-weight-bold text-dark">Дерево</span>
+                    <a href="#" class="text-decoration-none text-danger h4 align-middle">×</a>
+                </div>
+
+                <div class="parameter-block text-muted">
+                    <span>Цвет</span>
+                    <i class="fas fa-angle-right mx-1 align-middle"></i>
+                    <span class="font-weight-bold text-dark">Крем-брюле</span>
+                    <a href="#" class="text-decoration-none text-danger h4 align-middle">×</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="sorting-block">
+            <div class="d-inline-block mb-1">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text rounded-0 bg-light border-light" for="inputGroupSelect01"><i class="fas fa-sort-amount-down-alt mr-2"></i>Сортировать</label>
+                    </div>
+                    <select class="form-control rounded-0" id="inputGroupSelect01">
+                        <option selected>по умолчанию</option>
+                        <option value="1">One</option>
+                        <option value="2">Two</option>
+                        <option value="3">Three</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="d-inline-block mb-1">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text rounded-0 bg-light border-light" for="inputGroupSelect02"><i class="fas fa-eye mr-2"></i>Показать</label>
+                    </div>
+                    <select class="form-control rounded-0" id="inputGroupSelect02">
+                        <option value="11">11</option>
+                        <option value="19">19</option>
+                        <option value="31">31</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="d-inline-block mb-1">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text rounded-0 bg-light border-light" for=""><i class="fas fa-file-alt mr-2"></i>Страница</label>
+                    </div>
+                    <div>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <button class="input-group-text text-white bg-primary rounded-0 border-primary" disabled><i class="fas fa-angle-left"></i></button>
+                            </div>
+                            <select class="form-control rounded-0" id="inputGroupSelect03">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                            </select>
+                            <div class="input-group-append">
+                                <button class="input-group-text text-white bg-primary rounded-0 border-primary"><i class="fas fa-angle-right"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 card-block">
+
+
+            <div class="col pb-3">
+                <div class="card card-category h-100 rounded-0">
+                    <div class="card-body">
+                        <div class="text-dark font-weight-bold"><i class="fas fa-bars mr-2"></i>Уточнить раздел</div>
+
+                        <div class="category-block mt-3">
+                            <div class="mb-1"><a href="#">Кровати односпальные</a></div>
+                            <div class="mb-1"><a href="#">Кровати полуторные</a></div>
+                            <div class="mb-1"><a href="#">Кровати двухспальные</a></div>
+                            <div class="mb-1"><a href="#">Кровати с ящиками</a></div>
+                        </div>
+
+                        <div class="tag-block">
+                            <a href="#" class="tag tag-big">Из дерева</a><a href="#" class="tag tag-big">Модерн</a><a href="#" class="tag tag-big">Классика</a><a href="#" class="tag tag-big">Металлические</a><a href="#" class="tag tag-big">Трансформация</a><a href="#" class="tag tag-big">Современные</a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+
+            {% set x = 1 %}
+            {% set arr = [1,2,3] %}
+            {% for x in arr %}
+                <div class="col pb-3">
+                    <div class="card card-product h-100 position-relative rounded-0">
+                        <div class="position-relative">
+                            <a href="#"><img src="https://woodwerk.com/wp-content/uploads/45-0012-3-1000x1000.jpg" class="card-img-top rounded-0" alt="..."></a>
+                            <div class="gift-block small">
+                                <div class="gift">Доставка в подарок</div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-title-expansion">
+                                <a href="#" class="text-primary text-decoration-none d-block a-title">Кровать двухспальная с мягким изголовьем</a>
+                                <div class="card-text text-muted small">Код товара: <strong>2134</strong></div>
+                            </div>
+
+                            <div class="pt-3 pb-2">
+                                <div class="small">
+                                    <span class="text-success">В наличии</span>
+                                    <span class="text-muted">(доставка до 3 дней)</span>
+                                </div>
+                                <a class="btn btn-link" data-toggle="collapse" href="#collapseExample-{{ x }}" aria-expanded="false" aria-controls="collapseExample" role="button">Характеристики<i class="fas fa-angle-down ml-1"></i></a>
+                                <div class="collapse small" id="collapseExample-{{ x }}">
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item py-1">Размер: <strong>1200x600</strong></li>
+                                        <li class="list-group-item py-1">Материалы: <strong>дерево, металл</strong></li>
+                                        <li class="list-group-item py-1">Цвет: <strong>крем</strong></li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="price-block mb-3">
+                                <div class="price-old-percent">-15%</div>
+                                <span class="price-old"><s>24000 грн.</s></span>
+                                <span>23100 грн.</span>
+                            </div>
+
+                            <a href="#" class="card-link btn btn-primary align-middle" role="button"><i class="fas fa-info-circle mr-2"></i>Больше</a>
+                            <a href="#" class="card-link h2 text-danger align-middle"><i class="fas fa-cart-arrow-down"></i></a>
+
+                            <div class="tag-block">
+                                <div class="mb-1"><a href="#" class="small"><i class="fas fa-flag mr-2"></i>Кровати для спальни</a></div>
+                                <a href="#" class="tag">Из дерева</a><a href="#" class="tag">Двухспальные</a><a href="#" class="tag">Классика</a>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                {% set x = x + 1 %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <nav aria-label="Page navigation" class="mt-3">
+        <ul class="pagination pagination-lg justify-content-center">
+            <li class="page-item disabled">
+                <a class="page-link" href="#" tabindex="-1" aria-disabled="true"><i class="fas fa-angle-left"></i></a>
+            </li>
+            <li class="page-item active" aria-current="page">
+                <span class="page-link">1<span class="sr-only">(current)</span></span>
+            </li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item">
+                <a class="page-link" href="#"><i class="fas fa-angle-right"></i></a>
+            </li>
+        </ul>
+    </nav>
+
+{% endblock %}

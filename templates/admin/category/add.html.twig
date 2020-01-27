@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% endblock %}
+
+{% block body %}
+    <div class="mt-3">
+        <h1 class="admin-h1">{% trans %}Добавление категории{% endtrans %}</h1>
+        <fieldset class="input-max-width-600">
+        {{ form_start(form_add) }}
+            {{ form_row(form_add.name) }}
+            {{ form_row(form_add.slug) }}
+            {{ form_row(form_add.description) }}
+            {{ form_row(form_add.image) }}
+            {{ form_row(form_add.is_visible) }}
+            {{ form_row(form_add.submit) }}
+        {{ form_end(form_add) }}
+        </fieldset>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('ckeditor') }}
+{% endblock %}

@@ -21,6 +21,30 @@ body {
 }
 .footer {}
 
+/*Админ*/
+.admin-h1 {
+  color: $primary;
+  margin-bottom: 2rem;
+}
+
+.input-max-width-600 {
+  max-width: 600px!important;
+}
+
+label {
+  color: $warning;
+  font-weight: bold;
+}
+
+label.required:after {
+  content: "*";
+  padding-left: 5px;
+}
+
+select option[value=""] {
+  color: #999999;
+}
+
 /*Каталог*/
 .a-title {
   @include font-size(1.3rem);
