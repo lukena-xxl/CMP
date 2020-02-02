@@ -2,7 +2,11 @@
   <dictionary name="lukena">
     <words>
       <w>bulleted</w>
+      <w>ckeditor</w>
       <w>ckfinder</w>
+      <w>gedmo</w>
+      <w>navbar</w>
+      <w>toggler</w>
     </words>
   </dictionary>
 </component>

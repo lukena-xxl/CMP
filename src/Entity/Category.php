@@ -5,9 +5,11 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\CategoryRepository")
+ * @ORM\Entity(repositoryClass="Gedmo\Sortable\Entity\Repository\SortableRepository")
  */
 class Category
 {
@@ -19,14 +21,15 @@ class Category
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=200)
-     */
-    private $name;
-
-    /**
-     * @ORM\Column(type="string", length=255)
+     * @Gedmo\Slug(fields={"name"}, updatable=false, separator="-")
+     * @ORM\Column(name="slug", type="string", length=255, nullable=true)
      */
     private $slug;
+
+    /**
+     * @ORM\Column(name="name", type="string", length=200)
+    */
+    private $name;
 
     /**
      * @ORM\Column(type="text", nullable=true)
@@ -63,12 +66,31 @@ class Category
      */
     private $parameters;
 
+    /**
+     * @Gedmo\SortablePosition
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $position;
+
+    /**
+     * @Gedmo\SortableGroup
+     * @ORM\ManyToOne(targetEntity="App\Entity\Category", inversedBy="categories")
+     * @ORM\JoinColumn(referencedColumnName="id", onDelete="SET NULL")
+     */
+    private $parent_category;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Category", mappedBy="parent_category")
+     */
+    private $categories;
+
     public function __construct()
     {
         $this->products = new ArrayCollection();
         $this->tags = new ArrayCollection();
         $this->filters = new ArrayCollection();
         $this->parameters = new ArrayCollection();
+        $this->categories = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -93,7 +115,7 @@ class Category
         return $this->slug;
     }
 
-    public function setSlug(string $slug): self
+    public function setSlug(?string $slug): self
     {
         $this->slug = $slug;
 
@@ -256,6 +278,61 @@ class Category
                 $parameter->setCategoryId(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getParentCategory(): ?self
+    {
+        return $this->parent_category;
+    }
+
+    public function setParentCategory(?self $parent_category): self
+    {
+        $this->parent_category = $parent_category;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|self[]
+     */
+    public function getCategories(): Collection
+    {
+        return $this->categories;
+    }
+
+    public function addCategory(self $category): self
+    {
+        if (!$this->categories->contains($category)) {
+            $this->categories[] = $category;
+            $category->setParentCategory($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCategory(self $category): self
+    {
+        if ($this->categories->contains($category)) {
+            $this->categories->removeElement($category);
+            // set the owning side to null (unless already changed)
+            if ($category->getParentCategory() === $this) {
+                $category->setParentCategory(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getPosition(): ?int
+    {
+        return $this->position;
+    }
+
+    public function setPosition(?int $position): self
+    {
+        $this->position = $position;
 
         return $this;
     }

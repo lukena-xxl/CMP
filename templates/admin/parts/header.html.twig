@@ -1,0 +1,20 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top border-bottom px-3 py-2">
+    <a class="navbar-brand text-center" href="{{ path('admin_main') }}"><strong class="text-primary font-weight-bold">CMP</strong><span class="text-disabled small d-block">{{ 'Админпанель'|trans|raw }}</span></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link{% if controller_name == 'CategoryController' %} active{% endif %}" href="{{ path('admin_category_all') }}">{{ 'Категории'|trans|raw }}</a>
+            </li>
+
+
+        </ul>
+        <hr class="d-block d-lg-none" />
+        {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+            <a href="#{#{{ path('admin_user_info', {'id': app.user.id}) }}#}" class="font-weight-bold text-dark">{{ app.user.login }}</a>
+            <a href="{{ path('app_logout') }}" class="text-muted ml-2"><i class="fas fa-sign-out-alt"></i></a>
+        {% endif %}
+    </div>
+</nav>

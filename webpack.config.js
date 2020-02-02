@@ -25,7 +25,8 @@ Encore
      */
     .addEntry('app', './assets/js/app.js')
     .addEntry('ckeditor', './assets/js/ckeditor.js')
-    //.addEntry('page2', './assets/js/page2.js')
+    .addEntry('ckeditor_parse_media', './assets/js/ckeditor_parse_media.js')
+    .addEntry('sortable', './assets/js/sortable.js')
 
     //.addStyleEntry('menu', './assets/css/component-card.css')
 

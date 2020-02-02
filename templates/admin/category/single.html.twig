@@ -1,0 +1,152 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-sm-5">
+            <h3 class="admin-h3">{{ 'Данные'|trans|raw }}</h3>
+            <div class="mb-3">
+                <ul class="list-group">
+                    <li class="list-group-item rounded-0 text-white">
+                        {% if category.isVisible == 0 %}
+                            <span class="d-inline-block px-2 bg-danger">{{ 'Отключена'|trans|raw }}</span>
+                        {% else %}
+                            <span class="d-inline-block px-2 bg-success">{{ 'Включена'|trans|raw }}</span>
+                        {% endif %}
+                    </li>
+                    <li class="list-group-item rounded-0"><strong>ID:</strong> {{ category.id }}</li>
+                    <li class="list-group-item rounded-0"><strong>Slug:</strong> {{ category.slug }}</li>
+                    <li class="list-group-item rounded-0">
+                        <a class="btn btn-light mb-1 text-primary" href="{{ path('admin_category_edit', {'id': category.id}) }}" role="button"><i class="fas fa-edit mr-2"></i>{{ 'Редактировать'|trans|raw }}</a>
+                        <a class="btn btn-light mb-1 text-danger" href="{{ path('admin_category_delete', {'id': category.id}) }}" role="button"><i class="fas fa-trash-alt mr-2"></i>{{ 'Удалить'|trans|raw }}</a>
+                    </li>
+                </ul>
+            </div>
+            <h3 class="admin-h3">{{ 'Привязки'|trans|raw }}</h3>
+            <div class="mb-3">
+                <ul class="list-group">
+                    <li class="list-group-item rounded-0">
+                        <strong>{{ 'Родительская категория'|trans|raw }}:</strong>
+                        <div class="my-1">
+                            {% if category.parentCategory %}
+                                <a href="{{ path('admin_category_single', {'id': category.parentCategory.id}) }}">{{ category.parentCategory.name }}</a>
+                            {% else %}
+                                <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
+                            {% endif %}
+                        </div>
+                    </li>
+                    <li class="list-group-item rounded-0">
+                        <strong>{{ 'Дочерние категории'|trans|raw }}:</strong>
+                        <div class="my-1">
+                            {% if category.categories.count > 0 %}
+                                {% for child in category.categories %}
+                                    <div><a href="{{ path('admin_category_single', {'id': child.id}) }}">{{ child.name }}</a></div>
+                                {% endfor %}
+                            {% else %}
+                                <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
+                            {% endif %}
+                        </div>
+                    </li>
+                    <li class="list-group-item rounded-0">
+                        <strong>{{ 'Продукты категории'|trans|raw }}:</strong>
+                        <div class="my-1">
+                            {% if category.products.count > 0 %}
+                                {% for product in category.products %}
+                                    <div><a href="#{#{{ path('admin_product_single', {'id': product.id}) }}#}">{{ product.name }}</a></div>
+                                {% endfor %}
+                            {% else %}
+                                <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
+                            {% endif %}
+                            <div class="mt-2"><a href="#{#{{ path('admin_product_add') }}#}" class="text-success"><i class="fas fa-plus-circle mr-2"></i>{{ 'Добавить'|trans|raw }}</a></div>
+                        </div>
+                    </li>
+                    <li class="list-group-item rounded-0">
+                        <strong>{{ 'Теги категории'|trans|raw }}:</strong>
+                        <div class="my-1">
+                            {% if category.tags.count > 0 %}
+                                {% for tag in category.tags %}
+                                    <div><a href="#{#{{ path('admin_tag_single', {'id': tag.id}) }}#}">{{ tag.name }}</a></div>
+                                {% endfor %}
+                            {% else %}
+                                <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
+                            {% endif %}
+                            <div class="mt-2"><a href="#{#{{ path('admin_tag_add') }}#}" class="text-success"><i class="fas fa-plus-circle mr-2"></i>{{ 'Добавить'|trans|raw }}</a></div>
+                        </div>
+                    </li>
+                    <li class="list-group-item rounded-0">
+                        <strong>{{ 'Фильтры продуктов категории'|trans|raw }}:</strong>
+                        <div class="my-1">
+                            {% if category.filters.count > 0 %}
+                                {% for filter in category.filters %}
+                                    <div><a href="#{#{{ path('admin_filter_single', {'id': filter.id}) }}#}">{{ filter.name }}</a></div>
+                                {% endfor %}
+                            {% else %}
+                                <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
+                            {% endif %}
+                            <div class="mt-2"><a href="#{#{{ path('admin_filter_add') }}#}" class="text-success"><i class="fas fa-plus-circle mr-2"></i>{{ 'Добавить'|trans|raw }}</a></div>
+                        </div>
+                    </li>
+                    <li class="list-group-item rounded-0">
+                        <strong>{{ 'Характеристики продуктов категории'|trans|raw }}:</strong>
+                        <div class="my-1">
+                            {% if category.parameters.count > 0 %}
+                                {% for parameter in category.parameters %}
+                                    <div><a href="#{#{{ path('admin_parameter_single', {'id': parameter.id}) }}#}">{{ parameter.name }}</a></div>
+                                {% endfor %}
+                            {% else %}
+                                <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
+                            {% endif %}
+                            <div class="mt-2"><a href="#{#{{ path('admin_parameter_add') }}#}" class="text-success"><i class="fas fa-plus-circle mr-2"></i>{{ 'Добавить'|trans|raw }}</a></div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-sm-7">
+            <h3 class="admin-h3">{{ 'Информация'|trans|raw }}</h3>
+            <div class="mb-3">
+                <div class="h1 admin-h1">{{ category.name }}</div>
+                <ul class="list-group">
+                    <li class="list-group-item rounded-0">
+                        <strong>{{ 'Изображение'|trans|raw }}:</strong>
+                        <div class="row mt-2">
+                            <div class="col-sm-6">
+                                <img src="{% if category.image and fileExists(asset('uploads/category/'~category.image)) %}{% set image = asset('uploads/category/'~category.image) %}{{ image }}{% else %}{{ asset('build/images/common/no-image.png') }}{% endif %}" class="img-fluid" alt="">
+                            </div>
+                            <div class="col-sm-6">
+                                {% if image  is defined %}
+                                    <ul class="list-group">
+                                        <li class="list-group-item rounded-0"><strong>{{ 'Имя'|trans|raw }}:</strong> <a href="{{ image }}" target="_blank">{{ category.image }}</a></li>
+                                        <li class="list-group-item rounded-0"><strong>{{ 'Объем'|trans|raw }}:</strong> {{ image|img_length }}</li>
+                                        <li class="list-group-item rounded-0"><strong>{{ 'Размер'|trans|raw }}:</strong> {{ image|img_width }}&times;{{ image|img_height }}px</li>
+                                        <li class="list-group-item rounded-0"><strong>{{ 'Формат'|trans|raw }}:</strong> {{ image|img_format }}</li>
+                                        <li class="list-group-item rounded-0"><strong>{{ 'Тип'|trans|raw }}:</strong> {{ image|img_type }}</li>
+                                    </ul>
+                                {% else %}
+                                    <span class="small text-muted">{{ 'нет изображения'|trans|raw }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </li>
+                    <li class="list-group-item rounded-0">
+                        <strong>{{ 'Описание'|trans|raw }}:</strong>
+                        <div class="mt-3 editor-content">
+                            {% if category.description %}
+                                {% autoescape %}
+                                    {{ category.description|raw }}
+                                {% endautoescape %}
+                            {% else %}
+                                <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
+                            {% endif %}
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('ckeditor_parse_media') }}
+{% endblock %}

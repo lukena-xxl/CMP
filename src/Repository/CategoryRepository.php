@@ -5,6 +5,8 @@ namespace App\Repository;
 use App\Entity\Category;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Persistence\Mapping\MappingException;
+use Doctrine\ORM\ORMException;
 
 /**
  * @method Category|null find($id, $lockMode = null, $lockVersion = null)
@@ -19,32 +21,39 @@ class CategoryRepository extends ServiceEntityRepository
         parent::__construct($registry, Category::class);
     }
 
-    // /**
-    //  * @return Category[] Returns an array of Category objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * @param null $categories
+     * @param null $parentCategory
+     * @param string $separator
+     * @return array
+     * @throws MappingException
+     * @throws ORMException
+     */
+    public function getCategoryTree($categories = null, $parentCategory = null, $separator=' '): array
     {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('c.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+        if (is_null($categories)) {
+            $categories = $this->findAll();
+        }
 
-    /*
-    public function findOneBySomeField($value): ?Category
-    {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        $data = [];
+
+        foreach ($categories as $category) {
+            if ($category->getParentCategory() == $parentCategory) {
+                $data[$category->getId()] = $category;
+
+                $arr = $this->getCategoryTree($categories, $category, $separator++);
+
+                if (!empty($arr)) {
+                    foreach ($arr as $key=>$val) {
+                        //$val->setName($separator.$val->getName());
+                        $data[$key] = $val;
+                    }
+                }
+
+                unset($categories[$category->getId()]);
+            }
+        }
+
+        return $data;
     }
-    */
 }

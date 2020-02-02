@@ -1,6 +1,7 @@
 import '../css/app.scss';
 
 import $ from 'jquery';
+
 global.jQuery = $;
 global.$ = $;
 global.lang = $('html').attr('lang');

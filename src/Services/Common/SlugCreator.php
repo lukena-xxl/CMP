@@ -9,6 +9,7 @@ class SlugCreator
     {
         $string = transliterator_transliterate("Any-Latin; NFD; [:Nonspacing Mark:] Remove; NFC; [:Punctuation:] Remove; Lower();", $string);
         $string = preg_replace('/[-\s]+/', '-', $string);
+        $string = preg_replace('/[ʹ]+/', '', $string);
         return trim($string, '-');
     }
 }

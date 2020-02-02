@@ -15,24 +15,38 @@ body {
   font-size: 1rem;
 }
 
-.header {}
 .content {
   padding: 15px;
 }
 .footer {}
 
+
+
+
+
 /*Админ*/
 .admin-h1 {
-  color: $primary;
+  color: $dark;
   margin-bottom: 2rem;
 }
 
-.input-max-width-600 {
-  max-width: 600px!important;
+.admin-h3 {
+  color: $gray-900;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: .5rem solid #999999;
+}
+
+.input-max-width-700 {
+  max-width: 700px!important;
+}
+
+.min-width-300 {
+  min-width: 300px!important;
 }
 
 label {
-  color: $warning;
+  color: $primary;
   font-weight: bold;
 }
 
@@ -44,6 +58,23 @@ label.required:after {
 select option[value=""] {
   color: #999999;
 }
+
+.text-disabled {
+  color: $gray-400!important;
+}
+
+.sort-handle {
+  cursor: pointer;
+}
+
+.custom-project .nav-tabs .nav-link.active {
+  background-color: $light!important;
+  border-color: #dee2e6 #dee2e6 $light!important;
+}
+
+
+
+
 
 /*Каталог*/
 .a-title {

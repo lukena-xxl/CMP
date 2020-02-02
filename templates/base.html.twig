@@ -11,14 +11,13 @@
         {% endblock %}
     </head>
     <body>
-        <div class="header">
-            {% block header %}
-                {% if isRoutPath('admin_') %}
-
-                {% else %}
-                    {% include 'fronted/parts/header.html.twig' %}
-                {% endif %}
-            {% endblock %}</div>
+        {% block header %}
+            {% if isRoutPath('admin_') %}
+                {% include 'admin/parts/header.html.twig' %}
+            {% else %}
+                {% include 'fronted/parts/header.html.twig' %}
+            {% endif %}
+        {% endblock %}
         <div class="content">
             {% include 'common/flash_messages.html.twig' %}
             {% block body %}{% endblock %}
