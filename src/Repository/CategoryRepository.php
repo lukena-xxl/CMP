@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Category;
+use App\Services\Common\TranslationRecipient;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\Mapping\MappingException;
@@ -16,12 +17,16 @@ use Doctrine\ORM\ORMException;
  */
 class CategoryRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    private $translationRecipient;
+
+    public function __construct(ManagerRegistry $registry, TranslationRecipient $translationRecipient)
     {
         parent::__construct($registry, Category::class);
+        $this->translationRecipient = $translationRecipient;
     }
 
     /**
+     * @param bool $translation
      * @param null $categories
      * @param null $parentCategory
      * @param string $separator
@@ -29,19 +34,24 @@ class CategoryRepository extends ServiceEntityRepository
      * @throws MappingException
      * @throws ORMException
      */
-    public function getCategoryTree($categories = null, $parentCategory = null, $separator=' '): array
+    public function getCategoryTree($translation = true, $categories = null, $parentCategory = null, $separator=' '): array
     {
         if (is_null($categories)) {
-            $categories = $this->findAll();
+            $categories = $this->findBy([], ['position' => 'ASC']);
         }
 
         $data = [];
 
         foreach ($categories as $category) {
             if ($category->getParentCategory() == $parentCategory) {
+
+                if ($translation) {
+                    $category = $this->translationRecipient->getTranslatedEntity($category);
+                }
+
                 $data[$category->getId()] = $category;
 
-                $arr = $this->getCategoryTree($categories, $category, $separator++);
+                $arr = $this->getCategoryTree($translation, $categories, $category, $separator++);
 
                 if (!empty($arr)) {
                     foreach ($arr as $key=>$val) {

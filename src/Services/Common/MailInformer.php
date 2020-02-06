@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Services\Common;
 
 use Symfony\Component\Config\Definition\Exception\Exception;

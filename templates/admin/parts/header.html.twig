@@ -3,10 +3,23 @@
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <div class="collapse navbar-collapse ml-3" id="navbarSupportedContent">
+        <hr class="d-block d-lg-none" />
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-                <a class="nav-link{% if controller_name == 'CategoryController' %} active{% endif %}" href="{{ path('admin_category_all') }}">{{ 'Категории'|trans|raw }}</a>
+                <a class="btn btn-outline-dark m-1 rounded-0{% if controller_name == 'CategoryController' %} active{% endif %}" href="{{ path('admin_category_all') }}" role="button">{{ 'Категории'|trans|raw }}</a>
+            </li>
+            <li class="nav-item">
+                <a class="btn btn-outline-dark m-1 rounded-0{% if controller_name == 'AvailabilityController' %} active{% endif %}" href="{{ path('admin_availability_all') }}" role="button">{{ 'Доступность'|trans|raw }}</a>
+            </li>
+            <li class="nav-item">
+                <a class="btn btn-outline-dark m-1 rounded-0{% if controller_name == 'FilterController' %} active{% endif %}" href="{{ path('admin_filter_all') }}" role="button">{{ 'Фильтры'|trans|raw }}</a>
+            </li>
+            <li class="nav-item">
+                <a class="btn btn-outline-dark m-1 rounded-0{% if controller_name == 'ParameterController' %} active{% endif %}" href="{{ path('admin_parameter_all') }}" role="button">{{ 'Характеристики'|trans|raw }}</a>
+            </li>
+            <li class="nav-item">
+                <a class="btn btn-outline-dark m-1 rounded-0{% if controller_name == 'CurrencyController' %} active{% endif %}" href="{{ path('admin_currency_all') }}" role="button">{{ 'Валюты'|trans|raw }}</a>
             </li>
 
 
@@ -16,5 +29,8 @@
             <a href="#{#{{ path('admin_user_info', {'id': app.user.id}) }}#}" class="font-weight-bold text-dark">{{ app.user.login }}</a>
             <a href="{{ path('app_logout') }}" class="text-muted ml-2"><i class="fas fa-sign-out-alt"></i></a>
         {% endif %}
+
+        <div class="d-inline-block">{% include 'common/locale_switcher.html.twig' %}</div>
+
     </div>
 </nav>

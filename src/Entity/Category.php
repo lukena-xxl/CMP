@@ -6,12 +6,12 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Gedmo\Translatable\Translatable;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\CategoryRepository")
- * @ORM\Entity(repositoryClass="Gedmo\Sortable\Entity\Repository\SortableRepository")
  */
-class Category
+class Category implements Translatable
 {
     /**
      * @ORM\Id()
@@ -27,11 +27,13 @@ class Category
     private $slug;
 
     /**
+     * @Gedmo\Translatable
      * @ORM\Column(name="name", type="string", length=200)
     */
     private $name;
 
     /**
+     * @Gedmo\Translatable
      * @ORM\Column(type="text", nullable=true)
      */
     private $description;
@@ -45,26 +47,6 @@ class Category
      * @ORM\Column(type="boolean", options={"default":"0"})
      */
     private $is_visible = false;
-
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Product", mappedBy="category_id")
-     */
-    private $products;
-
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Tag", mappedBy="category_id")
-     */
-    private $tags;
-
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Filter", mappedBy="category_id")
-     */
-    private $filters;
-
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Parameter", mappedBy="category_id")
-     */
-    private $parameters;
 
     /**
      * @Gedmo\SortablePosition
@@ -84,13 +66,31 @@ class Category
      */
     private $categories;
 
+    /**
+     * @Gedmo\Locale
+     */
+    private $locale = 'ru';
+
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Filter", mappedBy="categories")
+     */
+    private $filters;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Parameter", mappedBy="categories")
+     */
+    private $parameters;
+
     public function __construct()
     {
-        $this->products = new ArrayCollection();
-        $this->tags = new ArrayCollection();
+        $this->categories = new ArrayCollection();
         $this->filters = new ArrayCollection();
         $this->parameters = new ArrayCollection();
-        $this->categories = new ArrayCollection();
+    }
+
+    public function setTranslatableLocale($locale)
+    {
+        $this->locale = $locale;
     }
 
     public function getId(): ?int
@@ -158,130 +158,6 @@ class Category
         return $this;
     }
 
-    /**
-     * @return Collection|Product[]
-     */
-    public function getProducts(): Collection
-    {
-        return $this->products;
-    }
-
-    public function addProduct(Product $product): self
-    {
-        if (!$this->products->contains($product)) {
-            $this->products[] = $product;
-            $product->setCategoryId($this);
-        }
-
-        return $this;
-    }
-
-    public function removeProduct(Product $product): self
-    {
-        if ($this->products->contains($product)) {
-            $this->products->removeElement($product);
-            // set the owning side to null (unless already changed)
-            if ($product->getCategoryId() === $this) {
-                $product->setCategoryId(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Tag[]
-     */
-    public function getTags(): Collection
-    {
-        return $this->tags;
-    }
-
-    public function addTag(Tag $tag): self
-    {
-        if (!$this->tags->contains($tag)) {
-            $this->tags[] = $tag;
-            $tag->setCategoryId($this);
-        }
-
-        return $this;
-    }
-
-    public function removeTag(Tag $tag): self
-    {
-        if ($this->tags->contains($tag)) {
-            $this->tags->removeElement($tag);
-            // set the owning side to null (unless already changed)
-            if ($tag->getCategoryId() === $this) {
-                $tag->setCategoryId(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Filter[]
-     */
-    public function getFilters(): Collection
-    {
-        return $this->filters;
-    }
-
-    public function addFilter(Filter $filter): self
-    {
-        if (!$this->filters->contains($filter)) {
-            $this->filters[] = $filter;
-            $filter->setCategoryId($this);
-        }
-
-        return $this;
-    }
-
-    public function removeFilter(Filter $filter): self
-    {
-        if ($this->filters->contains($filter)) {
-            $this->filters->removeElement($filter);
-            // set the owning side to null (unless already changed)
-            if ($filter->getCategoryId() === $this) {
-                $filter->setCategoryId(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Parameter[]
-     */
-    public function getParameters(): Collection
-    {
-        return $this->parameters;
-    }
-
-    public function addParameter(Parameter $parameter): self
-    {
-        if (!$this->parameters->contains($parameter)) {
-            $this->parameters[] = $parameter;
-            $parameter->setCategoryId($this);
-        }
-
-        return $this;
-    }
-
-    public function removeParameter(Parameter $parameter): self
-    {
-        if ($this->parameters->contains($parameter)) {
-            $this->parameters->removeElement($parameter);
-            // set the owning side to null (unless already changed)
-            if ($parameter->getCategoryId() === $this) {
-                $parameter->setCategoryId(null);
-            }
-        }
-
-        return $this;
-    }
-
     public function getParentCategory(): ?self
     {
         return $this->parent_category;
@@ -333,6 +209,62 @@ class Category
     public function setPosition(?int $position): self
     {
         $this->position = $position;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Filter[]
+     */
+    public function getFilters(): Collection
+    {
+        return $this->filters;
+    }
+
+    public function addFilter(Filter $filter): self
+    {
+        if (!$this->filters->contains($filter)) {
+            $this->filters[] = $filter;
+            $filter->addCategory($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFilter(Filter $filter): self
+    {
+        if ($this->filters->contains($filter)) {
+            $this->filters->removeElement($filter);
+            $filter->removeCategory($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Parameter[]
+     */
+    public function getParameters(): Collection
+    {
+        return $this->parameters;
+    }
+
+    public function addParameter(Parameter $parameter): self
+    {
+        if (!$this->parameters->contains($parameter)) {
+            $this->parameters[] = $parameter;
+            $parameter->addCategory($this);
+        }
+
+        return $this;
+    }
+
+    public function removeParameter(Parameter $parameter): self
+    {
+        if ($this->parameters->contains($parameter)) {
+            $this->parameters->removeElement($parameter);
+            $parameter->removeCategory($this);
+        }
 
         return $this;
     }

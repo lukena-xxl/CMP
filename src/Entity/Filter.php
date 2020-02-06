@@ -5,11 +5,13 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
+use Gedmo\Translatable\Translatable;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\FilterRepository")
  */
-class Filter
+class Filter implements Translatable
 {
     /**
      * @ORM\Id()
@@ -19,6 +21,7 @@ class Filter
     private $id;
 
     /**
+     * @Gedmo\Translatable
      * @ORM\Column(type="string", length=100)
      */
     private $name;
@@ -29,19 +32,23 @@ class Filter
     private $is_visible = false;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Category", inversedBy="filters")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\ManyToMany(targetEntity="App\Entity\Category", inversedBy="filters")
      */
-    private $category_id;
+    private $categories;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\ProductFilter", mappedBy="filter_id")
+     * @Gedmo\Locale
      */
-    private $productFilters;
+    private $locale = 'ru';
 
     public function __construct()
     {
-        $this->productFilters = new ArrayCollection();
+        $this->categories = new ArrayCollection();
+    }
+
+    public function setTranslatableLocale($locale)
+    {
+        $this->locale = $locale;
     }
 
     public function getId(): ?int
@@ -73,44 +80,27 @@ class Filter
         return $this;
     }
 
-    public function getCategoryId(): ?Category
-    {
-        return $this->category_id;
-    }
-
-    public function setCategoryId(?Category $category_id): self
-    {
-        $this->category_id = $category_id;
-
-        return $this;
-    }
-
     /**
-     * @return Collection|ProductFilter[]
+     * @return Collection|Category[]
      */
-    public function getProductFilters(): Collection
+    public function getCategories(): Collection
     {
-        return $this->productFilters;
+        return $this->categories;
     }
 
-    public function addProductFilter(ProductFilter $productFilter): self
+    public function addCategory(Category $category): self
     {
-        if (!$this->productFilters->contains($productFilter)) {
-            $this->productFilters[] = $productFilter;
-            $productFilter->setFilterId($this);
+        if (!$this->categories->contains($category)) {
+            $this->categories[] = $category;
         }
 
         return $this;
     }
 
-    public function removeProductFilter(ProductFilter $productFilter): self
+    public function removeCategory(Category $category): self
     {
-        if ($this->productFilters->contains($productFilter)) {
-            $this->productFilters->removeElement($productFilter);
-            // set the owning side to null (unless already changed)
-            if ($productFilter->getFilterId() === $this) {
-                $productFilter->setFilterId(null);
-            }
+        if ($this->categories->contains($category)) {
+            $this->categories->removeElement($category);
         }
 
         return $this;

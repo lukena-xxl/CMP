@@ -5,11 +5,13 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
+use Gedmo\Translatable\Translatable;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\CurrencyRepository")
  */
-class Currency
+class Currency implements Translatable
 {
     /**
      * @ORM\Id()
@@ -19,11 +21,13 @@ class Currency
     private $id;
 
     /**
+     * @Gedmo\Translatable
      * @ORM\Column(type="string", length=50)
      */
     private $name;
 
     /**
+     * @Gedmo\Translatable
      * @ORM\Column(type="string", length=10)
      */
     private $short;
@@ -36,26 +40,21 @@ class Currency
     /**
      * @ORM\Column(type="string", length=5)
      */
-    private $sign;
+    private $symbol;
 
     /**
-     * @ORM\Column(type="float")
+     * @Gedmo\Locale
      */
-    private $coefficient;
+    private $locale = 'ru';
 
     /**
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column(type="string", length=50)
      */
-    private $update_date;
+    private $display;
 
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Product", mappedBy="currency_id")
-     */
-    private $products;
-
-    public function __construct()
+    public function setTranslatableLocale($locale)
     {
-        $this->products = new ArrayCollection();
+        $this->locale = $locale;
     }
 
     public function getId(): ?int
@@ -99,69 +98,26 @@ class Currency
         return $this;
     }
 
-    public function getSign(): ?string
+    public function getSymbol(): ?string
     {
-        return $this->sign;
+        return $this->symbol;
     }
 
-    public function setSign(string $sign): self
+    public function setSymbol(string $symbol): self
     {
-        $this->sign = $sign;
+        $this->symbol = $symbol;
 
         return $this;
     }
 
-    public function getCoefficient(): ?float
+    public function getDisplay(): ?string
     {
-        return $this->coefficient;
+        return $this->display;
     }
 
-    public function setCoefficient(float $coefficient): self
+    public function setDisplay(string $display): self
     {
-        $this->coefficient = $coefficient;
-
-        return $this;
-    }
-
-    public function getUpdateDate(): ?\DateTimeInterface
-    {
-        return $this->update_date;
-    }
-
-    public function setUpdateDate(?\DateTimeInterface $update_date): self
-    {
-        $this->update_date = $update_date;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Product[]
-     */
-    public function getProducts(): Collection
-    {
-        return $this->products;
-    }
-
-    public function addProduct(Product $product): self
-    {
-        if (!$this->products->contains($product)) {
-            $this->products[] = $product;
-            $product->setCurrencyId($this);
-        }
-
-        return $this;
-    }
-
-    public function removeProduct(Product $product): self
-    {
-        if ($this->products->contains($product)) {
-            $this->products->removeElement($product);
-            // set the owning side to null (unless already changed)
-            if ($product->getCurrencyId() === $this) {
-                $product->setCurrencyId(null);
-            }
-        }
+        $this->display = $display;
 
         return $this;
     }

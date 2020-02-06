@@ -5,11 +5,13 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
+use Gedmo\Translatable\Translatable;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ParameterRepository")
  */
-class Parameter
+class Parameter implements Translatable
 {
     /**
      * @ORM\Id()
@@ -19,6 +21,7 @@ class Parameter
     private $id;
 
     /**
+     * @Gedmo\Translatable
      * @ORM\Column(type="string", length=100)
      */
     private $name;
@@ -29,19 +32,13 @@ class Parameter
     private $is_visible = false;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Category", inversedBy="parameters")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\ManyToMany(targetEntity="App\Entity\Category", inversedBy="parameters")
      */
-    private $category_id;
-
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\ProductParameter", mappedBy="parameter_id")
-     */
-    private $productParameters;
+    private $categories;
 
     public function __construct()
     {
-        $this->productParameters = new ArrayCollection();
+        $this->categories = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -73,44 +70,27 @@ class Parameter
         return $this;
     }
 
-    public function getCategoryId(): ?Category
-    {
-        return $this->category_id;
-    }
-
-    public function setCategoryId(?Category $category_id): self
-    {
-        $this->category_id = $category_id;
-
-        return $this;
-    }
-
     /**
-     * @return Collection|ProductParameter[]
+     * @return Collection|Category[]
      */
-    public function getProductParameters(): Collection
+    public function getCategories(): Collection
     {
-        return $this->productParameters;
+        return $this->categories;
     }
 
-    public function addProductParameter(ProductParameter $productParameter): self
+    public function addCategory(Category $category): self
     {
-        if (!$this->productParameters->contains($productParameter)) {
-            $this->productParameters[] = $productParameter;
-            $productParameter->setParameterId($this);
+        if (!$this->categories->contains($category)) {
+            $this->categories[] = $category;
         }
 
         return $this;
     }
 
-    public function removeProductParameter(ProductParameter $productParameter): self
+    public function removeCategory(Category $category): self
     {
-        if ($this->productParameters->contains($productParameter)) {
-            $this->productParameters->removeElement($productParameter);
-            // set the owning side to null (unless already changed)
-            if ($productParameter->getParameterId() === $this) {
-                $productParameter->setParameterId(null);
-            }
+        if ($this->categories->contains($category)) {
+            $this->categories->removeElement($category);
         }
 
         return $this;

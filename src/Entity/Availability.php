@@ -5,11 +5,13 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
+use Gedmo\Translatable\Translatable;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\AvailabilityRepository")
  */
-class Availability
+class Availability implements Translatable
 {
     /**
      * @ORM\Id()
@@ -19,6 +21,7 @@ class Availability
     private $id;
 
     /**
+     * @Gedmo\Translatable
      * @ORM\Column(type="string", length=100)
      */
     private $name;
@@ -29,11 +32,7 @@ class Availability
     private $color;
 
     /**
-     * @ORM\Column(type="string", length=200, nullable=true)
-     */
-    private $short_description;
-
-    /**
+     * @Gedmo\Translatable
      * @ORM\Column(type="text", nullable=true)
      */
     private $description;
@@ -44,13 +43,13 @@ class Availability
     private $is_visible = false;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Product", mappedBy="availability_id")
+     * @Gedmo\Locale
      */
-    private $products;
+    private $locale = 'ru';
 
-    public function __construct()
+    public function setTranslatableLocale($locale)
     {
-        $this->products = new ArrayCollection();
+        $this->locale = $locale;
     }
 
     public function getId(): ?int
@@ -82,18 +81,6 @@ class Availability
         return $this;
     }
 
-    public function getShortDescription(): ?string
-    {
-        return $this->short_description;
-    }
-
-    public function setShortDescription(?string $short_description): self
-    {
-        $this->short_description = $short_description;
-
-        return $this;
-    }
-
     public function getDescription(): ?string
     {
         return $this->description;
@@ -114,37 +101,6 @@ class Availability
     public function setIsVisible(bool $is_visible): self
     {
         $this->is_visible = $is_visible;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Product[]
-     */
-    public function getProducts(): Collection
-    {
-        return $this->products;
-    }
-
-    public function addProduct(Product $product): self
-    {
-        if (!$this->products->contains($product)) {
-            $this->products[] = $product;
-            $product->setAvailabilityId($this);
-        }
-
-        return $this;
-    }
-
-    public function removeProduct(Product $product): self
-    {
-        if ($this->products->contains($product)) {
-            $this->products->removeElement($product);
-            // set the owning side to null (unless already changed)
-            if ($product->getAvailabilityId() === $this) {
-                $product->setAvailabilityId(null);
-            }
-        }
 
         return $this;
     }

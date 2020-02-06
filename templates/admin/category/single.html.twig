@@ -10,9 +10,9 @@
                 <ul class="list-group">
                     <li class="list-group-item rounded-0 text-white">
                         {% if category.isVisible == 0 %}
-                            <span class="d-inline-block px-2 bg-danger">{{ 'Отключена'|trans|raw }}</span>
+                            <span class="d-inline-block px-2 bg-danger">{{ 'Отключено'|trans|raw }}</span>
                         {% else %}
-                            <span class="d-inline-block px-2 bg-success">{{ 'Включена'|trans|raw }}</span>
+                            <span class="d-inline-block px-2 bg-success">{{ 'Включено'|trans|raw }}</span>
                         {% endif %}
                     </li>
                     <li class="list-group-item rounded-0"><strong>ID:</strong> {{ category.id }}</li>
@@ -48,32 +48,19 @@
                             {% endif %}
                         </div>
                     </li>
-                    <li class="list-group-item rounded-0">
+                   {# <li class="list-group-item rounded-0">
                         <strong>{{ 'Продукты категории'|trans|raw }}:</strong>
                         <div class="my-1">
                             {% if category.products.count > 0 %}
                                 {% for product in category.products %}
-                                    <div><a href="#{#{{ path('admin_product_single', {'id': product.id}) }}#}">{{ product.name }}</a></div>
+                                    <div><a href="##}{#{{ path('admin_product_single', {'id': product.id}) }}#}{#">{{ product.name }}</a></div>
                                 {% endfor %}
                             {% else %}
                                 <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
                             {% endif %}
-                            <div class="mt-2"><a href="#{#{{ path('admin_product_add') }}#}" class="text-success"><i class="fas fa-plus-circle mr-2"></i>{{ 'Добавить'|trans|raw }}</a></div>
+                            <div class="mt-2"><a href="##}{#{{ path('admin_product_add') }}#}{#" class="text-success"><i class="fas fa-plus-circle mr-2"></i>{{ 'Добавить'|trans|raw }}</a></div>
                         </div>
-                    </li>
-                    <li class="list-group-item rounded-0">
-                        <strong>{{ 'Теги категории'|trans|raw }}:</strong>
-                        <div class="my-1">
-                            {% if category.tags.count > 0 %}
-                                {% for tag in category.tags %}
-                                    <div><a href="#{#{{ path('admin_tag_single', {'id': tag.id}) }}#}">{{ tag.name }}</a></div>
-                                {% endfor %}
-                            {% else %}
-                                <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
-                            {% endif %}
-                            <div class="mt-2"><a href="#{#{{ path('admin_tag_add') }}#}" class="text-success"><i class="fas fa-plus-circle mr-2"></i>{{ 'Добавить'|trans|raw }}</a></div>
-                        </div>
-                    </li>
+                    </li>#}
                     <li class="list-group-item rounded-0">
                         <strong>{{ 'Фильтры продуктов категории'|trans|raw }}:</strong>
                         <div class="my-1">
@@ -105,8 +92,23 @@
         </div>
         <div class="col-sm-7">
             <h3 class="admin-h3">{{ 'Информация'|trans|raw }}</h3>
-            <div class="mb-3">
-                <div class="h1 admin-h1">{{ category.name }}</div>
+            <div class="mb-3 custom-project">
+                <ul class="nav nav-tabs" id="nameTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="ru-name-tab" data-toggle="tab" href="#ru-name" role="tab" aria-controls="ru-name" aria-selected="true">RU</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="uk-name-tab" data-toggle="tab" href="#uk-name" role="tab" aria-controls="uk-name" aria-selected="false">UK</a>
+                    </li>
+                </ul>
+                <div class="tab-content p-2 bg-light border border-top-0 mb-3" id="nameTabContent">
+                    <div class="tab-pane fade show active" id="ru-name" role="tabpanel" aria-labelledby="ru-name-tab">
+                        <div class="h2 px-2">{{ category.name }}</div>
+                    </div>
+                    <div class="tab-pane fade" id="uk-name" role="tabpanel" aria-labelledby="uk-name-tab">
+                        <div class="h2 px-2">{{ translation['uk']['name'] }}</div>
+                    </div>
+                </div>
                 <ul class="list-group">
                     <li class="list-group-item rounded-0">
                         <strong>{{ 'Изображение'|trans|raw }}:</strong>
@@ -130,15 +132,33 @@
                         </div>
                     </li>
                     <li class="list-group-item rounded-0">
-                        <strong>{{ 'Описание'|trans|raw }}:</strong>
-                        <div class="mt-3 editor-content">
-                            {% if category.description %}
-                                {% autoescape %}
-                                    {{ category.description|raw }}
-                                {% endautoescape %}
-                            {% else %}
-                                <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
-                            {% endif %}
+                        <ul class="nav nav-tabs" id="descriptionTab" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="ru-description-tab" data-toggle="tab" href="#ru-description" role="tab" aria-controls="ru-description" aria-selected="true">RU</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="uk-description-tab" data-toggle="tab" href="#uk-description" role="tab" aria-controls="uk-description" aria-selected="false">UK</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content editor-content p-2 bg-light border border-top-0 mb-3" id="descriptionTabContent">
+                            <div class="tab-pane fade show active" id="ru-description" role="tabpanel" aria-labelledby="ru-description-tab">
+                                {% if category.description %}
+                                    {% autoescape %}
+                                        {{ category.description|raw }}
+                                    {% endautoescape %}
+                                {% else %}
+                                    <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
+                                {% endif %}
+                            </div>
+                            <div class="tab-pane fade" id="uk-description" role="tabpanel" aria-labelledby="uk-description-tab">
+                                {% if translation['uk']['description'] %}
+                                    {% autoescape %}
+                                        {{ translation['uk']['description']|raw }}
+                                    {% endautoescape %}
+                                {% else %}
+                                    <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
+                                {% endif %}
+                            </div>
                         </div>
                     </li>
                 </ul>

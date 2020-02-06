@@ -7,7 +7,7 @@
     {% if categories %}
         <ul class="list-group sortable">
             {% for category in categories %}
-                <li id="{{ category.id }}" class="list-group-item rounded-0 sort{%  if category == current %} text-primary bg-light h5{% endif %}">
+                <li id="{{ category.id }}" class="list-group-item rounded-0 sort{%  if category == current %} text-primary bg-light h5 m-0{% endif %}">
                     {%  if category == current %}<i class="fas fa-arrows-alt mr-2 sort-handle"></i>{% endif %}
                     {{ category.name }}
                 </li>

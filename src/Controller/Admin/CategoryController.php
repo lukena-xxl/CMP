@@ -6,9 +6,11 @@ use App\Entity\Category;
 use App\Form\Admin\Category\CategoryType;
 use App\Form\Admin\Common\SortableType;
 use App\Repository\CategoryRepository;
+use App\Services\Common\TranslationRecipient;
 use Doctrine\Common\Persistence\Mapping\MappingException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
+use Gedmo\Translatable\Entity\Translation;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -40,13 +42,17 @@ class CategoryController extends AbstractController
     /**
      * @Route("/{id}", name="_single", requirements={"id"="\d+"})
      * @param Category $category
+     * @param TranslationRecipient $translationRecipient
      * @return Response
      */
-    public function categorySingle(Category $category)
+    public function categorySingle(Category $category, TranslationRecipient $translationRecipient)
     {
+        $translation = $translationRecipient->getTranslation($category);
+
         return $this->render('admin/category/single.html.twig', [
             'controller_name' => 'CategoryController',
             'category' => $category,
+            'translation' => $translation,
         ]);
     }
 
@@ -71,8 +77,12 @@ class CategoryController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $category = $form->getData();
-
             $category->setPosition(0);
+
+            $arrData = $request->request->get('category');
+            $repoTranslation = $entityManager->getRepository(Translation::class);
+            $repoTranslation->translate($category, 'name', 'uk', $arrData['translation_name'])
+                ->translate($category, 'description', 'uk', $arrData['translation_description']);
 
             $entityManager->persist($category);
             $entityManager->flush();
@@ -112,6 +122,11 @@ class CategoryController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $arrData = $request->request->get('category');
+            $repoTranslation = $entityManager->getRepository(Translation::class);
+            $repoTranslation->translate($category, 'name', 'uk', $arrData['translation_name'])
+                ->translate($category, 'description', 'uk', $arrData['translation_description']);
+
             $entityManager->persist($category);
             $entityManager->flush();
 
@@ -157,9 +172,10 @@ class CategoryController extends AbstractController
      * @param Category $category
      * @param EntityManagerInterface $entityManager
      * @param TranslatorInterface $translator
+     * @param TranslationRecipient $translationRecipient
      * @return Response
      */
-    public function categorySort(Request $request, Category $category, EntityManagerInterface $entityManager, TranslatorInterface $translator)
+    public function categorySort(Request $request, Category $category, EntityManagerInterface $entityManager, TranslatorInterface $translator, TranslationRecipient $translationRecipient)
     {
         $form = $this->createForm(SortableType::class, null, [
             'action' => $this->generateUrl('admin_category_sort', ['id' => $category->getId()]),
@@ -198,6 +214,13 @@ class CategoryController extends AbstractController
         }
 
         $categories = $entityManager->getRepository(Category::class)->findBy(['parent_category' => $value], ['position' => 'ASC']);
+
+        // КОРЯВО (нужно исправить)
+        if ($categories) {
+            foreach ($categories as $cat) {
+                $translationRecipient->getTranslatedEntity($cat);
+            }
+        }
 
         return $this->render('admin/category/sort.html.twig', [
             'controller_name' => 'CategoryController',
