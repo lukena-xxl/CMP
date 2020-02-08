@@ -77,7 +77,6 @@ class CategoryController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $category = $form->getData();
-            $category->setPosition(0);
 
             $arrData = $request->request->get('category');
             $repoTranslation = $entityManager->getRepository(Translation::class);

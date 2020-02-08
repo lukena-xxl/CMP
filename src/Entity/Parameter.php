@@ -34,11 +34,21 @@ class Parameter implements Translatable
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Category", inversedBy="parameters")
      */
-    private $categories;
+    private $parameter_categories;
+
+    /**
+     * @Gedmo\Locale
+     */
+    private $locale = 'ru';
 
     public function __construct()
     {
-        $this->categories = new ArrayCollection();
+        $this->parameter_categories = new ArrayCollection();
+    }
+
+    public function setTranslatableLocale($locale)
+    {
+        $this->locale = $locale;
     }
 
     public function getId(): ?int
@@ -73,24 +83,24 @@ class Parameter implements Translatable
     /**
      * @return Collection|Category[]
      */
-    public function getCategories(): Collection
+    public function getParameterCategories(): Collection
     {
-        return $this->categories;
+        return $this->parameter_categories;
     }
 
-    public function addCategory(Category $category): self
+    public function addParameterCategory(Category $parameterCategory): self
     {
-        if (!$this->categories->contains($category)) {
-            $this->categories[] = $category;
+        if (!$this->parameter_categories->contains($parameterCategory)) {
+            $this->parameter_categories[] = $parameterCategory;
         }
 
         return $this;
     }
 
-    public function removeCategory(Category $category): self
+    public function removeParameterCategory(Category $parameterCategory): self
     {
-        if ($this->categories->contains($category)) {
-            $this->categories->removeElement($category);
+        if ($this->parameter_categories->contains($parameterCategory)) {
+            $this->parameter_categories->removeElement($parameterCategory);
         }
 
         return $this;

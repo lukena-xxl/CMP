@@ -22,14 +22,14 @@ class Category implements Translatable
 
     /**
      * @Gedmo\Slug(fields={"name"}, updatable=false, separator="-")
-     * @ORM\Column(name="slug", type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=255)
      */
     private $slug;
 
     /**
      * @Gedmo\Translatable
      * @ORM\Column(name="name", type="string", length=200)
-    */
+     */
     private $name;
 
     /**
@@ -50,14 +50,13 @@ class Category implements Translatable
 
     /**
      * @Gedmo\SortablePosition
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="integer")
      */
     private $position;
 
     /**
      * @Gedmo\SortableGroup
      * @ORM\ManyToOne(targetEntity="App\Entity\Category", inversedBy="categories")
-     * @ORM\JoinColumn(referencedColumnName="id", onDelete="SET NULL")
      */
     private $parent_category;
 
@@ -72,12 +71,12 @@ class Category implements Translatable
     private $locale = 'ru';
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Filter", mappedBy="categories")
+     * @ORM\ManyToMany(targetEntity="App\Entity\Filter", mappedBy="filter_categories")
      */
     private $filters;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Parameter", mappedBy="categories")
+     * @ORM\ManyToMany(targetEntity="App\Entity\Parameter", mappedBy="parameter_categories")
      */
     private $parameters;
 
@@ -98,6 +97,18 @@ class Category implements Translatable
         return $this->id;
     }
 
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): self
+    {
+        $this->slug = $slug;
+
+        return $this;
+    }
+
     public function getName(): ?string
     {
         return $this->name;
@@ -106,18 +117,6 @@ class Category implements Translatable
     public function setName(string $name): self
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    public function getSlug(): ?string
-    {
-        return $this->slug;
-    }
-
-    public function setSlug(?string $slug): self
-    {
-        $this->slug = $slug;
 
         return $this;
     }
@@ -154,6 +153,18 @@ class Category implements Translatable
     public function setIsVisible(bool $is_visible): self
     {
         $this->is_visible = $is_visible;
+
+        return $this;
+    }
+
+    public function getPosition(): ?int
+    {
+        return $this->position;
+    }
+
+    public function setPosition(int $position): self
+    {
+        $this->position = $position;
 
         return $this;
     }
@@ -201,18 +212,6 @@ class Category implements Translatable
         return $this;
     }
 
-    public function getPosition(): ?int
-    {
-        return $this->position;
-    }
-
-    public function setPosition(?int $position): self
-    {
-        $this->position = $position;
-
-        return $this;
-    }
-
     /**
      * @return Collection|Filter[]
      */
@@ -225,7 +224,7 @@ class Category implements Translatable
     {
         if (!$this->filters->contains($filter)) {
             $this->filters[] = $filter;
-            $filter->addCategory($this);
+            $filter->addFilterCategory($this);
         }
 
         return $this;
@@ -235,7 +234,7 @@ class Category implements Translatable
     {
         if ($this->filters->contains($filter)) {
             $this->filters->removeElement($filter);
-            $filter->removeCategory($this);
+            $filter->removeFilterCategory($this);
         }
 
         return $this;
@@ -253,7 +252,7 @@ class Category implements Translatable
     {
         if (!$this->parameters->contains($parameter)) {
             $this->parameters[] = $parameter;
-            $parameter->addCategory($this);
+            $parameter->addParameterCategory($this);
         }
 
         return $this;
@@ -263,7 +262,7 @@ class Category implements Translatable
     {
         if ($this->parameters->contains($parameter)) {
             $this->parameters->removeElement($parameter);
-            $parameter->removeCategory($this);
+            $parameter->removeParameterCategory($this);
         }
 
         return $this;

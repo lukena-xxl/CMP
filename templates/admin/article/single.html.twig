@@ -9,17 +9,47 @@
             <div class="mb-3">
                 <ul class="list-group">
                     <li class="list-group-item rounded-0 text-white">
-                        {% if category.isVisible == 0 %}
+                        {% if article.publish %}
+                            {% set differencePublic = article.publish.diff(date()) %}
+                        {% endif %}
+                        {% if article.isVisible == 0 %}
                             <span class="d-inline-block px-2 bg-danger">{{ 'Отключено'|trans|raw }}</span>
                         {% else %}
-                            <span class="d-inline-block px-2 bg-success">{{ 'Включено'|trans|raw }}</span>
+                            {% if differencePublic is defined and differencePublic.format('U') > 0 %}
+                                <span class="d-inline-block px-2 bg-warning">{{ 'Запланировано'|trans|raw }}</span>
+                                <div class="text-muted mt-2">{{ 'Показ с'|trans|raw }} {{ article.publish.format("d.m.Y H:i") }}</div>
+                            {% else %}
+                                <span class="d-inline-block px-2 bg-success">{{ 'Включено'|trans|raw }}</span>
+                            {% endif %}
                         {% endif %}
                     </li>
-                    <li class="list-group-item rounded-0"><strong>ID:</strong> {{ category.id }}</li>
-                    <li class="list-group-item rounded-0"><strong>Slug:</strong> {{ category.slug }}</li>
+                    <li class="list-group-item rounded-0"><strong>ID:</strong> {{ article.id }}</li>
+                    <li class="list-group-item rounded-0"><strong>Slug:</strong> {{ article.slug }}</li>
+                    <li class="list-group-item rounded-0"><strong>{{ 'Дата создания'|trans|raw }}:</strong> {{ article.created.format("d.m.Y H:i") }}</li>
                     <li class="list-group-item rounded-0">
-                        <a class="btn btn-light mb-1 text-primary" href="{{ path('admin_category_edit', {'id': category.id}) }}" role="button"><i class="fas fa-edit mr-2"></i>{{ 'Редактировать'|trans|raw }}</a>
-                        <a class="btn btn-light mb-1 text-danger" href="{{ path('admin_category_delete', {'id': category.id}) }}" role="button"><i class="fas fa-trash-alt mr-2"></i>{{ 'Удалить'|trans|raw }}</a>
+                        <strong>{{ 'Дата обновления'|trans|raw }}:</strong>
+                        <span class="text-info">
+                        <span class="text-muted">{{ 'более'|trans|raw }}</span>
+                        {% set difference = article.updated.diff(date()) %}
+                        <strong>{% if difference.format('%Y') > 0 %}
+                                {{ difference.format('%Y') }} {{ 'лет'|trans|raw }}
+                            {% elseif difference.format('%m') > 0 %}
+                                {{ difference.format('%m') }} {{ 'месяцев'|trans|raw }}
+                            {% elseif difference.format('%a') > 0 %}
+                                {{ difference.format('%a') }} {{ 'дней'|trans|raw }}
+                            {% elseif difference.format('%h') > 0 %}
+                                {{ difference.format('%h') }} {{ 'часов'|trans|raw }}
+                            {% elseif difference.format('%i') > 0 %}
+                                {{ difference.format('%i') }} {{ 'минут'|trans|raw }}
+                            {% elseif difference.format('%s') > 0 %}
+                                {{ difference.format('%s') }} {{ 'секунд'|trans|raw }}
+                            {% endif %} {{ 'назад'|trans|raw }}</strong>
+                        <span class="text-muted"> / {{ article.updated.format("d.m.Y H:i") }}</span>
+                    </span>
+                    </li>
+                    <li class="list-group-item rounded-0">
+                        <a class="btn btn-light mb-1 text-primary" href="{{ path('admin_article_edit', {'id': article.id}) }}" role="button"><i class="fas fa-edit mr-2"></i>{{ 'Редактировать'|trans|raw }}</a>
+                        <a class="btn btn-light mb-1 text-danger" href="{{ path('admin_article_delete', {'id': article.id}) }}" role="button"><i class="fas fa-trash-alt mr-2"></i>{{ 'Удалить'|trans|raw }}</a>
                     </li>
                 </ul>
             </div>
@@ -27,64 +57,26 @@
             <div class="mb-3">
                 <ul class="list-group">
                     <li class="list-group-item rounded-0">
-                        <strong>{{ 'Родительская категория'|trans|raw }}:</strong>
+                        <strong>{{ 'Категория'|trans|raw }}:</strong>
                         <div class="my-1">
-                            {% if category.parentCategory %}
-                                <a href="{{ path('admin_category_single', {'id': category.parentCategory.id}) }}">{{ category.parentCategory.name }}</a>
+                            {% if article.articleCategory %}
+                                <a href="{{ path('admin_article_category_single', {'id': article.articleCategory.id}) }}">{{ article.articleCategory.name }}</a>
                             {% else %}
                                 <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
                             {% endif %}
                         </div>
                     </li>
                     <li class="list-group-item rounded-0">
-                        <strong>{{ 'Дочерние категории'|trans|raw }}:</strong>
+                        <strong>{{ 'Теги публикации'|trans|raw }}:</strong>
                         <div class="my-1">
-                            {% if category.categories.count > 0 %}
-                                {% for child in category.categories %}
-                                    <div><a href="{{ path('admin_category_single', {'id': child.id}) }}">{{ child.name }}</a></div>
+                            {% if article.articleTags.count > 0 %}
+                                {% for tag in article.articleTags %}
+                                    <div><a href="{{ path('admin_article_tag_single', {'id': tag.id}) }}">{{ tag.name }}</a></div>
                                 {% endfor %}
                             {% else %}
                                 <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
                             {% endif %}
-                        </div>
-                    </li>
-                   {# <li class="list-group-item rounded-0">
-                        <strong>{{ 'Продукты категории'|trans|raw }}:</strong>
-                        <div class="my-1">
-                            {% if category.products.count > 0 %}
-                                {% for product in category.products %}
-                                    <div><a href="##}{#{{ path('admin_product_single', {'id': product.id}) }}#}{#">{{ product.name }}</a></div>
-                                {% endfor %}
-                            {% else %}
-                                <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
-                            {% endif %}
-                            <div class="mt-2"><a href="##}{#{{ path('admin_product_add') }}#}{#" class="text-success"><i class="fas fa-plus-circle mr-2"></i>{{ 'Добавить'|trans|raw }}</a></div>
-                        </div>
-                    </li>#}
-                    <li class="list-group-item rounded-0">
-                        <strong>{{ 'Фильтры продуктов категории'|trans|raw }}:</strong>
-                        <div class="my-1">
-                            {% if category.filters.count > 0 %}
-                                {% for filter in category.filters %}
-                                    <div><a href="{{ path('admin_filter_single', {'id': filter.id}) }}">{{ filter.name }}</a></div>
-                                {% endfor %}
-                            {% else %}
-                                <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
-                            {% endif %}
-                            <div class="mt-2"><a href="{{ path('admin_filter_add') }}" class="text-success"><i class="fas fa-plus-circle mr-2"></i>{{ 'Добавить'|trans|raw }}</a></div>
-                        </div>
-                    </li>
-                    <li class="list-group-item rounded-0">
-                        <strong>{{ 'Характеристики продуктов категории'|trans|raw }}:</strong>
-                        <div class="my-1">
-                            {% if category.parameters.count > 0 %}
-                                {% for parameter in category.parameters %}
-                                    <div><a href="{{ path('admin_parameter_single', {'id': parameter.id}) }}">{{ parameter.name }}</a></div>
-                                {% endfor %}
-                            {% else %}
-                                <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
-                            {% endif %}
-                            <div class="mt-2"><a href="{{ path('admin_parameter_add') }}" class="text-success"><i class="fas fa-plus-circle mr-2"></i>{{ 'Добавить'|trans|raw }}</a></div>
+                            <div class="mt-2"><a href="{{ path('admin_article_tag_add') }}" class="text-success"><i class="fas fa-plus-circle mr-2"></i>{{ 'Добавить'|trans|raw }}</a></div>
                         </div>
                     </li>
                 </ul>
@@ -103,7 +95,7 @@
                 </ul>
                 <div class="tab-content p-2 bg-light border border-top-0 mb-3" id="nameTabContent">
                     <div class="tab-pane fade show active" id="ru-name" role="tabpanel" aria-labelledby="ru-name-tab">
-                        <div class="h2 px-2">{{ category.name }}</div>
+                        <div class="h2 px-2">{{ article.name }}</div>
                     </div>
                     <div class="tab-pane fade" id="uk-name" role="tabpanel" aria-labelledby="uk-name-tab">
                         <div class="h2 px-2">{{ translation['uk']['name'] }}</div>
@@ -114,12 +106,12 @@
                         <strong>{{ 'Изображение'|trans|raw }}:</strong>
                         <div class="row mt-2">
                             <div class="col-sm-6">
-                                <img src="{% if category.image and fileExists(asset('uploads/category/'~category.image)) %}{% set image = asset('uploads/category/'~category.image) %}{{ image }}{% else %}{{ asset('build/images/common/no-image.png') }}{% endif %}" class="img-fluid" alt="">
+                                <img src="{% if article.image and fileExists(asset('uploads/article/'~article.image)) %}{% set image = asset('uploads/article/'~article.image) %}{{ image }}{% else %}{{ asset('build/images/common/no-image.png') }}{% endif %}" class="img-fluid" alt="">
                             </div>
                             <div class="col-sm-6">
                                 {% if image  is defined %}
                                     <ul class="list-group">
-                                        <li class="list-group-item rounded-0"><strong>{{ 'Имя'|trans|raw }}:</strong> <a href="{{ image }}" target="_blank">{{ category.image }}</a></li>
+                                        <li class="list-group-item rounded-0"><strong>{{ 'Имя'|trans|raw }}:</strong> <a href="{{ image }}" target="_blank">{{ article.image }}</a></li>
                                         <li class="list-group-item rounded-0"><strong>{{ 'Объем'|trans|raw }}:</strong> {{ image|img_length }}</li>
                                         <li class="list-group-item rounded-0"><strong>{{ 'Размер'|trans|raw }}:</strong> {{ image|img_width }}&times;{{ image|img_height }}px</li>
                                         <li class="list-group-item rounded-0"><strong>{{ 'Формат'|trans|raw }}:</strong> {{ image|img_format }}</li>
@@ -142,9 +134,9 @@
                         </ul>
                         <div class="tab-content editor-content p-2 bg-light border border-top-0 mb-3" id="descriptionTabContent">
                             <div class="tab-pane fade show active" id="ru-description" role="tabpanel" aria-labelledby="ru-description-tab">
-                                {% if category.description %}
+                                {% if article.description %}
                                     {% autoescape %}
-                                        {{ category.description|raw }}
+                                        {{ article.description|raw }}
                                     {% endautoescape %}
                                 {% else %}
                                     <span class="small text-muted">{{ 'нет'|trans|raw }}</span>

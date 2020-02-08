@@ -34,7 +34,7 @@ class Filter implements Translatable
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Category", inversedBy="filters")
      */
-    private $categories;
+    private $filter_categories;
 
     /**
      * @Gedmo\Locale
@@ -43,7 +43,7 @@ class Filter implements Translatable
 
     public function __construct()
     {
-        $this->categories = new ArrayCollection();
+        $this->filter_categories = new ArrayCollection();
     }
 
     public function setTranslatableLocale($locale)
@@ -83,24 +83,24 @@ class Filter implements Translatable
     /**
      * @return Collection|Category[]
      */
-    public function getCategories(): Collection
+    public function getFilterCategories(): Collection
     {
-        return $this->categories;
+        return $this->filter_categories;
     }
 
-    public function addCategory(Category $category): self
+    public function addFilterCategory(Category $filterCategory): self
     {
-        if (!$this->categories->contains($category)) {
-            $this->categories[] = $category;
+        if (!$this->filter_categories->contains($filterCategory)) {
+            $this->filter_categories[] = $filterCategory;
         }
 
         return $this;
     }
 
-    public function removeCategory(Category $category): self
+    public function removeFilterCategory(Category $filterCategory): self
     {
-        if ($this->categories->contains($category)) {
-            $this->categories->removeElement($category);
+        if ($this->filter_categories->contains($filterCategory)) {
+            $this->filter_categories->removeElement($filterCategory);
         }
 
         return $this;

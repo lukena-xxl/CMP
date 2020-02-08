@@ -27,14 +27,12 @@ body {
 /*Админ*/
 .admin-h1 {
   color: $dark;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .admin-h3 {
-  color: $gray-900;
-  margin-bottom: 2rem;
-  padding-bottom: 1rem;
-  border-bottom: .5rem solid #999999;
+  color: $primary;
+  margin-bottom: 1rem;
 }
 
 .input-max-width-700 {
@@ -76,6 +74,13 @@ select option[value=""] {
   border-color: #dee2e6 #dee2e6 $light!important;
 }
 
+.menu-arrow::after {
+  font-family: "Font Awesome 5 Free";
+  content: '\f054';
+  margin-left: .5rem;
+  text-align: right;
+  float: right;
+}
 
 
 

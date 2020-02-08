@@ -1,0 +1,36 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary p-2 p-lg-0 mb-3 mb-lg-0 shadow-sm">
+    <a class="navbar-brand d-block d-lg-none ml-3" href="#"><span class="text-white">{{ 'Меню'|trans|raw }}</span></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse pt-3 pt-lg-0" id="navbarSupportedContent">
+
+        {% set navs = {} %}
+        {% set navs = navs|merge({ 0: { controller: 'CategoryController', route: 'admin_category_all', name: 'Категории'|trans|raw } }) %}
+        {% set navs = navs|merge({ 1: { controller: 'AvailabilityController', route: 'admin_availability_all', name: 'Доступность'|trans|raw } }) %}
+        {% set navs = navs|merge({ 2: { controller: 'FilterController', route: 'admin_filter_all', name: 'Фильтры'|trans|raw } }) %}
+        {% set navs = navs|merge({ 3: { controller: 'ParameterController', route: 'admin_parameter_all', name: 'Характеристики'|trans|raw } }) %}
+        {% set navs = navs|merge({ 4: { controller: 'CurrencyController', route: 'admin_currency_all', name: 'Валюты'|trans|raw } }) %}
+
+        <div class="list-group w-100">
+            <div class="p-2 bg-secondary font-weight-bold"><i class="fas fa-store mr-2"></i>{{ 'Магазин'|trans|raw }}</div>
+            {% for nav in navs %}
+                <a class="list-group-item list-group-item-action{% if controller_name == nav['controller'] %} active font-weight-bold menu-arrow{% endif %} rounded-0" href="{{ path(nav['route']) }}">{{ nav['name'] }}</a>
+            {% endfor %}
+
+        {% set navs = {} %}
+        {% set navs = navs|merge({ 5: { controller: 'ArticleController', route: 'admin_article_all', name: 'Публикации'|trans|raw } }) %}
+        {% set navs = navs|merge({ 6: { controller: 'ArticleCategoryController', route: 'admin_article_category_all', name: 'Категории публикаций'|trans|raw } }) %}
+        {% set navs = navs|merge({ 7: { controller: 'ArticleTagController', route: 'admin_article_tag_all', name: 'Теги публикаций'|trans|raw } }) %}
+
+            <div class="p-2 bg-secondary font-weight-bold"><i class="fas fa-pencil-alt mr-2"></i>{{ 'Блог'|trans|raw }}</div>
+            {% for nav in navs %}
+                <a class="list-group-item list-group-item-action{% if controller_name == nav['controller'] %} active font-weight-bold menu-arrow{% endif %} rounded-0" href="{{ path(nav['route']) }}">{{ nav['name'] }}</a>
+            {% endfor %}
+        </div>
+
+
+
+
+    </div>
+</nav>

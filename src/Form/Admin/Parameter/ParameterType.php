@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Form\Admin\Filter;
+namespace App\Form\Admin\Parameter;
 
 use App\Entity\Category;
-use App\Entity\Filter;
+use App\Entity\Parameter;
 use App\Repository\CategoryRepository;
 use App\Services\Common\TranslationRecipient;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -14,7 +14,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class FilterType extends AbstractType
+class ParameterType extends AbstractType
 {
     protected $translationRecipient;
     protected $categoryRepository;
@@ -28,12 +28,12 @@ class FilterType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('filter_categories', EntityType::class, [
+            ->add('parameter_categories', EntityType::class, [
                 'required' => false,
                 'label' => 'Категории',
                 'class' => Category::class,
-                //'choices' => $this->categoryRepository->getCategoryTree(),
                 'choice_label' => 'name',
+                //'choices' => $this->categoryRepository->getCategoryTree(),
                 'multiple' => true,
             ])
             ->add('name', TextType::class, [
@@ -69,7 +69,7 @@ class FilterType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => Filter::class,
+            'data_class' => Parameter::class,
         ]);
     }
 }

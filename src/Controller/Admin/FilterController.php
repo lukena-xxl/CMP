@@ -44,9 +44,19 @@ class FilterController extends AbstractController
 
     /**
      * @Route("/{id}", name="_single", requirements={"id"="\d+"})
+     * @param Filter $filter
+     * @param TranslationRecipient $translationRecipient
+     * @return Response
      */
-    public function filterSingle()
+    public function filterSingle(Filter $filter, TranslationRecipient $translationRecipient)
     {
+        $translation = $translationRecipient->getTranslation($filter);
+
+        return $this->render('admin/filter/single.html.twig', [
+            'controller_name' => 'FilterController',
+            'filter' => $filter,
+            'translation' => $translation,
+        ]);
     }
 
     /**
@@ -81,7 +91,7 @@ class FilterController extends AbstractController
             $message = $translator->trans('Фильтр успешно добавлен');
             $this->addFlash('success', $message);
 
-            //return $this->redirectToRoute('admin_filter_all');
+            return $this->redirectToRoute('admin_filter_all');
         }
 
         return $this->render('admin/filter/add.html.twig', [

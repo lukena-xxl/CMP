@@ -1,41 +1,30 @@
 <?php
 
-namespace App\Form\Admin\Filter;
+namespace App\Form\Admin\ArticleTag;
 
-use App\Entity\Category;
-use App\Entity\Filter;
-use App\Repository\CategoryRepository;
+use App\Entity\ArticleTag;
 use App\Services\Common\TranslationRecipient;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class FilterType extends AbstractType
+class ArticleTagType extends AbstractType
 {
     protected $translationRecipient;
-    protected $categoryRepository;
 
-    public function __construct(CategoryRepository $categoryRepository, TranslationRecipient $translationRecipient)
+    public function __construct(TranslationRecipient $translationRecipient)
     {
         $this->translationRecipient = $translationRecipient;
-        $this->categoryRepository = $categoryRepository;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('filter_categories', EntityType::class, [
-                'required' => false,
-                'label' => 'Категории',
-                'class' => Category::class,
-                //'choices' => $this->categoryRepository->getCategoryTree(),
-                'choice_label' => 'name',
-                'multiple' => true,
-            ])
             ->add('name', TextType::class, [
                 'label' => 'Название',
                 'attr' => [
@@ -50,6 +39,35 @@ class FilterType extends AbstractType
                 'mapped' => false,
                 'data' => $this->translationRecipient->getTranslation(isset($options['data']) ? $options['data'] : false, 'uk', 'name'),
             ])
+            ->add('slug', TextType::class, [
+                'required' => false,
+                'label' => 'Slug',
+                'help' => 'Разрешенные символы %symbols%',
+                'help_translation_parameters' => [
+                    '%symbols%' => ' [a-z, 0-9] _ -',
+                ],
+                'attr' => [
+                    'placeholder' => 'Введите slug',
+                ],
+            ])
+            ->add('description', TextareaType::class, [
+                'required' => false,
+                'label' => 'Описание',
+                'attr' => [
+                    'placeholder' => 'Введите описание',
+                    'class' => 'editor',
+                ],
+            ])
+            ->add('translation_description', TextareaType::class, [
+                'required' => false,
+                'label' => 'Описание',
+                'attr' => [
+                    'placeholder' => 'Введите описание',
+                    'class' => 'editor',
+                ],
+                'mapped' => false,
+                'data' => $this->translationRecipient->getTranslation(isset($options['data']) ? $options['data'] : false, 'uk', 'description'),
+            ])
             ->add('is_visible', CheckboxType::class, [
                 'required' => false,
                 'label' => 'Включено / Отключено',
@@ -63,13 +81,19 @@ class FilterType extends AbstractType
                     'class' => 'btn-primary',
                 ],
             ])
+            ->add('submitAndAdd', SubmitType::class, [
+                'label' => 'Сохранить и добавить',
+                'attr' => [
+                    'class' => 'btn-secondary',
+                ],
+            ])
         ;
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => Filter::class,
+            'data_class' => ArticleTag::class,
         ]);
     }
 }

@@ -12,7 +12,7 @@
     </head>
     <body>
         {% block header %}
-            {% if isRoutPath('admin_') %}
+            {% if app.request.attributes.all['_route'] starts with 'admin_' %}
                 {% include 'admin/parts/header.html.twig' %}
             {% else %}
                 {% include 'fronted/parts/header.html.twig' %}
@@ -20,7 +20,16 @@
         {% endblock %}
         <div class="content">
             {% include 'common/flash_messages.html.twig' %}
-            {% block body %}{% endblock %}
+            {% if app.request.attributes.all['_route'] starts with 'admin_' %}
+                <div class="row">
+                    <div class="col-sm-3">
+                        {% include 'admin/parts/panel.html.twig' %}
+                    </div>
+                    <div class="col-sm-9">{% block body %}{% endblock %}</div>
+                </div>
+            {% else %}
+
+            {% endif %}
         </div>
         <div class="footer">{% block footer %}{% endblock %}</div>
         {% block javascripts %}
