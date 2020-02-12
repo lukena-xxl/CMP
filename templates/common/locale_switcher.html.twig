@@ -4,11 +4,11 @@
 {% set applocales = locales|split('|') %}
 {% for locale in applocales %}
     {% if app.request.locale == locale %}
-        <span class="btn btn-secondary active" role="button">
+        <span class="btn btn-sm btn-secondary active pulse" role="button">
             {{ locale|upper }}
         </span>
     {% else %}
-        <a class="btn btn-secondary" href="{{ path(route, params|merge({ _locale: locale })) }}" role="button">
+        <a class="btn btn-sm btn-secondary" href="{{ path(route, params|merge({ _locale: locale })) }}" role="button">
             {{ locale|upper }}
         </a>
     {% endif %}

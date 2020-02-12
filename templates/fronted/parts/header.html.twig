@@ -1,1 +1,20 @@
-
+<nav class="navbar navbar-light bg-dark sticky-top px-3 navbar-main">
+    <a class="navbar-brand text-center" href="{{ path('fronted_main') }}"><strong class="text-white font-weight-bold">CMP</strong><span class="text-muted small d-block">City Market Place</span></a>
+    <div class="ml-2">
+        <div class="d-inline-block">{% include 'common/locale_switcher.html.twig' %}</div>
+        {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_SUPERADMIN') %}
+            <div class="d-inline-block">
+                <a href="{{ path('admin_main') }}" class="btn btn-sm btn-warning text-white" role="button"><i class="fas fa-cog"></i></a>
+            </div>
+        {% endif %}
+        {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+            <div class="d-inline-block">
+                <a href="{{ path('app_logout') }}" class="btn btn-sm btn-danger" role="button"><i class="fas fa-sign-out-alt"></i></a>
+            </div>
+        {% else %}
+            <div class="d-inline-block">
+                <a href="{{ path('app_login') }}" class="btn btn-sm btn-success"><i class="fas fa-sign-in-alt"></i></a>
+            </div>
+        {% endif %}
+    </div>
+</nav>

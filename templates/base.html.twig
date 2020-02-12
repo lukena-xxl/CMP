@@ -22,13 +22,13 @@
             {% include 'common/flash_messages.html.twig' %}
             {% if app.request.attributes.all['_route'] starts with 'admin_' %}
                 <div class="row">
-                    <div class="col-sm-3">
+                    <div class="col-sm-4 col-md-3">
                         {% include 'admin/parts/panel.html.twig' %}
                     </div>
-                    <div class="col-sm-9">{% block body %}{% endblock %}</div>
+                    <div class="col-sm-8 col-md-9">{% block body %}{% endblock %}</div>
                 </div>
             {% else %}
-
+                {% block body_frontend %}{% endblock %}
             {% endif %}
         </div>
         <div class="footer">{% block footer %}{% endblock %}</div>

@@ -74,12 +74,72 @@ select option[value=""] {
   border-color: #dee2e6 #dee2e6 $light!important;
 }
 
+.pulse {
+  box-shadow: 0 0 0 rgba(255,255,255, 0.4);
+  animation: pulse 2s infinite;
+}
+.pulse:hover {
+  animation: none;
+}
+
+@-webkit-keyframes pulse {
+  0% {
+    -webkit-box-shadow: 0 0 0 0 rgba(255,255,255, 0.4);
+  }
+  70% {
+    -webkit-box-shadow: 0 0 0 10px rgba(255,255,255, 0);
+  }
+  100% {
+    -webkit-box-shadow: 0 0 0 0 rgba(255,255,255, 0);
+  }
+}
+@keyframes pulse {
+  0% {
+    -moz-box-shadow: 0 0 0 0 rgba(255,255,255, 0.4);
+    box-shadow: 0 0 0 0 rgba(255,255,255, 0.4);
+  }
+  70% {
+    -moz-box-shadow: 0 0 0 10px rgba(255,255,255, 0);
+    box-shadow: 0 0 0 10px rgba(255,255,255, 0);
+  }
+  100% {
+    -moz-box-shadow: 0 0 0 0 rgba(255,255,255, 0);
+    box-shadow: 0 0 0 0 rgba(255,255,255, 0);
+  }
+}
+
+.menu-arrow {
+  position: relative;
+}
+
 .menu-arrow::after {
   font-family: "Font Awesome 5 Free";
   content: '\f054';
   margin-left: .5rem;
-  text-align: right;
-  float: right;
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+}
+
+.navbar-main {
+  border-bottom: 1px dotted $white;
+}
+
+.form-inline select {
+  margin: 2px;
+}
+
+::-webkit-input-placeholder {
+  color: $gray-400!important;
+}
+
+:-ms-input-placeholder {
+  color: $gray-400!important;
+}
+
+::placeholder {
+  color: $gray-400!important;
 }
 
 

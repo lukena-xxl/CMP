@@ -11,6 +11,7 @@ parameters:
     #app.supported_locales: ['ru', 'uk']
     locale: 'ru'
     app_locales: 'ru|uk'
+    user_roles: ['ROLE_ADMIN', 'ROLE_SUPERADMIN']
 
 services:
     # default configuration for services in *this* file
@@ -18,8 +19,9 @@ services:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
         bind:
-            $locales: '%app_locales%'
             $defaultLocale: '%locale%'
+            $locales: '%app_locales%'
+            $userRoles: '%user_roles%'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -42,3 +44,7 @@ services:
         arguments: ['@request_stack']
         tags:
             - { name: twig.extension }
+
+    App\Form\Admin\User\UserType:
+        arguments: ['%user_roles%']
+        tags: [form.type]
