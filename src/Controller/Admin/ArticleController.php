@@ -221,7 +221,7 @@ class ArticleController extends AbstractController
         }
 
         return $this->render('admin/article/sort.html.twig', [
-            'controller_name' => 'ArticleTagController',
+            'controller_name' => 'ArticleController',
             'articles' => $articles,
             'current' => $article,
             'form_sort' => $form->createView(),

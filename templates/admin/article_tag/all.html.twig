@@ -19,7 +19,11 @@
                 <tr>
                     <td>{{ tag.id }}</td>
                     <td class="min-width-300"><a href="{{ path('admin_article_tag_single', {'id': tag.id}) }}" class="text-decoration-none{% if tag.isVisible != 1 %} text-disabled{% endif %}">{{ tag.name }}</a></td>
-                    <td class="text-center">{{ tag.articles.count }}</td>
+                    <td class="text-center">
+                        {% if tag.articles %}
+                            {{ tag.articles.count }}
+                        {% endif %}
+                    </td>
                     <td>
                         <div class="min-width-300 text-center">
                             <a class="btn btn-light" href="{{ path('admin_article_tag_sort', {'id': tag.id}) }}" role="button"><i class="fas fa-exchange-alt fa-rotate-90"></i></a>
