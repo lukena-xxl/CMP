@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\Fronted;
+namespace App\Controller\Frontend;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
@@ -8,7 +8,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * Class MainController
  * @package App\Controller\Fronted
- * @Route("/", name="fronted")
+ * @Route("/", name="frontend")
  */
 class MainController extends AbstractController
 {
@@ -17,7 +17,7 @@ class MainController extends AbstractController
      */
     public function index()
     {
-        return $this->render('fronted/main/index.html.twig', [
+        return $this->render('frontend/main/index.html.twig', [
             'controller_name' => 'MainController',
         ]);
     }

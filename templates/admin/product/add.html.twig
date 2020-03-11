@@ -1,0 +1,114 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% endblock %}
+
+{% block body %}
+    <h1 class="admin-h1">{{ title }}</h1>
+
+    <fieldset class="custom-project">
+        {{ form_start(form_add) }}
+        <div class="p-3 mb-3 bg-light border">{{ form_row(form_add.category) }}</div>
+        <ul class="nav nav-tabs" id="nameTab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="ru-name-tab" data-toggle="tab" href="#ru-name" role="tab" aria-controls="ru-name" aria-selected="true">RU</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="uk-name-tab" data-toggle="tab" href="#uk-name" role="tab" aria-controls="uk-name" aria-selected="false">UK</a>
+            </li>
+        </ul>
+        <div class="tab-content p-2 bg-light border border-top-0 mb-3" id="nameTabContent">
+            <div class="tab-pane fade show active" id="ru-name" role="tabpanel" aria-labelledby="ru-name-tab">
+                {{ form_row(form_add.name) }}
+            </div>
+            <div class="tab-pane fade" id="uk-name" role="tabpanel" aria-labelledby="uk-name-tab">
+                {{ form_row(form_add.translation_name) }}
+            </div>
+        </div>
+        <div class="p-3 my-3 bg-light border">{{ form_row(form_add.slug) }}</div>
+        <ul class="nav nav-tabs" id="descriptionTab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="ru-description-tab" data-toggle="tab" href="#ru-description" role="tab" aria-controls="ru-description" aria-selected="true">RU</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="uk-description-tab" data-toggle="tab" href="#uk-description" role="tab" aria-controls="uk-description" aria-selected="false">UK</a>
+            </li>
+        </ul>
+        <div class="tab-content p-2 bg-light border border-top-0 mb-3" id="descriptionTabContent">
+            <div class="tab-pane fade show active" id="ru-description" role="tabpanel" aria-labelledby="ru-description-tab">
+                {{ form_row(form_add.description) }}
+            </div>
+            <div class="tab-pane fade" id="uk-description" role="tabpanel" aria-labelledby="uk-description-tab">
+                {{ form_row(form_add.translation_description) }}
+            </div>
+        </div>
+        <div class="p-3 my-3 bg-light border">
+            <div class="row">
+                <div class="col-sm-6">
+                    {{ form_row(form_add.price) }}
+                    {{ form_row(form_add.coefficient) }}
+                    {{ form_row(form_add.currency) }}
+                    <hr />
+                    <label class="text-danger">{{ 'Отображаемая цена'|trans|raw }}</label>
+                    <div class="mb-2 text-muted">
+                        <span class="pr-2">{{ 'Цена без скидки'|trans|raw }}:</span>
+                        <span class="font-weight-bold" id="price-no-discount">0</span>
+                    </div>
+                    <div class="mb-2 text-muted">
+                        <span class="pr-2">{{ 'Цена со скидкой'|trans|raw }}:</span>
+                        <span class="font-weight-bold" id="price-yes-discount">0</span>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        {{ form_label(form_add.discount_percentage) }}
+                        <div class="input-group">
+                            {{ form_widget(form_add.discount_percentage) }}
+                            <div class="input-group-append">
+                                <span class="input-group-text">%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        {{ form_label(form_add.discount_start_date) }}
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fad fa-calendar-plus"></i></span>
+                            </div>
+                            {{ form_widget(form_add.discount_start_date) }}
+                        </div>
+                        <small>{{ form_help(form_add.discount_start_date) }}</small>
+                    </div>
+                    <div class="form-group">
+                        {{ form_label(form_add.discount_end_date) }}
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fad fa-calendar-minus"></i></span>
+                            </div>
+                            {{ form_widget(form_add.discount_end_date) }}
+                        </div>
+                        <small>{{ form_help(form_add.discount_end_date) }}</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="p-3 my-3 bg-light border">
+            {{ form_row(form_add.availability) }}
+        </div>
+        <div class="p-3 my-3 bg-light border">
+            {{ form_row(form_add.captions) }}
+        </div>
+        {{ form_row(form_add.is_visible) }}
+        <div class="d-inline-block">{{ form_row(form_add.submitAndAdd) }}</div>
+        <div class="d-inline-block">{{ form_row(form_add.submit) }}</div>
+        {{ form_end(form_add) }}
+    </fieldset>
+
+
+
+
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('ckeditor') }}
+    {{ encore_entry_script_tags('product_add') }}
+{% endblock %}

@@ -15,7 +15,7 @@
             {% if app.request.attributes.all['_route'] starts with 'admin_' %}
                 {% include 'admin/parts/header.html.twig' %}
             {% else %}
-                {% include 'fronted/parts/header.html.twig' %}
+                {% include 'frontend/parts/header.html.twig' %}
             {% endif %}
         {% endblock %}
         <div class="content">

@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% endblock %}
+
+{% block body %}
+    <h1 class="admin-h1">{{ 'Коэффициенты пересчета цены'|trans|raw }}</h1>
+    <div class="mb-3">
+        <a href="{{ path('admin_coefficient_add') }}" class="btn btn-primary" role="button"><i class="fas fa-plus-circle mr-2"></i>{{ 'Добавить'|trans|raw }}</a>
+    </div>
+    {% if coefficients %}
+        <table class="table table-responsive">
+            <tr class="bg-light text-dark small">
+                <th>ID</th>
+                <th class="min-width-300">{{ 'Название'|trans|raw }}</th>
+                <th class="text-center">{{ 'Коэффициент'|trans|raw }}</th>
+                <th class="min-width-300 text-center">{{ 'Дата обновления'|trans|raw }}</th>
+                <th class="text-center">{{ 'Продукты'|trans|raw }}</th>
+                <th class="text-center">{{ 'Действия'|trans|raw }}</th>
+            </tr>
+            {% for coefficient in coefficients %}
+                <tr>
+                    <td>{{ coefficient.id }}</td>
+                    <td>{{ coefficient.name }}</td>
+                    <td class="text-center">{{ coefficient.ratio }}</td>
+                    <td class="text-center">{{ coefficient.updateDate.format("d.m.Y H:i") }}</td>
+                    <td class="text-center">{{ coefficient.products.count }}</td>
+                    <td>
+                        <div class="min-width-300 text-center">
+                            <a class="btn btn-light" href="{{ path('admin_coefficient_edit', {'id': coefficient.id}) }}" role="button"><i class="fas fa-edit"></i></a>
+                            <a class="btn btn-light text-danger" href="{{ path('admin_coefficient_delete', {'id': coefficient.id}) }}" role="button"><i class="fas fa-trash-alt"></i></a>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p class="mt-3">{{ 'Нет коэффициентов'|trans|raw }}!</p>
+    {% endif %}
+{% endblock %}

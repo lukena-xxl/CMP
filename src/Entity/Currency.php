@@ -80,6 +80,22 @@ class Currency implements Translatable
      */
     private $display;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Product", mappedBy="currency")
+     */
+    private $products;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Product", mappedBy="currency_purchase")
+     */
+    private $products_purchase;
+
+    public function __construct()
+    {
+        $this->products = new ArrayCollection();
+        $this->products_purchase = new ArrayCollection();
+    }
+
     public function setTranslatableLocale($locale)
     {
         $this->locale = $locale;
@@ -146,6 +162,68 @@ class Currency implements Translatable
     public function setDisplay(string $display): self
     {
         $this->display = $display;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Product[]
+     */
+    public function getProducts(): Collection
+    {
+        return $this->products;
+    }
+
+    public function addProduct(Product $product): self
+    {
+        if (!$this->products->contains($product)) {
+            $this->products[] = $product;
+            $product->setCurrency($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProduct(Product $product): self
+    {
+        if ($this->products->contains($product)) {
+            $this->products->removeElement($product);
+            // set the owning side to null (unless already changed)
+            if ($product->getCurrency() === $this) {
+                $product->setCurrency(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Product[]
+     */
+    public function getProductsPurchase(): Collection
+    {
+        return $this->products_purchase;
+    }
+
+    public function addProductsPurchase(Product $productsPurchase): self
+    {
+        if (!$this->products_purchase->contains($productsPurchase)) {
+            $this->products_purchase[] = $productsPurchase;
+            $productsPurchase->setCurrencyPurchase($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProductsPurchase(Product $productsPurchase): self
+    {
+        if ($this->products_purchase->contains($productsPurchase)) {
+            $this->products_purchase->removeElement($productsPurchase);
+            // set the owning side to null (unless already changed)
+            if ($productsPurchase->getCurrencyPurchase() === $this) {
+                $productsPurchase->setCurrencyPurchase(null);
+            }
+        }
 
         return $this;
     }

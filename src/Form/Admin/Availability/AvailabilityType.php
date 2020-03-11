@@ -46,6 +46,22 @@ class AvailabilityType extends AbstractType
                     'class' => 'max-width-50',
                 ]
             ])
+            ->add('short_description', TextType::class, [
+                'required' => false,
+                'label' => 'Краткое описание',
+                'attr' => [
+                    'placeholder' => 'Введите описание',
+                ],
+            ])
+            ->add('translation_short_description', TextType::class, [
+                'required' => false,
+                'label' => 'Краткое описание',
+                'attr' => [
+                    'placeholder' => 'Введите описание',
+                ],
+                'mapped' => false,
+                'data' => $this->translationRecipient->getTranslation(isset($options['data']) ? $options['data'] : false, 'uk', 'short_description'),
+            ])
             ->add('description', TextareaType::class, [
                 'required' => false,
                 'label' => 'Описание',

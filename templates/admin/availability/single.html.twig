@@ -41,7 +41,7 @@
                     </div>
                     <div class="tab-pane fade" id="uk-name" role="tabpanel" aria-labelledby="uk-name-tab">
                         <div class="h2 px-2">
-                            {% if translation['uk']['name'] is defined %}
+                            {% if translation['uk']['name'] is defined and translation['uk']['name'] %}
                                 {{ translation['uk']['name'] }}
                             {% else %}
                                 <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
@@ -49,6 +49,38 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="font-weight-bold mt-3 mb-2">{{ 'Краткое описание'|trans|raw }}:</div>
+                <ul class="nav nav-tabs" id="short_descriptionTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="ru-short_description-tab" data-toggle="tab" href="#ru-short_description" role="tab" aria-controls="ru-short_description" aria-selected="true">RU</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="uk-short_description-tab" data-toggle="tab" href="#uk-short_description" role="tab" aria-controls="uk-short_description" aria-selected="false">UK</a>
+                    </li>
+                </ul>
+                <div class="tab-content editor-content p-2 bg-light border border-top-0 mb-3" id="short_descriptionTabContent">
+                    <div class="tab-pane fade show active" id="ru-short_description" role="tabpanel" aria-labelledby="ru-short_description-tab">
+                        {% if availability.shortDescription %}
+                            {% autoescape %}
+                                {{ availability.shortDescription|raw }}
+                            {% endautoescape %}
+                        {% else %}
+                            <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="tab-pane fade" id="uk-short_description" role="tabpanel" aria-labelledby="uk-short_description-tab">
+                        {% if translation['uk']['short_description'] is defined and translation['uk']['short_description'] %}
+                            {% autoescape %}
+                                {{ translation['uk']['short_description']|raw }}
+                            {% endautoescape %}
+                        {% else %}
+                            <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="font-weight-bold mt-3 mb-2">{{ 'Описание'|trans|raw }}:</div>
                 <ul class="nav nav-tabs" id="descriptionTab" role="tablist">
                     <li class="nav-item">
                         <a class="nav-link active" id="ru-description-tab" data-toggle="tab" href="#ru-description" role="tab" aria-controls="ru-description" aria-selected="true">RU</a>
@@ -68,7 +100,7 @@
                         {% endif %}
                     </div>
                     <div class="tab-pane fade" id="uk-description" role="tabpanel" aria-labelledby="uk-description-tab">
-                        {% if translation['uk']['description'] is defined %}
+                        {% if translation['uk']['description'] is defined and translation['uk']['description'] %}
                             {% autoescape %}
                                 {{ translation['uk']['description']|raw }}
                             {% endautoescape %}

@@ -68,9 +68,15 @@ class Filter implements Translatable
      */
     private $locale = 'ru';
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\ProductFilter", mappedBy="filter")
+     */
+    private $product;
+
     public function __construct()
     {
         $this->filter_categories = new ArrayCollection();
+        $this->product = new ArrayCollection();
     }
 
     public function setTranslatableLocale($locale)
@@ -128,6 +134,37 @@ class Filter implements Translatable
     {
         if ($this->filter_categories->contains($filterCategory)) {
             $this->filter_categories->removeElement($filterCategory);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ProductFilter[]
+     */
+    public function getProduct(): Collection
+    {
+        return $this->product;
+    }
+
+    public function addProduct(ProductFilter $product): self
+    {
+        if (!$this->product->contains($product)) {
+            $this->product[] = $product;
+            $product->setFilter($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProduct(ProductFilter $product): self
+    {
+        if ($this->product->contains($product)) {
+            $this->product->removeElement($product);
+            // set the owning side to null (unless already changed)
+            if ($product->getFilter() === $this) {
+                $product->setFilter(null);
+            }
         }
 
         return $this;

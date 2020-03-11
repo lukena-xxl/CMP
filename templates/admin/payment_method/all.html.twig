@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% endblock %}
+
+{% block body %}
+    <h1 class="admin-h1">{{ 'Способы оплаты'|trans|raw }}</h1>
+    <div class="mb-3">
+        <a href="{{ path('admin_payment_add') }}" class="btn btn-primary" role="button"><i class="fas fa-plus-circle mr-2"></i>{{ 'Добавить'|trans|raw }}</a>
+    </div>
+    {% if payments %}
+        <table class="table table-responsive">
+            <tr class="bg-light text-dark">
+                <th>ID</th>
+                <th>{{ 'Название'|trans|raw }}</th>
+                <th class="text-center">{{ 'Продукты'|trans|raw }}</th>
+                <th class="text-center">{{ 'Действия'|trans|raw }}</th>
+            </tr>
+            {% for payment in payments %}
+                <tr>
+                    <td>{{ payment.id }}</td>
+                    <td class="min-width-300"><a href="{{ path('admin_payment_single', {'id': payment.id}) }}" class="text-decoration-none{% if payment.isVisible != 1 %} text-disabled{% endif %}">{{ payment.name }}</a></td>
+                    <td class="text-center">
+                        {#{% if payment.products %}
+                            {{ payment.products.count }}
+                        {% endif %}#}
+                    </td>
+                    <td>
+                        <div class="min-width-300 text-center">
+                            <a class="btn btn-light" href="{{ path('admin_payment_sort', {'id': payment.id}) }}" role="button"><i class="fas fa-exchange-alt fa-rotate-90"></i></a>
+                            <a class="btn btn-light" href="{{ path('admin_payment_edit', {'id': payment.id}) }}" role="button"><i class="fas fa-edit"></i></a>
+                            <a class="btn btn-light text-danger" href="{{ path('admin_payment_delete', {'id': payment.id}) }}" role="button"><i class="fas fa-trash-alt"></i></a>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p class="mt-3">{{ 'Нет способов оплаты'|trans|raw }}!</p>
+    {% endif %}
+{% endblock %}

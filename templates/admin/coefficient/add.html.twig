@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% endblock %}
+
+{% block body %}
+    <div>
+        <h1 class="admin-h1">{{ title }}</h1>
+        <fieldset class="input-max-width-700 custom-project">
+            {{ form_start(form_add) }}
+            {{ form_row(form_add.name) }}
+            {{ form_row(form_add.ratio) }}
+            {{ form_row(form_add.submit) }}
+            {{ form_end(form_add) }}
+        </fieldset>
+    </div>
+{% endblock %}

@@ -68,9 +68,15 @@ class Parameter implements Translatable
      */
     private $locale = 'ru';
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\ProductParameter", mappedBy="parameter")
+     */
+    private $product;
+
     public function __construct()
     {
         $this->parameter_categories = new ArrayCollection();
+        $this->product = new ArrayCollection();
     }
 
     public function setTranslatableLocale($locale)
@@ -128,6 +134,37 @@ class Parameter implements Translatable
     {
         if ($this->parameter_categories->contains($parameterCategory)) {
             $this->parameter_categories->removeElement($parameterCategory);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ProductParameter[]
+     */
+    public function getProduct(): Collection
+    {
+        return $this->product;
+    }
+
+    public function addProduct(ProductParameter $product): self
+    {
+        if (!$this->product->contains($product)) {
+            $this->product[] = $product;
+            $product->setParameter($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProduct(ProductParameter $product): self
+    {
+        if ($this->product->contains($product)) {
+            $this->product->removeElement($product);
+            // set the owning side to null (unless already changed)
+            if ($product->getParameter() === $this) {
+                $product->setParameter(null);
+            }
         }
 
         return $this;

@@ -1,0 +1,306 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% endblock %}
+
+{% block body_frontend %}
+
+    <div class="category-content">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb bg-light">
+                <li class="breadcrumb-item"><a href="#">Главная</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Мебель</li>
+            </ol>
+        </nav>
+
+        <div class="row">
+            <div class="col-sm-5 col-md-4 col-lg-3 order-2 order-sm-1">
+                <div class="pb-3">
+
+                    <div class="block-title">
+                        <strong><span class="h6">До 24.06.2020</span></strong>
+                    </div>
+                    <div class="mt-3">
+
+                        <div class="owl-carousel-single owl-carousel owl-theme">
+                            {% set x = 1 %}
+                            {% set arr = [1,2,3] %}
+                            {% for x in arr %}
+                                <div class="card card-product h-100 position-relative rounded-0">
+                                    <div class="position-relative">
+                                        <a href="#"><img src="https://images.ua.prom.st/1105824121_w640_h640_1105824121.jpg" class="card-img-top rounded-0" alt="..."></a>
+                                        <div class="gift-block">
+                                            <div class="gift font-weight-bold small">Доставка в подарок</div>
+                                        </div>
+                                    </div>
+                                    <div class="card-body pb-3">
+                                        <div class="">
+                                            <a href="#" class="text-dark text-decoration-none d-block">Кровать двухспальная с мягким изголовьем</a>
+                                            <div class="card-text text-muted small">Код товара: <strong>2134</strong></div>
+                                        </div>
+
+                                        <div class="pt-3">
+                                            <div class="small">
+                                                <span class="text-success">В наличии</span>
+                                                <span class="text-muted">(доставка до 3 дней)</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="price-block mb-2">
+                                            <div class="price-old-percent">-15%</div>
+                                            <span class="price-old"><s>24000 грн.</s></span>
+                                            <span class="small">23100 грн.</span>
+                                        </div>
+
+                                        <a href="#" class="card-link btn btn-primary align-middle" role="button"><i class="fad fa-info-circle mr-2"></i>Больше</a>
+                                        <a href="#" class="card-link h2 text-muted align-middle"><i class="fad fa-cart-arrow-down"></i></a>
+
+                                        <div class="tag-block">
+                                            <div class="mb-1"><a href="#" class="text-muted"><i class="fad fa-flag mr-2"></i>Прикормки</a></div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                {% set x = x + 1 %}
+                            {% endfor %}
+                        </div>
+
+                    </div>
+
+                    <div class="block-title">
+                        <strong>Производители</strong>
+                    </div>
+                    <div class="mt-3 px-2 text-muted">
+                        <div class="list-group w-100 category-list">
+                            {% set x = 1 %}
+                            {% set arr = [1,2,3,4,5,6] %}
+                            {% for x in arr %}
+
+                                <a class="list-group-item list-group-item-action rounded-0 border-0 py-2" href="#"><span class="d-inline-block text-wrap">Производитель мебели {{ x }}</span></a>
+
+                                {% set x = x + 1 %}
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="block-title mt-3">
+                        <strong>Публикации</strong>
+                    </div>
+                    <div class="mt-3 px-2">
+                        <div class="mb-3">
+                            <a href="#"><img src="https://morfey.ua/image/catalog/Creale/Krovati/Slip_Taun/Sleep-Town-creale_morfey.jpg" class="img-fluid" alt="..."></a>
+                            <div class="position-relative">
+                                <div class="article-title-block">
+                                    <a href="#" class="text-decoration-none">От стула зависит будет ли человек отвлекаться на неприятные ощущения</a>
+                                    <div><a href="#" class="text-decoration-none text-muted small"><i class="fad fa-book mr-2"></i>Удобная мебель</a></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <a href="#"><img src="https://constanta.ua/2633-tm_large_default/shkaf-kupe-steval-13.jpg" class="img-fluid" alt="..."></a>
+                            <div class="position-relative">
+                                <div class="article-title-block">
+                                    <a href="#" class="text-decoration-none">Шкаф-купе поможет сэкономить пространство</a>
+                                    <div><a href="#" class="text-decoration-none text-muted small"><i class="fad fa-book mr-2"></i>Пространство в квартире</a></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <a href="#"><img src="https://tourdnepr.com/images/stories/news_2018/november/22_mebel_01.jpg" class="img-fluid" alt="..."></a>
+                            <div class="position-relative">
+                                <div class="article-title-block">
+                                    <a href="#" class="text-decoration-none">Каким должен быть кабинет руководителя?</a>
+                                    <div><a href="#" class="text-decoration-none text-muted small"><i class="fad fa-book mr-2"></i>Удобная мебель</a></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-7 col-md-8 col-lg-9 order-1 order-sm-2">
+                <h1 class="text-uppercase">Мебель</h1>
+
+                <div class="row card-block">
+
+                    <div class="col-lg-8 pb-3">
+
+                        <div class="bd-example">
+                            <div id="carouselExampleCaptions" class="carousel slide" data-ride="carousel">
+                                <ol class="carousel-indicators">
+                                    <li data-target="#carouselExampleCaptions" data-slide-to="0" class="active"></li>
+                                    <li data-target="#carouselExampleCaptions" data-slide-to="2"></li>
+                                </ol>
+                                <div class="carousel-inner">
+                                    <div class="carousel-item active">
+                                        <a href="#"><img src="https://www.style-comfort.com.ua/uploads/catalog/37251f432686acabd90c3c08f68b9bfd0566b6b8.jpg" class="d-block w-100" alt="..."></a>
+                                        <div class="carousel-caption">
+                                            <a href="#" class="font-weight-bold h5 text-white text-decoration-none">Скидка на обеденные комплекты -20%</a>
+                                            <p class="d-none d-md-block">Мы считаем, что любой предмет мебели, в первую очередь, должен быть удобным.</p>
+                                        </div>
+                                    </div>
+                                    <div class="carousel-item">
+                                        <a href="#"><img src="https://www.style-comfort.com.ua/uploads/catalog/280267c620b0cd6bbc3b06a7f64c0fd796a2a442.jpg" class="d-block w-100" alt="..."></a>
+                                        <div class="carousel-caption">
+                                            <a href="#" class="font-weight-bold h5 text-white text-decoration-none">Third slide label</a>
+                                            <p class="d-none d-md-block">Praesent commodo cursus magna, vel scelerisque nisl consectetur.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <a class="carousel-control-prev" href="#carouselExampleCaptions" role="button" data-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="sr-only">Previous</span>
+                                </a>
+                                <a class="carousel-control-next" href="#carouselExampleCaptions" role="button" data-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="sr-only">Next</span>
+                                </a>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    {% set x = 1 %}
+                    {% set arr = [1,2,3,4,5,6] %}
+                    {% for x in arr %}
+                        <div class="col-md-6 col-lg-4 pb-3">
+                            <div class="card card-product h-100 position-relative rounded-0">
+                                <div class="position-relative">
+                                    <a href="{{ path('frontend_category_single', { slug: 'slug' }) }}"><img src="http://www.krim-mebel.com/wp-content/uploads/2019/04/65822_1-500x500.jpeg" class="card-img-top rounded-0" alt="..."></a>
+                                    <div class="gift-block small">
+                                        <div class="gift h5 mb-0">Скидки до 25%</div>
+                                    </div>
+                                </div>
+                                <div class="card-body pb-3">
+                                    <a href="{{ path('frontend_category_single', { slug: 'slug' }) }}" class="text-dark text-decoration-none d-block a-title">Спальные гарнитуры</a>
+                                    <div class="text-primary small">
+                                        от <strong>1200 грн.</strong> до <strong>36500 грн.</strong>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        {% set x = x + 1 %}
+                    {% endfor %}
+                </div>
+
+                <div class="block-title mt-4 mb-3">
+                    <strong>Рекомендуем посмотреть</strong>
+                </div>
+
+                <div class="owl-carousel-middle owl-carousel owl-theme">
+                    {% set x = 1 %}
+                    {% set arr = [1,2,3,4,5,6] %}
+                    {% for x in arr %}
+                        <div class="card card-product h-100 position-relative rounded-0">
+                            <div class="position-relative">
+                                <a href="#"><img src="https://images.ua.prom.st/1105824121_w640_h640_1105824121.jpg" class="card-img-top rounded-0" alt="..."></a>
+                                <div class="gift-block">
+                                    <div class="gift font-weight-bold small">Доставка в подарок</div>
+                                </div>
+                            </div>
+                            <div class="card-body pb-3">
+                                <div class="card-title-expansion">
+                                    <a href="#" class="text-dark text-decoration-none d-block a-title">Кровать двухспальная с мягким изголовьем</a>
+                                    <div class="card-text text-muted small">Код товара: <strong>2134</strong></div>
+                                </div>
+
+                                <div class="pt-3">
+                                    <div class="small">
+                                        <span class="text-success">В наличии</span>
+                                        <span class="text-muted">(доставка до 3 дней)</span>
+                                    </div>
+                                </div>
+
+                                <div class="price-block mb-2">
+                                    <div class="price-old-percent">-15%</div>
+                                    <span class="price-old"><s>24000 грн.</s></span>
+                                    <span>23100 грн.</span>
+                                </div>
+
+                                <a href="#" class="card-link btn btn-primary align-middle" role="button"><i class="fad fa-info-circle mr-2"></i>Больше</a>
+                                <a href="#" class="card-link h2 text-muted align-middle"><i class="fad fa-cart-arrow-down"></i></a>
+
+                                <div class="tag-block">
+                                    <div class="mb-1"><a href="#" class="text-muted"><i class="fad fa-flag mr-2"></i>Прикормки</a></div>
+                                </div>
+
+                            </div>
+                        </div>
+                        {% set x = x + 1 %}
+                    {% endfor %}
+                </div>
+
+                <div class="block-title mt-4">
+                    <strong>Часто спрашивают</strong>
+                </div>
+
+                <div class="accordion mt-3" id="accordionExample">
+                    <div class="card">
+                        <div class="card-header" id="heading1">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse1" aria-expanded="true" aria-controls="collapse1">
+                                    <i class="fad fa-question-square fa-2x mr-2 align-middle"></i><span class="d-inline align-middle">Разворачиваемая панель #1</span>
+                                </button>
+                            </h5>
+                        </div>
+
+                        <div id="collapse1" class="collapse show" aria-labelledby="heading1" data-parent="#accordionExample">
+                            <div class="card-body">
+                                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                            </div>
+                        </div>
+                    </div>
+
+                    {% set x = 2 %}
+                    {% set arr = [2,3,4] %}
+                    {% for x in arr %}
+
+                        <div class="card">
+                            <div class="card-header" id="heading{{ x }}">
+                                <h5 class="mb-0">
+                                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapse{{ x }}" aria-expanded="false" aria-controls="collapse{{ x }}">
+                                        <i class="fad fa-question-square fa-2x mr-2 align-middle"></i><span class="d-inline align-middle">Разворачиваемая панель #{{ x }}</span>
+                                    </button>
+                                </h5>
+                            </div>
+                            <div id="collapse{{ x }}" class="collapse" aria-labelledby="heading{{ x }}" data-parent="#accordionExample">
+                                <div class="card-body">
+                                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                                </div>
+                            </div>
+                        </div>
+
+                        {% set x = x + 1 %}
+                    {% endfor %}
+
+                </div>
+
+                <div class="block-title mt-4">
+                    <strong>Информация</strong>
+                </div>
+
+                <article class="text-muted mt-3">
+                    <h2>Мебель в интернет-магазине City Market Place</h2>
+                    <p>Мебель является неизменным атрибутом любого помещения. Именно она задает ему правильную атмосферу, делая пространство уютным и комфортным, создавая благоприятные условия для продуктивной работы или помогая отдохнуть после тяжелого дня. Все чаще клиенты предпочитают оформлять заказ в интернет магазине мебели , когда можно в сводное время сесть за компьютер, рассмотреть мебель на фото и спокойно купить мебель в Одессе, которая вам понравилась. Интернет магазин Табуретка имеет большой каталог мебели: в наличии имеется как мебель Львов для дома, так и для офиса. </p>
+                    <h2>Покупка мебели онлайн</h2>
+                    <p>На сайте мебели Табуретка Вы найдете богатый ассортимент мебели различного назначения: </p>
+                    <p>Садовая мебель. Современная и практичная мебель Винница выполнена из качественных материалов и прослужит Вам не один десяток лет. Красивые и аккуратные кресла, функциональные столики – в каталоге нашего магазина Вы найдете много мебели, которая обеспечит комфортный отдых в саду, а цены на мебель порадуют своей демократичностью. В продаже также имеются наборы мебели Житомир для открытых террас, шезлонги и качели с навесным тентом. Вся садовая мебель Хмельницкий легко моется, ее можно без труда сложить и спрятать на хранение, она не боится влаги и прямых солнечных лучей. </p>
+                    <p>Мебель для офиса. Такая мебель Николаев должна приносить комфорт и создавать продуктивную атмосферу в офисе, но при этом выглядеть стильно и солидно. Офисная мебель Черкассы бывает корпусной и мягкой. К корпусной можно отнести шкафы и стеллажи для хранения документов, стойки и столы. В отличие от мебели Белая Церковь для дома, офисные экземпляры имеют лаконичный дизайн и являются очень функциональными. Мягкая мебель Одесса для офиса отличается износостойкостью и непритязательна в уходе. </p>
+                    <p>Мебель для кухни. Магазин мебели Киев предлагает большой ассортимент мебели для кухни. Все гарнитуры имеют разную комплектацию, благодаря этому клиенты смогут выбрать мебель, которая будет иметь подходящие габариты и вместит всю кухонную утварь. В интернет магазине мебели официальный сайт Табуретка Вы сможете приобрести не только полноценный гарнитур, но и отдельные модули для кухни. </p>
+                    <p>Мебель для дома. Каждая квартира начинается с прихожей – там необходимо оборудовать место для хранения одежды. Можно выбрать вместительный шкаф-купе или отдать предпочтение стандартному угловому, либо обычному шкафу. В мебельном интернет магазине Табуретка есть возможность купить мебель для прихожей с доставкой по доступной цене. </p>
+                    <p>Для гостиной отлично подойдут мягкие диваны и кресла, а также небольшие тумбы и стеллажи для различных мелочей. В ассортименте присутствует как мебель Полтава из сруба дерева, так и более доступный ее аналог – мебель Киев из ДСП, практичность которой сложно переоценить. </p>
+                    <p>В качестве мебели Чернигов для спальни магазин предлагает кровати различного дизайна. В наличии имеются двуспальные и односпальные кровати, на сайте также можно купить мебель Киев для детей от 1 года. В дополнение к ним можно приобрести матрас – нужно только выбрать ту модель, которая соответствует параметрам основания кровати. </p>
+                </article>
+
+            </div>
+        </div>
+
+
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('owl_carousel') }}
+{% endblock %}
