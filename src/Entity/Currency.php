@@ -2,36 +2,13 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
-use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\Translatable\Translatable;
-use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * Secured resource.
- *
- * @ApiResource(
- *     attributes={
- *         "security"="is_granted('ROLE_USER')",
- *         "normalization_context"={"groups"={"read"}},
- *         "denormalization_context"={"groups"={"write"}}},
- *     collectionOperations={
- *         "get",
- *         "post"={"security"="is_granted('ROLE_ADMIN')"}
- *     },
- *     itemOperations={
- *         "get",
- *         "put"={"security"="is_granted('ROLE_ADMIN')"},
- *         "patch"={"security"="is_granted('ROLE_ADMIN')"},
- *         "delete"={"security"="is_granted('ROLE_ADMIN')"}
- *     }
- * )
- * @ApiFilter(OrderFilter::class, properties={"id"})
  * @ORM\Entity(repositoryClass="App\Repository\CurrencyRepository")
  */
 class Currency implements Translatable
@@ -40,33 +17,28 @@ class Currency implements Translatable
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"read"})
      */
     private $id;
 
     /**
      * @Gedmo\Translatable
      * @ORM\Column(type="string", length=50)
-     * @Groups({"read", "write"})
      */
     private $name;
 
     /**
      * @Gedmo\Translatable
      * @ORM\Column(type="string", length=10)
-     * @Groups({"read", "write"})
      */
     private $short;
 
     /**
      * @ORM\Column(type="string", length=10)
-     * @Groups({"read", "write"})
      */
     private $abbr;
 
     /**
      * @ORM\Column(type="string", length=5)
-     * @Groups({"read", "write"})
      */
     private $symbol;
 
@@ -85,15 +57,9 @@ class Currency implements Translatable
      */
     private $products;
 
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Product", mappedBy="currency_purchase")
-     */
-    private $products_purchase;
-
     public function __construct()
     {
         $this->products = new ArrayCollection();
-        $this->products_purchase = new ArrayCollection();
     }
 
     public function setTranslatableLocale($locale)
@@ -191,37 +157,6 @@ class Currency implements Translatable
             // set the owning side to null (unless already changed)
             if ($product->getCurrency() === $this) {
                 $product->setCurrency(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Product[]
-     */
-    public function getProductsPurchase(): Collection
-    {
-        return $this->products_purchase;
-    }
-
-    public function addProductsPurchase(Product $productsPurchase): self
-    {
-        if (!$this->products_purchase->contains($productsPurchase)) {
-            $this->products_purchase[] = $productsPurchase;
-            $productsPurchase->setCurrencyPurchase($this);
-        }
-
-        return $this;
-    }
-
-    public function removeProductsPurchase(Product $productsPurchase): self
-    {
-        if ($this->products_purchase->contains($productsPurchase)) {
-            $this->products_purchase->removeElement($productsPurchase);
-            // set the owning side to null (unless already changed)
-            if ($productsPurchase->getCurrencyPurchase() === $this) {
-                $productsPurchase->setCurrencyPurchase(null);
             }
         }
 

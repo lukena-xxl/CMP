@@ -30,6 +30,7 @@
             {% else %}
                 {% block body_frontend %}{% endblock %}
             {% endif %}
+            {% include 'common/bootstrap_modal.html.twig' %}
         </div>
         <div class="footer">{% block footer %}{% endblock %}</div>
         {% block javascripts %}

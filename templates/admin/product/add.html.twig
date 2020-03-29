@@ -7,24 +7,33 @@
 
     <fieldset class="custom-project">
         {{ form_start(form_add) }}
+        {{ form_errors(form_add) }}
         <div class="p-3 mb-3 bg-light border">{{ form_row(form_add.category) }}</div>
-        <ul class="nav nav-tabs" id="nameTab" role="tablist">
-            <li class="nav-item">
-                <a class="nav-link active" id="ru-name-tab" data-toggle="tab" href="#ru-name" role="tab" aria-controls="ru-name" aria-selected="true">RU</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" id="uk-name-tab" data-toggle="tab" href="#uk-name" role="tab" aria-controls="uk-name" aria-selected="false">UK</a>
-            </li>
-        </ul>
-        <div class="tab-content p-2 bg-light border border-top-0 mb-3" id="nameTabContent">
-            <div class="tab-pane fade show active" id="ru-name" role="tabpanel" aria-labelledby="ru-name-tab">
-                {{ form_row(form_add.name) }}
+        <div class="row">
+            <div class="col-md-6">
+                <ul class="nav nav-tabs" id="nameTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="ru-name-tab" data-toggle="tab" href="#ru-name" role="tab" aria-controls="ru-name" aria-selected="true">RU</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="uk-name-tab" data-toggle="tab" href="#uk-name" role="tab" aria-controls="uk-name" aria-selected="false">UK</a>
+                    </li>
+                </ul>
+                <div class="tab-content p-2 bg-light border border-top-0 mb-3" id="nameTabContent">
+                    <div class="tab-pane fade show active" id="ru-name" role="tabpanel" aria-labelledby="ru-name-tab">
+                        {{ form_row(form_add.name) }}
+                    </div>
+                    <div class="tab-pane fade" id="uk-name" role="tabpanel" aria-labelledby="uk-name-tab">
+                        {{ form_row(form_add.translation_name) }}
+                    </div>
+                </div>
             </div>
-            <div class="tab-pane fade" id="uk-name" role="tabpanel" aria-labelledby="uk-name-tab">
-                {{ form_row(form_add.translation_name) }}
+            <div class="col-md-6">
+                <div class="p-3 my-3 bg-light border">
+                    {{ form_row(form_add.slug) }}
+                </div>
             </div>
         </div>
-        <div class="p-3 my-3 bg-light border">{{ form_row(form_add.slug) }}</div>
         <ul class="nav nav-tabs" id="descriptionTab" role="tablist">
             <li class="nav-item">
                 <a class="nav-link active" id="ru-description-tab" data-toggle="tab" href="#ru-description" role="tab" aria-controls="ru-description" aria-selected="true">RU</a>
@@ -41,63 +50,211 @@
                 {{ form_row(form_add.translation_description) }}
             </div>
         </div>
-        <div class="p-3 my-3 bg-light border">
-            <div class="row">
-                <div class="col-sm-6">
-                    {{ form_row(form_add.price) }}
-                    {{ form_row(form_add.coefficient) }}
+        <div class="row">
+            <div class="col-md-6">
+                <div class="p-3 my-3 bg-light border">
                     {{ form_row(form_add.currency) }}
-                    <hr />
-                    <label class="text-danger">{{ 'Отображаемая цена'|trans|raw }}</label>
-                    <div class="mb-2 text-muted">
-                        <span class="pr-2">{{ 'Цена без скидки'|trans|raw }}:</span>
-                        <span class="font-weight-bold" id="price-no-discount">0</span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="p-3 my-3 bg-light border">
+                    {{ form_row(form_add.availability) }}
+                </div>
+            </div>
+        </div>
+
+        <div class="p-3 my-3 bg-light border">
+            <div class="mb-3 text-dark font-weight-bold h5">{{ 'Разновидности'|trans|raw }}</div>
+            {% import _self as formMacros %}
+            {% macro printItemsRow(itemsForm , num) %}
+                <div class="row align-items-center mb-2">
+                    <div class="col-lg-auto text-center img-block">
+                        <div class="mb-2 text-center">
+                            <div class="dropdown d-inline-block">
+                                <a class="no-caret dropdown-toggle h4 mb-0 text-decoration-none text-dark mr-2" href="#" id="dropdownImageAdd__name__{{ num }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="far fa-image"></i>
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="dropdownImageAdd__name__{{ num }}">
+                                    <a href="javascript:void(0);"
+                                       class="dropdown-item add-image small"
+                                       data-ratio="{{ 800/600 }}"
+                                       data-min-length="150/113"
+                                       data-max-size="{{ 1*1024*1024 }}"
+                                       data-output-length = "150/113"
+                                       data-idn="item_img__name__{{ num }}"
+                                       data-title="{{ 'Добавление изображения'|trans|raw }}">{{ 'Изменить'|trans|raw }}</a>
+                                    <a class="dropdown-item small reset-img" href="javascript:void(0);">{{ 'Сбросить'|trans|raw }}</a>
+                                    <a class="dropdown-item small clear-img" href="javascript:void(0);">{{ 'Нет изображения'|trans|raw }}</a>
+                                </div>
+                            </div>
+                            <i class="fad fa-arrows-alt mr-2 text-dark h4 mb-0 sort-handle"></i>
+                            <a href="javascript:void(0);" class="delete-element text-decoration-none"><i class="fad fa-trash-alt text-danger h4 mb-0"></i></a>
+                        </div>
+                        {{ form_row(itemsForm.img) }}
+                        {% set noImg150 = asset('build/images/common/no-image-150.png') %}
+                        {% if itemsForm.img.vars.value %}
+                            {% set imgItem = asset('uploads/product/item/'~itemsForm.img.vars.value) %}
+                        {% else %}
+                            {% set imgItem = noImg150 %}
+                        {% endif %}
+                        <img src="{{ imgItem }}" id="item_img__name__{{ num }}" class="img-fluid img-item mb-2 mb-sm-0" data-no-image="{{ noImg150 }}" data-old-image="{{ imgItem }}" data-name-image="{{ itemsForm.img.vars.value }}">
                     </div>
-                    <div class="mb-2 text-muted">
-                        <span class="pr-2">{{ 'Цена со скидкой'|trans|raw }}:</span>
-                        <span class="font-weight-bold" id="price-yes-discount">0</span>
+                    <div class="col-lg-4">
+                        <ul class="nav nav-tabs" id="name-item__name__{{ num }}Tab" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="ru-name-item__name__{{ num }}-tab" data-toggle="tab" href="#ru-name__name__{{ num }}-item" role="tab" aria-controls="ru-name__name__{{ num }}-item" aria-selected="true">RU</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="uk-name-item__name__{{ num }}-tab" data-toggle="tab" href="#uk-name__name__{{ num }}-item" role="tab" aria-controls="uk-name__name__{{ num }}-item" aria-selected="false">UK</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content p-2 bg-light border border-top-0 mb-2" id="name-item__name__{{ num }}TabContent">
+                            <div class="tab-pane fade show active" id="ru-name__name__{{ num }}-item" role="tabpanel" aria-labelledby="ru-name-item__name__{{ num }}-tab">
+                                {{ form_row(itemsForm.name) }}
+                            </div>
+                            <div class="tab-pane fade" id="uk-name__name__{{ num }}-item" role="tabpanel" aria-labelledby="uk-name-item__name__{{ num }}-tab">
+                                {{ form_row(itemsForm.translation_name) }}
+                            </div>
+                        </div>
+                        {{ form_row(itemsForm.isChecked) }}
+                        {{ form_row(itemsForm.isVisible) }}
+                    </div>
+                    <div class="col-lg-5">
+                        {{ form_row(itemsForm.price) }}
+                        {{ form_row(itemsForm.coefficient) }}
+                        <div class="row align-items-center text-muted no-gutters">
+                            <div class="col-md-6">
+                                <div class="border p-2 mr-0 mr-md-2 mb-2 mb-md-0">
+                                    <div class="pr-2">{{ 'Цена без скидки'|trans|raw }}:</div>
+                                    <div class="font-weight-bold price-no-discount">0</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="border p-2">
+                                    <div class="pr-2">{{ 'Цена со скидкой'|trans|raw }}:</div>
+                                    <div class="font-weight-bold price-yes-discount">0</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        {{ form_label(form_add.discount_percentage) }}
-                        <div class="input-group">
-                            {{ form_widget(form_add.discount_percentage) }}
-                            <div class="input-group-append">
-                                <span class="input-group-text">%</span>
+                <a class="mb-3 text-success" data-toggle="collapse" href="#collapse-item__name__{{ num }}" aria-expanded="false" aria-controls="collapse-item__name__{{ num }}"><i class="fad fa-sort-down mr-2"></i>{{ 'Больше данных'|trans|raw }}</a>
+                <div class="collapse mt-3" id="collapse-item__name__{{ num }}">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            {{ form_row(itemsForm.displayedQuantity) }}
+                            {{ form_row(itemsForm.minOrderQuantity) }}
+                            {{ form_row(itemsForm.maxOrderQuantity) }}
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                {{ form_label(itemsForm.discountPercentage) }}
+                                <div class="input-group">
+                                    {{ form_widget(itemsForm.discountPercentage) }}
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                {{ form_label(itemsForm.discountStartDate) }}
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fad fa-calendar-plus"></i></span>
+                                    </div>
+                                    {{ form_widget(itemsForm.discountStartDate) }}
+                                </div>
+                                {{ form_help(itemsForm.discountStartDate) }}
+                            </div>
+                            <div class="form-group">
+                                {{ form_label(itemsForm.discountEndDate) }}
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fad fa-calendar-minus"></i></span>
+                                    </div>
+                                    {{ form_widget(itemsForm.discountEndDate) }}
+                                </div>
+                                {{ form_help(itemsForm.discountEndDate) }}
                             </div>
                         </div>
                     </div>
-                    <div class="form-group">
-                        {{ form_label(form_add.discount_start_date) }}
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fad fa-calendar-plus"></i></span>
-                            </div>
-                            {{ form_widget(form_add.discount_start_date) }}
-                        </div>
-                        <small>{{ form_help(form_add.discount_start_date) }}</small>
-                    </div>
-                    <div class="form-group">
-                        {{ form_label(form_add.discount_end_date) }}
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fad fa-calendar-minus"></i></span>
-                            </div>
-                            {{ form_widget(form_add.discount_end_date) }}
-                        </div>
-                        <small>{{ form_help(form_add.discount_end_date) }}</small>
-                    </div>
+                </div>
+            {% endmacro %}
+
+            <ul class="pl-0 sortable-list" id="product-items-list"
+                data-prototype="{{ formMacros.printItemsRow(form_add.items.vars.prototype)|e('html_attr') }}"
+                data-widget-counter="{{ form_add.items|length }}"
+                data-widget-tags="{{ '<li class="collection-widget-item srt"></li>'|e }}">
+                {% set num = 0 %}
+                {% for itemsForm in form_add.items %}
+                    <li class="collection-widget-item srt">{{ formMacros.printItemsRow(itemsForm, num) }}</li>
+                    {% set num = num + 1 %}
+                {% endfor %}
+            </ul>
+            <a href="javascript:void(0);"
+               class="btn btn-secondary mt-3 add-another-collection-widget"
+               data-list="#product-items-list"><i class="fad fa-plus-square mr-2"></i>{{ 'Добавить'|trans|raw }}</a>
+        </div>
+
+        {% macro printImagesRow(imagesForm) %}
+            <div class="position-relative">
+                {% if imagesForm.name.vars.value %}
+                    {% set src = imagesForm.name.vars.value %}
+                {% else %}
+                    {% set src = '__src__' %}
+                {% endif %}
+                <div class="d-none">
+                    {{ form_widget(imagesForm.name, {'value' : src}) }}
+                    {{ form_widget(imagesForm.isVisible) }}
+                </div>
+                <img src="{% if imagesForm.name.vars.value %}{{ asset('uploads/product/') }}{% endif %}{{ src }}" class="img-fluid m-1">
+                <div class="position-absolute bg-light-opacity px-2 py-1" style="top:10px;left:10px">
+                    <i class="fad fa-arrows-alt mr-2 text-dark h4 mb-0 sort-handle"></i>
+                    <a href="javascript:void(0);" class="visible-img text-decoration-none mr-2"><i class="fad h4 mb-0 text-{% if imagesForm.isVisible.vars.data %}dark fa-eye{% else %}danger fa-eye-slash{% endif %}"></i></a>
+                    <a href="javascript:void(0);" class="delete-element text-decoration-none"><i class="fad fa-trash-alt text-danger h4 mb-0"></i></a>
+                </div>
+            </div>
+        {% endmacro %}
+
+        <div class="p-3 my-3 bg-light border">
+            <div class="text-dark font-weight-bold h5">{{ 'Изображения'|trans|raw }}</div>
+            <div class="mb-3 text-muted small">{{ 'Первое изображение будет главным'|trans|raw }}</div>
+
+            <div class="row sortable-list" id="image_list"
+                 data-prototype="{{ formMacros.printImagesRow(form_add.images.vars.prototype)|e('html_attr') }}"
+                 data-widget-counter="{{ form_add.images|length }}"
+                 data-widget-tags="{{ '<div class="col-sm-3 srt"></div>'|e }}">
+                {% for imagesForm in form_add.images %}
+                    <div class="col-sm-3 srt">{{ formMacros.printImagesRow(imagesForm) }}</div>
+                {% endfor %}
+            </div>
+
+            <a href="javascript:void(0);"
+               class="btn btn-secondary mt-3 add-image"
+               data-ratio="{{ 800/600 }}"
+               data-min-length="800/600"
+               data-max-size="{{ 3*1024*1024 }}"
+               data-output-length = "800/600"
+               data-idn="product"
+               data-title="{{ 'Добавление изображения'|trans|raw }}"><i class="fad fa-plus-square mr-2"></i>{{ 'Добавить'|trans|raw }}</a>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="p-3 my-3 bg-light border">
+                    {{ form_row(form_add.delivery) }}
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="p-3 my-3 bg-light border">
+                    {{ form_row(form_add.payment) }}
                 </div>
             </div>
         </div>
         <div class="p-3 my-3 bg-light border">
-            {{ form_row(form_add.availability) }}
-        </div>
-        <div class="p-3 my-3 bg-light border">
             {{ form_row(form_add.captions) }}
         </div>
-        {{ form_row(form_add.is_visible) }}
+        {{ form_row(form_add.isVisible) }}
         <div class="d-inline-block">{{ form_row(form_add.submitAndAdd) }}</div>
         <div class="d-inline-block">{{ form_row(form_add.submit) }}</div>
         {{ form_end(form_add) }}
@@ -111,4 +268,5 @@
     {{ parent() }}
     {{ encore_entry_script_tags('ckeditor') }}
     {{ encore_entry_script_tags('product_add') }}
+    {{ encore_entry_script_tags('cropping_image') }}
 {% endblock %}

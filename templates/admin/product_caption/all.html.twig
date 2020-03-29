@@ -19,7 +19,7 @@
                 <tr>
                     <td>{{ caption.id }}</td>
                     <td class="min-width-300"><a href="{{ path('admin_product_caption_single', {'id': caption.id}) }}" class="text-decoration-none px-3 py-1 d-inline-block" style="{% if caption.colorFill %}background-color:{{ caption.colorFill }};{% endif %}{% if caption.colorText %}color:{{ caption.colorText }};{% endif %}">{{ caption.name }}</a></td>
-                    <td class="text-center">{#{{ caption.products.count }}#}</td>
+                    <td class="text-center">{{ caption.products.count }}</td>
                     <td>
                         <div class="min-width-300 text-center">
                             <a class="btn btn-light" href="{{ path('admin_product_caption_sort', {'id': caption.id}) }}" role="button"><i class="fas fa-exchange-alt fa-rotate-90"></i></a>

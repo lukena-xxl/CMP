@@ -40,26 +40,6 @@ class Product implements Translatable
     private $description;
 
     /**
-     * @ORM\Column(type="float")
-     */
-    private $price;
-
-    /**
-     * @ORM\Column(type="float", nullable=true)
-     */
-    private $discount_percentage;
-
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $discount_start_date;
-
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $discount_end_date;
-
-    /**
      * @ORM\Column(type="boolean", options={"default":"0"})
      */
     private $is_visible = false;
@@ -106,7 +86,7 @@ class Product implements Translatable
     private $captions;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\ProductImage", mappedBy="product")
+     * @ORM\OneToMany(targetEntity="App\Entity\ProductImage", mappedBy="product", cascade={"persist", "remove"}, orphanRemoval=true)
      */
     private $images;
 
@@ -116,29 +96,24 @@ class Product implements Translatable
     private $filters;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\ProductParameter", mappedBy="product")
-     */
-    private $parameters;
-
-    /**
      * @Gedmo\Locale
      */
     private $locale = 'ru';
 
     /**
-     * @ORM\Column(type="float", nullable=true)
+     * @ORM\OneToMany(targetEntity="App\Entity\ProductItem", mappedBy="product", cascade={"persist", "remove"})
      */
-    private $price_purchase;
+    private $items;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Currency", inversedBy="products_purchase")
+     * @ORM\ManyToMany(targetEntity="App\Entity\DeliveryMethod", inversedBy="products")
      */
-    private $currency_purchase;
+    private $delivery;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Coefficient", inversedBy="products")
+     * @ORM\ManyToMany(targetEntity="App\Entity\PaymentMethod", inversedBy="products")
      */
-    private $coefficient;
+    private $payment;
 
     public function setTranslatableLocale($locale)
     {
@@ -150,7 +125,9 @@ class Product implements Translatable
         $this->captions = new ArrayCollection();
         $this->images = new ArrayCollection();
         $this->filters = new ArrayCollection();
-        $this->parameters = new ArrayCollection();
+        $this->items = new ArrayCollection();
+        $this->delivery = new ArrayCollection();
+        $this->payment = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -190,54 +167,6 @@ class Product implements Translatable
     public function setDescription(?string $description): self
     {
         $this->description = $description;
-
-        return $this;
-    }
-
-    public function getPrice(): ?float
-    {
-        return $this->price;
-    }
-
-    public function setPrice(float $price): self
-    {
-        $this->price = $price;
-
-        return $this;
-    }
-
-    public function getDiscountPercentage(): ?float
-    {
-        return $this->discount_percentage;
-    }
-
-    public function setDiscountPercentage(?float $discount_percentage): self
-    {
-        $this->discount_percentage = $discount_percentage;
-
-        return $this;
-    }
-
-    public function getDiscountStartDate(): ?\DateTimeInterface
-    {
-        return $this->discount_start_date;
-    }
-
-    public function setDiscountStartDate(?\DateTimeInterface $discount_start_date): self
-    {
-        $this->discount_start_date = $discount_start_date;
-
-        return $this;
-    }
-
-    public function getDiscountEndDate(): ?\DateTimeInterface
-    {
-        return $this->discount_end_date;
-    }
-
-    public function setDiscountEndDate(?\DateTimeInterface $discount_end_date): self
-    {
-        $this->discount_end_date = $discount_end_date;
 
         return $this;
     }
@@ -374,7 +303,6 @@ class Product implements Translatable
     {
         if ($this->images->contains($image)) {
             $this->images->removeElement($image);
-            // set the owning side to null (unless already changed)
             if ($image->getProduct() === $this) {
                 $image->setProduct(null);
             }
@@ -415,68 +343,84 @@ class Product implements Translatable
     }
 
     /**
-     * @return Collection|ProductParameter[]
+     * @return Collection|ProductItem[]
      */
-    public function getParameters(): Collection
+    public function getItems(): Collection
     {
-        return $this->parameters;
+        return $this->items;
     }
 
-    public function addParameter(ProductParameter $parameter): self
+    public function addItem(ProductItem $item): self
     {
-        if (!$this->parameters->contains($parameter)) {
-            $this->parameters[] = $parameter;
-            $parameter->setProduct($this);
+        if (!$this->items->contains($item)) {
+            $this->items[] = $item;
+            $item->setProduct($this);
         }
 
         return $this;
     }
 
-    public function removeParameter(ProductParameter $parameter): self
+    public function removeItem(ProductItem $item): self
     {
-        if ($this->parameters->contains($parameter)) {
-            $this->parameters->removeElement($parameter);
+        if ($this->items->contains($item)) {
+            $this->items->removeElement($item);
             // set the owning side to null (unless already changed)
-            if ($parameter->getProduct() === $this) {
-                $parameter->setProduct(null);
+            if ($item->getProduct() === $this) {
+                $item->setProduct(null);
             }
         }
 
         return $this;
     }
 
-    public function getPricePurchase(): ?float
+    /**
+     * @return Collection|DeliveryMethod[]
+     */
+    public function getDelivery(): Collection
     {
-        return $this->price_purchase;
+        return $this->delivery;
     }
 
-    public function setPricePurchase(?float $price_purchase): self
+    public function addDelivery(DeliveryMethod $delivery): self
     {
-        $this->price_purchase = $price_purchase;
+        if (!$this->delivery->contains($delivery)) {
+            $this->delivery[] = $delivery;
+        }
 
         return $this;
     }
 
-    public function getCurrencyPurchase(): ?Currency
+    public function removeDelivery(DeliveryMethod $delivery): self
     {
-        return $this->currency_purchase;
-    }
-
-    public function setCurrencyPurchase(?Currency $currency_purchase): self
-    {
-        $this->currency_purchase = $currency_purchase;
+        if ($this->delivery->contains($delivery)) {
+            $this->delivery->removeElement($delivery);
+        }
 
         return $this;
     }
 
-    public function getCoefficient(): ?Coefficient
+    /**
+     * @return Collection|PaymentMethod[]
+     */
+    public function getPayment(): Collection
     {
-        return $this->coefficient;
+        return $this->payment;
     }
 
-    public function setCoefficient(?Coefficient $coefficient): self
+    public function addPayment(PaymentMethod $payment): self
     {
-        $this->coefficient = $coefficient;
+        if (!$this->payment->contains($payment)) {
+            $this->payment[] = $payment;
+        }
+
+        return $this;
+    }
+
+    public function removePayment(PaymentMethod $payment): self
+    {
+        if ($this->payment->contains($payment)) {
+            $this->payment->removeElement($payment);
+        }
 
         return $this;
     }

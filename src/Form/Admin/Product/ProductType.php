@@ -6,12 +6,18 @@ use App\Entity\Availability;
 use App\Entity\Category;
 use App\Entity\Coefficient;
 use App\Entity\Currency;
+use App\Entity\DeliveryMethod;
+use App\Entity\PaymentMethod;
 use App\Entity\Product;
 use App\Entity\ProductCaption;
+use App\Form\Admin\ProductImage\ProductImageType;
+use App\Form\Admin\ProductItem\ProductItemType;
 use App\Services\Common\TranslationRecipient;
+use Gedmo\Translatable\Entity\Translation;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -21,7 +27,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ProductType extends AbstractType
 {
-    protected $translationRecipient;
+    private $translationRecipient;
 
     public function __construct(TranslationRecipient $translationRecipient)
     {
@@ -74,40 +80,7 @@ class ProductType extends AbstractType
                 'mapped' => false,
                 'data' => $this->translationRecipient->getTranslation(isset($options['data']) ? $options['data'] : false, 'uk', 'description'),
             ])
-            ->add('price', TextType::class, [
-                'label' => 'Цена',
-                'attr' => [
-                    'placeholder' => '0',
-                    'class' => 'max-width-100 calc-price',
-                ],
-            ])
-            ->add('discount_percentage', TextType::class, [
-                'required' => false,
-                'label' => 'Скидка',
-                'attr' => [
-                    'placeholder' => '0',
-                    'class' => 'max-width-100 calc-price',
-                ],
-            ])
-            ->add('discount_start_date', DateTimeType::class, [
-                'required' => false,
-                'widget' => 'single_text',
-                'label' => 'Дата начала показа скидки',
-                'help' => 'Выберите дату начала показа скидки или оставьте поле пустым для немедленного показа',
-                'attr' => [
-                    'min' => (new \DateTime())->format('Y-m-d\TH:i'),
-                ],
-            ])
-            ->add('discount_end_date', DateTimeType::class, [
-                'required' => false,
-                'widget' => 'single_text',
-                'label' => 'Дата окончания показа скидки',
-                'help' => 'Выберите дату окончания показа скидки или оставьте поле пустым для постоянного показа',
-                'attr' => [
-                    'min' => (new \DateTime())->format('Y-m-d\TH:i'),
-                ],
-            ])
-            ->add('is_visible', CheckboxType::class, [
+            ->add('isVisible', CheckboxType::class, [
                 'required' => false,
                 'label' => 'Включено / Отключено',
                 'label_attr' => [
@@ -136,28 +109,35 @@ class ProductType extends AbstractType
                 'choice_label' => 'name',
                 'multiple' => true,
             ])
-            ->add('coefficient', EntityType::class, [
+            ->add('delivery', EntityType::class, [
                 'required' => false,
-                'label' => 'Коэффициент',
-                'class' => Coefficient::class,
-                'choice_label' => function (Coefficient $coefficient = null) {
-                    if ($coefficient) {
-                        return $coefficient->getName() . " (" .$coefficient->getRatio() . ")";
-                    }
-                    return '';
-                },
-                'placeholder' => 'нет',
-                'attr' => [
-                    'class' => 'calc-price',
-                ],
-                'choice_attr' => function (Coefficient $coefficient = null) {
-                    $k = false;
-                    if ($coefficient) {
-                        $k = $coefficient->getRatio();
-                    }
-
-                    return $k ? ['data-coefficient' => $k] : [];
-                },
+                'label' => 'Способы доставки',
+                'class' => DeliveryMethod::class,
+                'choice_label' => 'name',
+                'multiple' => true,
+            ])
+            ->add('payment', EntityType::class, [
+                'required' => false,
+                'label' => 'Способы оплаты',
+                'class' => PaymentMethod::class,
+                'choice_label' => 'name',
+                'multiple' => true,
+            ])
+            ->add('items', CollectionType::class, [
+                'label' => false,
+                'entry_type' => ProductItemType::class,
+                'by_reference' => false,
+                'prototype' => true,
+                'allow_add' => true,
+                'allow_delete' => true,
+            ])
+            ->add('images', CollectionType::class, [
+                'label' => false,
+                'entry_type' => ProductImageType::class,
+                'by_reference' => false,
+                'prototype' => true,
+                'allow_add' => true,
+                'allow_delete' => true,
             ])
             ->add('submit', SubmitType::class, [
                 'label' => 'Сохранить',

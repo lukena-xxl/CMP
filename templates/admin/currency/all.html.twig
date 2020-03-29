@@ -19,7 +19,7 @@
                 <tr>
                     <td>{{ currency.id }}</td>
                     <td class="min-width-300"><a href="{{ path('admin_currency_single', {'id': currency.id}) }}" class="text-decoration-none">{{ currency.name }}</a></td>
-                    <td class="text-center">{#{{ currency.products.count }}#}</td>
+                    <td class="text-center">{{ currency.products.count }}</td>
                     <td>
                         <div class="min-width-300 text-center">
                             <a class="btn btn-light" href="{{ path('admin_currency_edit', {'id': currency.id}) }}" role="button"><i class="fas fa-edit"></i></a>

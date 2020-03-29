@@ -14,7 +14,7 @@
                 <th class="min-width-300">{{ 'Название'|trans|raw }}</th>
                 <th class="text-center">{{ 'Коэффициент'|trans|raw }}</th>
                 <th class="min-width-300 text-center">{{ 'Дата обновления'|trans|raw }}</th>
-                <th class="text-center">{{ 'Продукты'|trans|raw }}</th>
+                <th class="text-center">{{ 'Товарные позиции'|trans|raw }}</th>
                 <th class="text-center">{{ 'Действия'|trans|raw }}</th>
             </tr>
             {% for coefficient in coefficients %}
@@ -23,7 +23,7 @@
                     <td>{{ coefficient.name }}</td>
                     <td class="text-center">{{ coefficient.ratio }}</td>
                     <td class="text-center">{{ coefficient.updateDate.format("d.m.Y H:i") }}</td>
-                    <td class="text-center">{{ coefficient.products.count }}</td>
+                    <td class="text-center">{{ coefficient.productItems.count }}</td>
                     <td>
                         <div class="min-width-300 text-center">
                             <a class="btn btn-light" href="{{ path('admin_coefficient_edit', {'id': coefficient.id}) }}" role="button"><i class="fas fa-edit"></i></a>

@@ -19,11 +19,7 @@
                 <tr>
                     <td>{{ payment.id }}</td>
                     <td class="min-width-300"><a href="{{ path('admin_payment_single', {'id': payment.id}) }}" class="text-decoration-none{% if payment.isVisible != 1 %} text-disabled{% endif %}">{{ payment.name }}</a></td>
-                    <td class="text-center">
-                        {#{% if payment.products %}
-                            {{ payment.products.count }}
-                        {% endif %}#}
-                    </td>
+                    <td class="text-center">{{ payment.products.count }}</td>
                     <td>
                         <div class="min-width-300 text-center">
                             <a class="btn btn-light" href="{{ path('admin_payment_sort', {'id': payment.id}) }}" role="button"><i class="fas fa-exchange-alt fa-rotate-90"></i></a>

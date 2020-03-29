@@ -39,13 +39,13 @@ class Coefficient
     private $update_date;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Product", mappedBy="coefficient")
+     * @ORM\OneToMany(targetEntity="App\Entity\ProductItem", mappedBy="coefficient")
      */
-    private $products;
+    private $productItems;
 
     public function __construct()
     {
-        $this->products = new ArrayCollection();
+        $this->productItems = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -90,30 +90,30 @@ class Coefficient
     }
 
     /**
-     * @return Collection|Product[]
+     * @return Collection|ProductItem[]
      */
-    public function getProducts(): Collection
+    public function getProductItems(): Collection
     {
-        return $this->products;
+        return $this->productItems;
     }
 
-    public function addProduct(Product $product): self
+    public function addProductItem(ProductItem $productItem): self
     {
-        if (!$this->products->contains($product)) {
-            $this->products[] = $product;
-            $product->setCoefficient($this);
+        if (!$this->productItems->contains($productItem)) {
+            $this->productItems[] = $productItem;
+            $productItem->setCoefficient($this);
         }
 
         return $this;
     }
 
-    public function removeProduct(Product $product): self
+    public function removeProductItem(ProductItem $productItem): self
     {
-        if ($this->products->contains($product)) {
-            $this->products->removeElement($product);
+        if ($this->productItems->contains($productItem)) {
+            $this->productItems->removeElement($productItem);
             // set the owning side to null (unless already changed)
-            if ($product->getCoefficient() === $this) {
-                $product->setCoefficient(null);
+            if ($productItem->getCoefficient() === $this) {
+                $productItem->setCoefficient(null);
             }
         }
 

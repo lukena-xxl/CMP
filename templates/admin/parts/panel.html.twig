@@ -26,7 +26,6 @@
             {% set navs = navs|merge({ 0: { controller: 'CategoryController', route: 'admin_category_all', name: 'Категории'|trans|raw } }) %}
             {% set navs = navs|merge({ 1: { controller: 'AvailabilityController', route: 'admin_availability_all', name: 'Доступность'|trans|raw } }) %}
             {% set navs = navs|merge({ 2: { controller: 'FilterController', route: 'admin_filter_all', name: 'Фильтры'|trans|raw } }) %}
-            {% set navs = navs|merge({ 3: { controller: 'ParameterController', route: 'admin_parameter_all', name: 'Характеристики'|trans|raw } }) %}
             {% set navs = navs|merge({ 4: { controller: 'CurrencyController', route: 'admin_currency_all', name: 'Валюты'|trans|raw } }) %}
             {% set navs = navs|merge({ 4: { controller: 'DeliveryMethodController', route: 'admin_delivery_all', name: 'Способы доставки'|trans|raw } }) %}
             {% set navs = navs|merge({ 4: { controller: 'PaymentMethodController', route: 'admin_payment_all', name: 'Способы оплаты'|trans|raw } }) %}

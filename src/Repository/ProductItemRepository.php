@@ -2,25 +2,25 @@
 
 namespace App\Repository;
 
-use App\Entity\ProductParameter;
+use App\Entity\ProductItem;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 /**
- * @method ProductParameter|null find($id, $lockMode = null, $lockVersion = null)
- * @method ProductParameter|null findOneBy(array $criteria, array $orderBy = null)
- * @method ProductParameter[]    findAll()
- * @method ProductParameter[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method ProductItem|null find($id, $lockMode = null, $lockVersion = null)
+ * @method ProductItem|null findOneBy(array $criteria, array $orderBy = null)
+ * @method ProductItem[]    findAll()
+ * @method ProductItem[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ProductParameterRepository extends ServiceEntityRepository
+class ProductItemRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, ProductParameter::class);
+        parent::__construct($registry, ProductItem::class);
     }
 
     // /**
-    //  * @return ProductParameter[] Returns an array of ProductParameter objects
+    //  * @return ProductItem[] Returns an array of ProductItem objects
     //  */
     /*
     public function findByExampleField($value)
@@ -37,7 +37,7 @@ class ProductParameterRepository extends ServiceEntityRepository
     */
 
     /*
-    public function findOneBySomeField($value): ?ProductParameter
+    public function findOneBySomeField($value): ?ProductItem
     {
         return $this->createQueryBuilder('p')
             ->andWhere('p.exampleField = :val')

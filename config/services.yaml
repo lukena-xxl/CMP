@@ -12,6 +12,7 @@ parameters:
     locale: 'ru'
     app_locales: 'ru|uk'
     user_roles: ['ROLE_ADMIN', 'ROLE_SUPERADMIN']
+    image_product_dir: '%kernel.project_dir%/public/uploads/product/'
 
 services:
     # default configuration for services in *this* file
@@ -22,6 +23,7 @@ services:
             $defaultLocale: '%locale%'
             $locales: '%app_locales%'
             $userRoles: '%user_roles%'
+            $image_product_dir: '%image_product_dir%'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -48,3 +50,9 @@ services:
     App\Form\Admin\User\UserType:
         arguments: ['%user_roles%']
         tags: [form.type]
+
+    App\EventListener\ProductImageListener:
+        arguments:
+            $image_product_dir: '%image_product_dir%'
+        tags:
+            - { name: doctrine.orm.entity_listener, event: preRemove, entity: App\Entity\ProductImage, entity_manager: custom }

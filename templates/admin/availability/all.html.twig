@@ -19,7 +19,7 @@
                 <tr>
                     <td>{{ availability.id }}</td>
                     <td class="min-width-300"><a href="{{ path('admin_availability_single', {'id': availability.id}) }}" class="text-decoration-none" style="color:{{ availability.color }}!important;">{{ availability.name }}</a></td>
-                    <td class="text-center">{#{{ availability.products.count }}#}</td>
+                    <td class="text-center">{{ availability.products.count }}</td>
                     <td>
                         <div class="min-width-300 text-center">
                             <a class="btn btn-light" href="{{ path('admin_availability_edit', {'id': availability.id}) }}" role="button"><i class="fas fa-edit"></i></a>

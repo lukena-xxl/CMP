@@ -32,6 +32,7 @@ Encore
     .addEntry('owl_carousel', './assets/js/owl_carousel.js')
     .addEntry('fotorama', './assets/js/fotorama.js')
     .addEntry('calculate_price', './assets/js/calculate_price.js')
+    .addEntry('cropping_image', './assets/js/cropping_image.js')
 
     //.addStyleEntry('menu', './assets/css/component-card.css')
 

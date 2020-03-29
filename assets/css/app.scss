@@ -3,13 +3,15 @@ $info: darken(#666, 1%);
 $danger: darken(#CD5C5C, 1%);
 $warning: darken(#EC962C, 1%);
 $secondary: darken(#d7e0df, 1%);
+$success: darken(#86C429, 1%);
 $enable-responsive-font-sizes: true;
 $breadcrumb-divider: quote("›");
-
 
 @import "~bootstrap/scss/bootstrap";
 @import "~@fortawesome/fontawesome-pro/css/all.css";
 @import "~jquery-confirm/css/jquery-confirm.css";
+
+@import '~cropperjs/dist/cropper.css';
 
 @import "component-nav.css";
 @import '~owl.carousel/dist/assets/owl.carousel.css';
@@ -35,7 +37,7 @@ body {
 /*Админ*/
 .admin-h1 {
   background-color: $light;
-  color: $gray-600;
+  color: $gray-900;
   margin-bottom: 1.2rem;
   display: inline-block;
   font-size: 1.5rem !important;
@@ -43,21 +45,13 @@ body {
   border-left: 1px dashed $secondary;
   --notchSize: 30px;
   padding: 1rem calc(var(--notchSize) + 5%) 1rem 1rem;
-  clip-path:
-          polygon(
-                          0% 0px,
-                          0px 0%,
-                          calc(100% - var(--notchSize)) 0%,
-                          100% var(--notchSize),
-                          100% calc(100% - var(--notchSize)),
-                          calc(100% - var(--notchSize)) 100%,
-                          0px 100%,
-                          0% 0px
-          );
+  clip-path: polygon(0% 0px, 0px 0%, calc(100% - var(--notchSize)) 0%, 100% var(--notchSize), 100% calc(100% - var(--notchSize)), calc(100% - var(--notchSize)) 100%, 0px 100%, 0% 0px);
 }
 
 .admin-h3 {
-  color: $primary;
+  color: $dark;
+  text-transform: uppercase;
+  font-size: 1.2rem;
   margin-bottom: 1rem;
 }
 
@@ -67,6 +61,10 @@ body {
 
 .min-width-300 {
   min-width: 300px!important;
+}
+
+.min-width-150 {
+  min-width: 150px!important;
 }
 
 .max-width-50 {
@@ -186,9 +184,30 @@ select option[value=""] {
   background-color: $primary;
 }
 
+.collection-widget-item {
+  list-style: none;
+  padding: 15px;
+  border: 3px dashed $secondary;
+  margin-bottom: 10px;
+  font-size: 90%;
+}
+
+.bg-light-opacity {
+  background: rgba(255,255,255,0.8) !important;;
+}
+
+.no-caret.dropdown-toggle::after{
+  display: none;
+}
 
 
-/*Карусель*/
+
+
+
+
+
+
+  /*Карусель*/
 .owl-carousel {
 }
 .owl-prev svg, .owl-next svg {

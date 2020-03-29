@@ -19,11 +19,7 @@
                 <tr>
                     <td>{{ delivery.id }}</td>
                     <td class="min-width-300"><a href="{{ path('admin_delivery_single', {'id': delivery.id}) }}" class="text-decoration-none{% if delivery.isVisible != 1 %} text-disabled{% endif %}">{{ delivery.name }}</a></td>
-                    <td class="text-center">
-                        {#{% if delivery.products %}
-                            {{ delivery.products.count }}
-                        {% endif %}#}
-                    </td>
+                    <td class="text-center">{{ delivery.products.count }}</td>
                     <td>
                         <div class="min-width-300 text-center">
                             <a class="btn btn-light" href="{{ path('admin_delivery_sort', {'id': delivery.id}) }}" role="button"><i class="fas fa-exchange-alt fa-rotate-90"></i></a>
