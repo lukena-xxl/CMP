@@ -6,9 +6,9 @@ use App\Entity\PaymentMethod;
 use App\Form\Admin\Common\SortableType;
 use App\Form\Admin\PaymentMethod\PaymentMethodType;
 use App\Repository\PaymentMethodRepository;
-use App\Services\Common\TranslationRecipient;
 use Doctrine\ORM\EntityManagerInterface;
 use Gedmo\Translatable\Entity\Translation;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,6 +19,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * Class PaymentMethodController
  * @package App\Controller\Admin
+ * @IsGranted("ROLE_SUPERADMIN", message="Access denied for you!")
  * @Route("/admin/payment", name="admin_payment")
  */
 class PaymentMethodController extends AbstractController
@@ -26,37 +27,26 @@ class PaymentMethodController extends AbstractController
     /**
      * @Route("", name="_all")
      * @param PaymentMethodRepository $paymentMethodRepository
-     * @param TranslationRecipient $translationRecipient
      * @return Response
      */
-    public function paymentAll(PaymentMethodRepository $paymentMethodRepository, TranslationRecipient $translationRecipient)
+    public function paymentAll(PaymentMethodRepository $paymentMethodRepository)
     {
-        $payments = [];
-        $paymentsAll = $paymentMethodRepository->findBy([], ['position' => 'ASC']);
-        foreach ($paymentsAll as $payment) {
-            $payments[] = $translationRecipient->getTranslatedEntity($payment);
-        }
-
         return $this->render('admin/payment_method/all.html.twig', [
             'controller_name' => 'PaymentMethodController',
-            'payments' => $payments,
+            'payments' => $paymentMethodRepository->findBy([], ['position' => 'ASC']),
         ]);
     }
 
     /**
      * @Route("/{id}", name="_single", requirements={"id"="\d+"})
      * @param PaymentMethod $paymentMethod
-     * @param TranslationRecipient $translationRecipient
      * @return Response
      */
-    public function paymentSingle(PaymentMethod $paymentMethod, TranslationRecipient $translationRecipient)
+    public function paymentSingle(PaymentMethod $paymentMethod)
     {
-        $translation = $translationRecipient->getTranslation($paymentMethod);
-
         return $this->render('admin/payment_method/single.html.twig', [
             'controller_name' => 'PaymentMethodController',
             'payment' => $paymentMethod,
-            'translation' => $translation,
         ]);
     }
 
@@ -180,10 +170,9 @@ class PaymentMethodController extends AbstractController
      * @param PaymentMethod $payment
      * @param EntityManagerInterface $entityManager
      * @param TranslatorInterface $translator
-     * @param TranslationRecipient $translationRecipient
      * @return Response
      */
-    public function paymentSort(Request $request, PaymentMethod $payment, EntityManagerInterface $entityManager, TranslatorInterface $translator, TranslationRecipient $translationRecipient)
+    public function paymentSort(Request $request, PaymentMethod $payment, EntityManagerInterface $entityManager, TranslatorInterface $translator)
     {
         $form = $this->createForm(SortableType::class, null, [
             'action' => $this->generateUrl('admin_payment_sort', ['id' => $payment->getId()]),
@@ -214,13 +203,6 @@ class PaymentMethodController extends AbstractController
         }
 
         $payments = $entityManager->getRepository(PaymentMethod::class)->findBy([], ['position' => 'ASC']);
-
-        // КОРЯВО (нужно исправить)
-        if ($payments) {
-            foreach ($payments as $pay) {
-                $translationRecipient->getTranslatedEntity($pay);
-            }
-        }
 
         return $this->render('admin/payment_method/sort.html.twig', [
             'controller_name' => 'PaymentMethodController',

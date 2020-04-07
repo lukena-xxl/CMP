@@ -19,7 +19,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ProductItemType extends AbstractType
 {
-    protected $translationRecipient;
+    private $translationRecipient;
 
     public function __construct(TranslationRecipient $translationRecipient)
     {
@@ -85,18 +85,12 @@ class ProductItemType extends AbstractType
                 'widget' => 'single_text',
                 'label' => 'Дата начала показа скидки',
                 'help' => 'Выберите дату начала показа скидки или оставьте поле пустым для немедленного показа',
-                'attr' => [
-                    'min' => (new \DateTime())->format('Y-m-d\TH:i'),
-                ],
             ])
             ->add('discountEndDate', DateTimeType::class, [
                 'required' => false,
                 'widget' => 'single_text',
                 'label' => 'Дата окончания показа скидки',
                 'help' => 'Выберите дату окончания показа скидки или оставьте поле пустым для постоянного показа',
-                'attr' => [
-                    'min' => (new \DateTime())->format('Y-m-d\TH:i'),
-                ],
             ])
             ->add('displayedQuantity', NumberType::class, [
                 'required' => false,
@@ -152,6 +146,13 @@ class ProductItemType extends AbstractType
                 'label' => false,
                 'attr' => [
                     'class' => 'input-img-item',
+                ],
+            ])
+            ->add('position', HiddenType::class, [
+                'required' => false,
+                'label' => false,
+                'attr' => [
+                    'class' => 'input-position',
                 ],
             ])
         ;

@@ -20,7 +20,10 @@
             {% for coefficient in coefficients %}
                 <tr>
                     <td>{{ coefficient.id }}</td>
-                    <td>{{ coefficient.name }}</td>
+                    <td>
+                        {{ coefficient.name }}
+                        <div class="small">{{ 'Добавил'|trans|raw }}: <strong>{{ coefficient.user.login }}</strong></div>
+                    </td>
                     <td class="text-center">{{ coefficient.ratio }}</td>
                     <td class="text-center">{{ coefficient.updateDate.format("d.m.Y H:i") }}</td>
                     <td class="text-center">{{ coefficient.productItems.count }}</td>

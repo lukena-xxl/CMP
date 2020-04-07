@@ -33,6 +33,7 @@ Encore
     .addEntry('fotorama', './assets/js/fotorama.js')
     .addEntry('calculate_price', './assets/js/calculate_price.js')
     .addEntry('cropping_image', './assets/js/cropping_image.js')
+    .addEntry('single_image_add', './assets/js/single_image_add.js')
 
     //.addStyleEntry('menu', './assets/css/component-card.css')
 

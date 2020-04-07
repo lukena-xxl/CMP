@@ -13,7 +13,6 @@ use Gedmo\Mapping\Annotation as Gedmo;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  * @UniqueEntity(fields={"login"}, message="There is already an account with this login")
- * @UniqueEntity(fields={"email"}, message="There is already an account with this email")
  */
 class User implements UserInterface
 {
@@ -36,7 +35,7 @@ class User implements UserInterface
 
     /**
      * @var string The hashed password
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", nullable=true)
      */
     private $password;
 
@@ -66,11 +65,6 @@ class User implements UserInterface
     private $second_name;
 
     /**
-     * @ORM\Column(type="string", length=100, nullable=true)
-     */
-    private $region;
-
-    /**
      * @ORM\Column(type="date", nullable=true)
      */
     private $birth_date;
@@ -93,9 +87,27 @@ class User implements UserInterface
      */
     private $products;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Coefficient", mappedBy="user")
+     */
+    private $coefficients;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Availability", mappedBy="user")
+     */
+    private $availabilities;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\ProductCaption", mappedBy="user")
+     */
+    private $productCaptions;
+
     public function __construct()
     {
         $this->products = new ArrayCollection();
+        $this->coefficients = new ArrayCollection();
+        $this->availabilities = new ArrayCollection();
+        $this->productCaptions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -152,7 +164,7 @@ class User implements UserInterface
         return (string) $this->password;
     }
 
-    public function setPassword(string $password): self
+    public function setPassword(?string $password): self
     {
         $this->password = $password;
 
@@ -236,18 +248,6 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getRegion(): ?string
-    {
-        return $this->region;
-    }
-
-    public function setRegion(?string $region): self
-    {
-        $this->region = $region;
-
-        return $this;
-    }
-
     public function getBirthDate(): ?\DateTimeInterface
     {
         return $this->birth_date;
@@ -309,6 +309,99 @@ class User implements UserInterface
             // set the owning side to null (unless already changed)
             if ($product->getUser() === $this) {
                 $product->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Coefficient[]
+     */
+    public function getCoefficients(): Collection
+    {
+        return $this->coefficients;
+    }
+
+    public function addCoefficient(Coefficient $coefficient): self
+    {
+        if (!$this->coefficients->contains($coefficient)) {
+            $this->coefficients[] = $coefficient;
+            $coefficient->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCoefficient(Coefficient $coefficient): self
+    {
+        if ($this->coefficients->contains($coefficient)) {
+            $this->coefficients->removeElement($coefficient);
+            // set the owning side to null (unless already changed)
+            if ($coefficient->getUser() === $this) {
+                $coefficient->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Availability[]
+     */
+    public function getAvailabilities(): Collection
+    {
+        return $this->availabilities;
+    }
+
+    public function addAvailability(Availability $availability): self
+    {
+        if (!$this->availabilities->contains($availability)) {
+            $this->availabilities[] = $availability;
+            $availability->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAvailability(Availability $availability): self
+    {
+        if ($this->availabilities->contains($availability)) {
+            $this->availabilities->removeElement($availability);
+            // set the owning side to null (unless already changed)
+            if ($availability->getUser() === $this) {
+                $availability->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ProductCaption[]
+     */
+    public function getProductCaptions(): Collection
+    {
+        return $this->productCaptions;
+    }
+
+    public function addProductCaption(ProductCaption $productCaption): self
+    {
+        if (!$this->productCaptions->contains($productCaption)) {
+            $this->productCaptions[] = $productCaption;
+            $productCaption->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProductCaption(ProductCaption $productCaption): self
+    {
+        if ($this->productCaptions->contains($productCaption)) {
+            $this->productCaptions->removeElement($productCaption);
+            // set the owning side to null (unless already changed)
+            if ($productCaption->getUser() === $this) {
+                $productCaption->setUser(null);
             }
         }
 

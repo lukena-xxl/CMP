@@ -9,7 +9,7 @@
     </div>
     {% if availabilities %}
         <table class="table table-responsive">
-            <tr class="bg-light text-dark">
+            <tr class="bg-light text-dark small">
                 <th>ID</th>
                 <th>{{ 'Название'|trans|raw }}</th>
                 <th class="text-center">{{ 'Продукты'|trans|raw }}</th>
@@ -18,7 +18,10 @@
             {% for availability in availabilities %}
                 <tr>
                     <td>{{ availability.id }}</td>
-                    <td class="min-width-300"><a href="{{ path('admin_availability_single', {'id': availability.id}) }}" class="text-decoration-none" style="color:{{ availability.color }}!important;">{{ availability.name }}</a></td>
+                    <td class="min-width-300">
+                        <a href="{{ path('admin_availability_single', {'id': availability.id}) }}" class="text-decoration-none" style="color:{{ availability.color }}!important;">{{ availability.name }}</a>
+                        <div class="small">{{ 'Добавил'|trans|raw }}: <strong>{{ availability.user.login }}</strong></div>
+                    </td>
                     <td class="text-center">{{ availability.products.count }}</td>
                     <td>
                         <div class="min-width-300 text-center">

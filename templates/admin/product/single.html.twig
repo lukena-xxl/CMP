@@ -69,33 +69,33 @@
                         <strong>{{ 'Способы доставки'|trans|raw }}:</strong>
                         <div class="my-1">
                             {% if product.delivery.count > 0 %}
-                                {% for delivery in product.delivery|sort((a, b) => a.position <=> b.position) %}
+                                {% for delivery in product.delivery %}
                                     <div><a href="{{ path('admin_delivery_single', {'id': delivery.id}) }}">{{ delivery.name }}</a></div>
                                 {% endfor %}
                             {% else %}
                                 <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
                             {% endif %}
-                            <div class="mt-2"><a href="{{ path('admin_delivery_add') }}" class="text-success"><i class="fas fa-plus-circle mr-2"></i>{{ 'Добавить'|trans|raw }}</a></div>
+                            {% if is_granted('ROLE_SUPERADMIN') %}<div class="mt-2"><a href="{{ path('admin_delivery_add') }}" class="text-success"><i class="fas fa-plus-circle mr-2"></i>{{ 'Добавить'|trans|raw }}</a></div>{% endif %}
                         </div>
                     </li>
                     <li class="list-group-item rounded-0">
                         <strong>{{ 'Способы оплаты'|trans|raw }}:</strong>
                         <div class="my-1">
                             {% if product.payment.count > 0 %}
-                                {% for payment in product.payment|sort((a, b) => a.position <=> b.position) %}
+                                {% for payment in product.payment %}
                                     <div><a href="{{ path('admin_payment_single', {'id': payment.id}) }}">{{ payment.name }}</a></div>
                                 {% endfor %}
                             {% else %}
                                 <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
                             {% endif %}
-                            <div class="mt-2"><a href="{{ path('admin_payment_add') }}" class="text-success"><i class="fas fa-plus-circle mr-2"></i>{{ 'Добавить'|trans|raw }}</a></div>
+                            {% if is_granted('ROLE_SUPERADMIN') %}<div class="mt-2"><a href="{{ path('admin_payment_add') }}" class="text-success"><i class="fas fa-plus-circle mr-2"></i>{{ 'Добавить'|trans|raw }}</a></div>{% endif %}
                         </div>
                     </li>
                     <li class="list-group-item rounded-0">
                         <strong>{{ 'Подписи'|trans|raw }}:</strong>
                         <div class="my-1">
                             {% if product.captions.count > 0 %}
-                                {% for caption in product.captions|sort((a, b) => a.position <=> b.position) %}
+                                {% for caption in product.captions %}
                                     <div class="mb-2"><a href="{{ path('admin_product_caption_single', {'id': caption.id}) }}" class="text-decoration-none px-3 py-1 d-inline-block" style="{% if caption.colorFill %}background-color:{{ caption.colorFill }};{% endif %}{% if caption.colorText %}color:{{ caption.colorText }};{% endif %}">{{ caption.name }}</a></div>
                                 {% endfor %}
                             {% else %}
@@ -107,14 +107,19 @@
                     <li class="list-group-item rounded-0">
                         <strong>{{ 'Фильтры'|trans|raw }}:</strong>
                         <div class="my-1">
-                            {% if product.filters.count > 0 %}
-                                {% for filter in product.filters %}
-                                    <div><a href="{{ path('admin_filter_single', {'id': filter.filter.id}) }}">{{ filter.filter.name }}</a></div>
+                            {% if filters %}
+                                {% for filter in filters %}
+                                    <div><a href="{{ path('admin_filter_single', {'id': filter['filter']['id']}) }}">{{ filter['filter']['name'] }}</a></div>
+                                    {% if filter['elements'] %}
+                                        {% for element in filter['elements'] %}
+                                            <div class="ml-2">{{ element['name'] }}</div>
+                                        {% endfor %}
+                                    {% endif %}
                                 {% endfor %}
                             {% else %}
                                 <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
                             {% endif %}
-                            <div class="mt-2"><a href="{{ path('admin_filter_add') }}" class="text-success"><i class="fas fa-plus-circle mr-2"></i>{{ 'Добавить'|trans|raw }}</a></div>
+                            {% if is_granted('ROLE_SUPERADMIN') %}<div class="mt-2"><a href="{{ path('admin_filter_add') }}" class="text-success"><i class="fas fa-plus-circle mr-2"></i>{{ 'Добавить'|trans|raw }}</a></div>{% endif %}
                         </div>
                     </li>
                 </ul>
@@ -136,8 +141,9 @@
                     </div>
                     <div class="tab-pane fade" id="uk-name" role="tabpanel" aria-labelledby="uk-name-tab">
                         <div class="h2 px-2">
-                            {% if translation['uk']['name'] is defined and translation['uk']['name'] %}
-                                {{ translation['uk']['name'] }}
+                            {% set trns = translate(product, 'uk', 'name') %}
+                            {% if trns %}
+                                {{ trns }}
                             {% else %}
                                 <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
                             {% endif %}
@@ -150,14 +156,37 @@
                     {% set totalNoDiscount = 0 %}
                     <div class="row">
                         <div class="col-12 order-2">
-                            {% for item in product.items|sort((a, b) => a.position <=> b.position) %}
+                            {% for item in product.items %}
                                 <div class="row mb-3">
                                     <div class="col-lg-auto img-check">
-                                        <img src="{% if item.img and fileExists(asset('uploads/product/item/'~item.img)) %}{{ asset('uploads/product/item/'~item.img) }}{% else %}{{ asset('build/images/common/no-image-150.png') }}{% endif %}" class="img-fluid checked-img{% if item.isChecked == 1 %} checked{% endif %}" alt="">
+                                        {% if item.isVisible not in [1]  %}
+                                            <div class="small text-white px-1 bg-danger text-center mb-1">{{ 'Отключено'|trans|raw }}</div>
+                                        {% endif %}
+                                        <img src="{% if item.img and fileExists(asset(image_item_dir ~ '/' ~ item.img)) %}{{ asset(image_item_dir ~ '/' ~ item.img) }}{% else %}{{ asset('build/images/common/no-image-150.png') }}{% endif %}" class="img-fluid checked-img{% if item.isChecked == 1 %} checked{% endif %}" alt="">
                                     </div>
                                     <div class="col-lg-auto">
-                                        <div class="font-weight-bold text-muted">
-                                            {{ item.name }}
+                                        <ul class="nav nav-tabs small" id="nameItemTab{{ item.id }}" role="tablist">
+                                            <li class="nav-item">
+                                                <a class="nav-link active" id="ru-name-item-tab{{ item.id }}" data-toggle="tab" href="#ru-name-item{{ item.id }}" role="tab" aria-controls="ru-name-item{{ item.id }}" aria-selected="true">RU</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" id="uk-name-item-tab{{ item.id }}" data-toggle="tab" href="#uk-name-item{{ item.id }}" role="tab" aria-controls="uk-name-item{{ item.id }}" aria-selected="false">UK</a>
+                                            </li>
+                                        </ul>
+                                        <div class="tab-content p-2 bg-light border border-top-0 mb-2" id="nameItemTabContent{{ item.id }}">
+                                            <div class="tab-pane fade show active" id="ru-name-item{{ item.id }}" role="tabpanel" aria-labelledby="ru-name-item-tab{{ item.id }}">
+                                                <div class="px-2">{{ item.name }}</div>
+                                            </div>
+                                            <div class="tab-pane fade" id="uk-name-item{{ item.id }}" role="tabpanel" aria-labelledby="uk-name-item-tab{{ item.id }}">
+                                                <div class="px-2">
+                                                    {% set trns = translate(item, 'uk', 'name') %}
+                                                    {% if trns %}
+                                                        {{ trns }}
+                                                    {% else %}
+                                                        <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
                                         </div>
                                         <div class="small">
                                             {% set cost = item.price %}
@@ -194,7 +223,7 @@
                                             {% set cost = cost * item.displayedQuantity %}
                                             <div class="h5">{{ 'Итого'|trans|raw }}:{% if costNoDiscount != cost %} <s class="small text-muted">{{ costNoDiscount|round }}</s>{% endif %} <strong>{{ cost|round }}</strong></div>
 
-                                            {% if item.isChecked == 1 %}
+                                            {% if item.isChecked == 1 and item.isVisible == 1 %}
                                                 {% set total = total + cost %}
                                                 {% set totalNoDiscount = totalNoDiscount + costNoDiscount %}
                                             {% endif %}
@@ -239,9 +268,10 @@
                         {% endif %}
                     </div>
                     <div class="tab-pane fade" id="uk-description" role="tabpanel" aria-labelledby="uk-description-tab">
-                        {% if translation['uk']['description'] is defined and translation['uk']['description'] %}
+                        {% set trns = translate(product, 'uk', 'description') %}
+                        {% if trns %}
                             {% autoescape %}
-                                {{ translation['uk']['description']|raw }}
+                                {{ trns|raw }}
                             {% endautoescape %}
                         {% else %}
                             <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
@@ -250,13 +280,20 @@
                 </div>
 
                 {% if product.images.count > 0 %}
-                    {% for image in product.images|sort((a, b) => a.position <=> b.position) %}
+                    {% for image in product.images %}
                         <div class="row mt-3 no-gutters">
                             <div class="col-lg-6 p-0 pr-lg-2">
-                                {% if image.isMain == 1 %}
-                                    <div class="font-weight-bold text-success p-2 border text-center mb-1">{{ 'Главное изображение'|trans|raw }}</div>
-                                {% endif %}
-                                <img src="{% if image and fileExists(asset('uploads/product/'~image.name)) %}{% set img = asset('uploads/product/'~image.name) %}{{ img }}{% else %}{{ asset('build/images/common/no-image.png') }}{% endif %}" class="img-fluid" alt="">
+                                <div class="position-relative">
+                                    <img src="{% if image and fileExists(asset(image_product_dir ~ '/' ~ image.name)) %}{% set img = asset(image_product_dir ~ '/' ~ image.name) %}{{ img }}{% else %}{{ asset('build/images/common/no-image.png') }}{% endif %}" class="img-fluid" alt="">
+                                    <div class="position-absolute" style="top:0; left:0;">
+                                    {% if image.isMain == 1 %}
+                                        <div class="small text-white bg-success px-1 mb-1">{{ 'Главное изображение'|trans|raw }}</div>
+                                    {% endif %}
+                                    {% if image.isVisible not in [1]  %}
+                                        <div class="small text-white bg-danger px-1">{{ 'Отключено'|trans|raw }}</div>
+                                    {% endif %}
+                                    </div>
+                                </div>
                             </div>
                             <div class="col-lg-6 small">
                                 {% if img is defined %}

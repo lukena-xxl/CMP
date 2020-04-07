@@ -65,7 +65,6 @@ class ProductItem implements Translatable
     private $coefficient;
 
     /**
-     * @Gedmo\SortablePosition
      * @ORM\Column(type="integer")
      */
     private $position;
@@ -73,7 +72,6 @@ class ProductItem implements Translatable
     /**
      * @var Product
      *
-     * @Gedmo\SortableGroup
      * @ORM\ManyToOne(targetEntity="App\Entity\Product", inversedBy="items")
      * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE")
      */

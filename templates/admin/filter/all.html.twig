@@ -9,9 +9,10 @@
     </div>
     {% if filters %}
         <table class="table table-responsive">
-            <tr class="bg-light text-dark">
+            <tr class="bg-light text-dark small">
                 <th>ID</th>
                 <th>{{ 'Название'|trans|raw }}</th>
+                <th>{{ 'Категории'|trans|raw }}</th>
                 <th class="text-center">{{ 'Продукты'|trans|raw }}</th>
                 <th class="text-center">{{ 'Действия'|trans|raw }}</th>
             </tr>
@@ -19,9 +20,19 @@
                 <tr>
                     <td>{{ filter.id }}</td>
                     <td class="min-width-300"><a href="{{ path('admin_filter_single', {'id': filter.id}) }}" class="text-decoration-none">{{ filter.name }}</a></td>
-                    <td class="text-center"></td>
+                    <td class="min-width-150">
+                        {% if filter.categories %}
+                            {% for category in filter.categories %}
+                                <div><a href="{{ path('admin_category_single', {'id': category.id}) }}" class="small">{{ category.name }}</a></div>
+                            {% endfor %}
+                        {% endif %}
+                    </td>
+                    <td class="text-center">
+                        {{ findFilterProducts(filter.id)|length }}
+                    </td>
                     <td>
                         <div class="min-width-300 text-center">
+                            <a class="btn btn-light" href="{{ path('admin_filter_sort', {'id': filter.id}) }}" role="button"><i class="fas fa-exchange-alt fa-rotate-90"></i></a>
                             <a class="btn btn-light" href="{{ path('admin_filter_edit', {'id': filter.id}) }}" role="button"><i class="fas fa-edit"></i></a>
                             <a class="btn btn-light text-danger" href="{{ path('admin_filter_delete', {'id': filter.id}) }}" role="button"><i class="fas fa-trash-alt"></i></a>
                         </div>

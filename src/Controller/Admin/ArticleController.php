@@ -6,10 +6,12 @@ use App\Entity\Article;
 use App\Form\Admin\Article\ArticleType;
 use App\Form\Admin\Common\SortableType;
 use App\Repository\ArticleRepository;
-use App\Services\Common\TranslationRecipient;
+use App\Services\ImageUpload;
 use Doctrine\ORM\EntityManagerInterface;
 use Gedmo\Translatable\Entity\Translation;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,6 +21,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * Class ArticleController
  * @package App\Controller\Admin
+ * @IsGranted("ROLE_SUPERADMIN", message="Access denied for you!")
  * @Route("/admin/article", name="admin_article")
  */
 class ArticleController extends AbstractController
@@ -26,37 +29,26 @@ class ArticleController extends AbstractController
     /**
      * @Route("", name="_all")
      * @param ArticleRepository $articleRepository
-     * @param TranslationRecipient $translationRecipient
      * @return Response
      */
-    public function articleAll(ArticleRepository $articleRepository, TranslationRecipient $translationRecipient)
+    public function articleAll(ArticleRepository $articleRepository)
     {
-        $articles = [];
-        $articlesAll = $articleRepository->findBy([], ['position' => 'ASC']);
-        foreach ($articlesAll as $article) {
-            $articles[] = $translationRecipient->getTranslatedEntity($article);
-        }
-
         return $this->render('admin/article/all.html.twig', [
             'controller_name' => 'ArticleController',
-            'articles' => $articles,
+            'articles' => $articleRepository->findBy([], ['position' => 'ASC']),
         ]);
     }
 
     /**
      * @Route("/{id}", name="_single", requirements={"id"="\d+"})
      * @param Article $article
-     * @param TranslationRecipient $translationRecipient
      * @return Response
      */
-    public function articleSingle(Article $article, TranslationRecipient $translationRecipient)
+    public function articleSingle(Article $article)
     {
-        $translation = $translationRecipient->getTranslation($article);
-
         return $this->render('admin/article/single.html.twig', [
             'controller_name' => 'ArticleController',
             'article' => $article,
-            'translation' => $translation,
         ]);
     }
 
@@ -65,9 +57,11 @@ class ArticleController extends AbstractController
      * @param Request $request
      * @param EntityManagerInterface $entityManager
      * @param TranslatorInterface $translator
+     * @param ParameterBagInterface $parameterBag
+     * @param ImageUpload $imageUpload
      * @return RedirectResponse|Response
      */
-    public function articleAdd(Request $request, EntityManagerInterface $entityManager, TranslatorInterface $translator)
+    public function articleAdd(Request $request, EntityManagerInterface $entityManager, TranslatorInterface $translator, ParameterBagInterface $parameterBag, ImageUpload $imageUpload)
     {
         $form = $this->createForm(ArticleType::class, null, [
             'action' => $this->generateUrl('admin_article_add'),
@@ -86,6 +80,15 @@ class ArticleController extends AbstractController
             $repoTranslation = $entityManager->getRepository(Translation::class);
             $repoTranslation->translate($article, 'name', 'uk', $arrData['translation_name'])
                 ->translate($article, 'description', 'uk', $arrData['translation_description']);
+
+            $image_article_dir = $parameterBag->get('image_article_dir');
+            $name_image = $imageUpload->base64ImageUpload($article->getImage(), $image_article_dir, $article->getName());
+
+            if (!$name_image) {
+                $name_image = '';
+            }
+
+            $article->setImage($name_image);
 
             $entityManager->persist($article);
             $entityManager->flush();
@@ -113,9 +116,11 @@ class ArticleController extends AbstractController
      * @param Request $request
      * @param EntityManagerInterface $entityManager
      * @param TranslatorInterface $translator
+     * @param ParameterBagInterface $parameterBag
+     * @param ImageUpload $imageUpload
      * @return RedirectResponse|Response
      */
-    public function articleEdit(Article $article, Request $request, EntityManagerInterface $entityManager, TranslatorInterface $translator)
+    public function articleEdit(Article $article, Request $request, EntityManagerInterface $entityManager, TranslatorInterface $translator, ParameterBagInterface $parameterBag, ImageUpload $imageUpload)
     {
         $form = $this->createForm(ArticleType::class, $article, [
             'action' => $this->generateUrl('admin_article_edit', ['id' => $article->getId()]),
@@ -132,6 +137,22 @@ class ArticleController extends AbstractController
             $repoTranslation = $entityManager->getRepository(Translation::class);
             $repoTranslation->translate($article, 'name', 'uk', $arrData['translation_name'])
                 ->translate($article, 'description', 'uk', $arrData['translation_description']);
+
+            $pattern_for_image = '/^data:image\/\w+;base64,/i';
+
+            $image = $article->getImage();
+            if (!empty($image)) {
+                if (preg_match($pattern_for_image, $image)) {
+                    $image_article_dir = $parameterBag->get('image_article_dir');
+                    $name_image = $imageUpload->base64ImageUpload($image, $image_article_dir, $article->getName());
+
+                    if (!$name_image) {
+                        $name_image = '';
+                    }
+
+                    $article->setImage($name_image);
+                }
+            }
 
             $entityManager->persist($article);
             $entityManager->flush();
@@ -178,10 +199,9 @@ class ArticleController extends AbstractController
      * @param Article $article
      * @param EntityManagerInterface $entityManager
      * @param TranslatorInterface $translator
-     * @param TranslationRecipient $translationRecipient
      * @return Response
      */
-    public function articleTagSort(Request $request, Article $article, EntityManagerInterface $entityManager, TranslatorInterface $translator, TranslationRecipient $translationRecipient)
+    public function articleTagSort(Request $request, Article $article, EntityManagerInterface $entityManager, TranslatorInterface $translator)
     {
         $form = $this->createForm(SortableType::class, null, [
             'action' => $this->generateUrl('admin_article_sort', ['id' => $article->getId()]),
@@ -213,12 +233,6 @@ class ArticleController extends AbstractController
 
         $articles = $entityManager->getRepository(Article::class)->findBy(['article_category' => $article->getArticleCategory()->getId()], ['position' => 'ASC']);
 
-        // КОРЯВО (нужно исправить)
-        if ($articles) {
-            foreach ($articles as $art) {
-                $translationRecipient->getTranslatedEntity($art);
-            }
-        }
 
         return $this->render('admin/article/sort.html.twig', [
             'controller_name' => 'ArticleController',

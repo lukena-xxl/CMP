@@ -39,11 +39,6 @@ class DeliveryMethod implements Translatable
     private $description;
 
     /**
-     * @ORM\Column(type="string", length=100, nullable=true)
-     */
-    private $image;
-
-    /**
      * @ORM\Column(type="string", length=150, nullable=true)
      */
     private $key_1;
@@ -141,18 +136,6 @@ class DeliveryMethod implements Translatable
     public function setDescription(?string $description): self
     {
         $this->description = $description;
-
-        return $this;
-    }
-
-    public function getImage(): ?string
-    {
-        return $this->image;
-    }
-
-    public function setImage(?string $image): self
-    {
-        $this->image = $image;
 
         return $this;
     }

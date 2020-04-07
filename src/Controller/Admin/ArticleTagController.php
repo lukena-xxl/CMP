@@ -6,9 +6,9 @@ use App\Entity\ArticleTag;
 use App\Form\Admin\ArticleTag\ArticleTagType;
 use App\Form\Admin\Common\SortableType;
 use App\Repository\ArticleTagRepository;
-use App\Services\Common\TranslationRecipient;
 use Doctrine\ORM\EntityManagerInterface;
 use Gedmo\Translatable\Entity\Translation;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,6 +19,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * Class ArticleTagController
  * @package App\Controller\Admin
+ * @IsGranted("ROLE_SUPERADMIN", message="Access denied for you!")
  * @Route("/admin/article/tag", name="admin_article_tag")
  */
 class ArticleTagController extends AbstractController
@@ -26,37 +27,26 @@ class ArticleTagController extends AbstractController
     /**
      * @Route("", name="_all")
      * @param ArticleTagRepository $articleTagRepository
-     * @param TranslationRecipient $translationRecipient
      * @return Response
      */
-    public function articleTagAll(ArticleTagRepository $articleTagRepository, TranslationRecipient $translationRecipient)
+    public function articleTagAll(ArticleTagRepository $articleTagRepository)
     {
-        $tags = [];
-        $tagsAll = $articleTagRepository->findBy([], ['position' => 'ASC']);
-        foreach ($tagsAll as $tag) {
-            $tags[] = $translationRecipient->getTranslatedEntity($tag);
-        }
-
         return $this->render('admin/article_tag/all.html.twig', [
             'controller_name' => 'ArticleTagController',
-            'tags' => $tags,
+            'tags' => $articleTagRepository->findBy([], ['position' => 'ASC']),
         ]);
     }
 
     /**
      * @Route("/{id}", name="_single", requirements={"id"="\d+"})
      * @param ArticleTag $articleTag
-     * @param TranslationRecipient $translationRecipient
      * @return Response
      */
-    public function articleTagSingle(ArticleTag $articleTag, TranslationRecipient $translationRecipient)
+    public function articleTagSingle(ArticleTag $articleTag)
     {
-        $translation = $translationRecipient->getTranslation($articleTag);
-
         return $this->render('admin/article_tag/single.html.twig', [
             'controller_name' => 'ArticleTagController',
             'tag' => $articleTag,
-            'translation' => $translation,
         ]);
     }
 
@@ -178,10 +168,9 @@ class ArticleTagController extends AbstractController
      * @param ArticleTag $articleTag
      * @param EntityManagerInterface $entityManager
      * @param TranslatorInterface $translator
-     * @param TranslationRecipient $translationRecipient
      * @return Response
      */
-    public function articleTagSort(Request $request, ArticleTag $articleTag, EntityManagerInterface $entityManager, TranslatorInterface $translator, TranslationRecipient $translationRecipient)
+    public function articleTagSort(Request $request, ArticleTag $articleTag, EntityManagerInterface $entityManager, TranslatorInterface $translator)
     {
         $form = $this->createForm(SortableType::class, null, [
             'action' => $this->generateUrl('admin_article_tag_sort', ['id' => $articleTag->getId()]),
@@ -212,13 +201,6 @@ class ArticleTagController extends AbstractController
         }
 
         $tags = $entityManager->getRepository(ArticleTag::class)->findBy([], ['position' => 'ASC']);
-
-        // КОРЯВО (нужно исправить)
-        if ($tags) {
-            foreach ($tags as $tag) {
-                $translationRecipient->getTranslatedEntity($tag);
-            }
-        }
 
         return $this->render('admin/article_tag/sort.html.twig', [
             'controller_name' => 'ArticleTagController',

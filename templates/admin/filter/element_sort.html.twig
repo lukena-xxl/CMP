@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% endblock %}
+
+{% block body %}
+    <h1 class="admin-h1">{{ 'Сортировка элементов фильтра'|trans|raw }}</h1>
+    {% if elements %}
+        <ul class="list-group sortable">
+            {% for element in elements %}
+                <li id="{{ element.id }}" class="list-group-item rounded-0 sort{%  if element == current %} text-primary bg-light h5 m-0{% endif %}">
+                    {%  if element == current %}<i class="fas fa-arrows-alt mr-2 sort-handle"></i>{% endif %}
+                    {{ element.name }}
+                </li>
+            {% endfor %}
+        </ul>
+        <div class="mt-3">
+            {{ form_start(form_sort) }}
+            {{ form_row(form_sort.sorted_data) }}
+            <div class="d-inline-block"><a class="btn btn-light text-dark" href="{{ path('admin_filter_single', {'id': current.filter.id}) }}" role="button"><i class="fad fa-backspace mr-2"></i>{{ 'К фильтру'|trans|raw }}</a></div>
+            <div class="d-inline-block">{{ form_row(form_sort.submit) }}</div>
+            {{ form_end(form_sort) }}
+        </div>
+    {% else %}
+        <p class="mt-3">{{ 'Нет элементов'|trans|raw }}!</p>
+    {% endif %}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('sortable') }}
+{% endblock %}

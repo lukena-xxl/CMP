@@ -17,13 +17,20 @@ class ProductImageType extends AbstractType
             ->add('name', TextType::class, [
                 'required' => false,
                 'label' => false,
-                'attr' => [
-                    'class' => 'img-visible',
-                ]
             ])
             ->add('isVisible', CheckboxType::class, [
                 'required' => false,
                 'label' => false,
+                'attr' => [
+                    'class' => 'img-visible',
+                ],
+            ])
+            ->add('position', TextType::class, [
+                'required' => false,
+                'label' => false,
+                'attr' => [
+                    'class' => 'input-position',
+                ],
             ])
         ;
     }

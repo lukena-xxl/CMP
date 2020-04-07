@@ -1,10 +1,123 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}
-
-{% endblock %}
+{% block title %}{% endblock %}
 
 {% block body %}
+<div class="row">
+    <div class="col-sm-5">
+        <div class="mb-3">
+            <ul class="list-group">
+                <li class="list-group-item rounded-0"><strong>ID:</strong> {{ user.id }}</li>
+                <li class="list-group-item rounded-0"><strong>{{ 'Логин'|trans|raw }}:</strong> {{ user.login }}</li>
+                <li class="list-group-item rounded-0">
+                    <strong>{{ 'Права'|trans|raw }}:</strong>
+                    {% set arr_roles = [] %}
+                    {% for role in user.roles %}
+                        {% set arr_split = role|split('ROLE_') %}
+                        {% if arr_split[1] %}
+                            {% set arr_roles = arr_roles|merge([arr_split[1]|mbCaseTitleSimple]) %}
+                        {% endif %}
+                    {% endfor %}
+                    <span class="text-success">{{ arr_roles|join(' / ') }}</span>
+                </li>
+                <li class="list-group-item rounded-0">
+                    <strong>Email:</strong>
+                    {% if user.email %}
+                        {{ user.email }}
+                    {% else %}
+                        <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
+                    {% endif %}
+                </li>
+                <li class="list-group-item rounded-0">
+                    <strong>{{ 'Телефон'|trans|raw }}:</strong>
+                    {% if user.phone %}
+                        {{ user.phone }}
+                    {% else %}
+                        <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
+                    {% endif %}
+                </li>
+                <li class="list-group-item rounded-0">
+                    <strong>{{ 'ФИО'|trans|raw }}:</strong>
+                    {% if user.secondName or user.firstName or user.middleName %}
+                        {{ user.secondName }} {{ user.firstName }} {{ user.middleName }}
+                    {% else %}
+                        <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
+                    {% endif %}
+                </li>
+                <li class="list-group-item rounded-0">
+                    <strong>{{ 'Дата рождения'|trans|raw }}:</strong>
+                    {% if user.birthDate %}
+                        {{ user.birthDate.format("d.m.Y") }}
+                    {% else %}
+                        <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
+                    {% endif %}
+                </li>
+                <li class="list-group-item rounded-0">
+                    <strong>{{ 'Дата регистрации'|trans|raw }}:</strong>
+                    <span class="text-info">
+                        <span class="text-muted">{{ 'более'|trans|raw }}</span>
+                        {% set difference = user.registrationDate.diff(date()) %}
+                        <strong>{% if difference.format('%Y') > 0 %}
+                                {{ difference.format('%Y') }} {{ 'лет'|trans|raw }}
+                            {% elseif difference.format('%m') > 0 %}
+                                {{ difference.format('%m') }} {{ 'месяцев'|trans|raw }}
+                            {% elseif difference.format('%a') > 0 %}
+                                {{ difference.format('%a') }} {{ 'дней'|trans|raw }}
+                            {% elseif difference.format('%h') > 0 %}
+                                {{ difference.format('%h') }} {{ 'часов'|trans|raw }}
+                            {% elseif difference.format('%i') > 0 %}
+                                {{ difference.format('%i') }} {{ 'минут'|trans|raw }}
+                            {% elseif difference.format('%s') > 0 %}
+                                {{ difference.format('%s') }} {{ 'секунд'|trans|raw }}
+                            {% endif %} {{ 'назад'|trans|raw }}</strong>
+                        <span class="text-muted"> / {{ user.registrationDate.format("d.m.Y H:i") }}</span>
+                    </span>
+                </li>
+                <li class="list-group-item rounded-0">
+                    <a class="btn btn-light mb-1 text-primary" href="{{ path('admin_user_edit', {'id': user.id}) }}" role="button"><i class="fas fa-edit mr-2"></i>{{ 'Редактировать'|trans|raw }}</a>
+                    <a class="btn btn-light mb-1 text-danger" href="{{ path('admin_user_delete', {'id': user.id}) }}" role="button"><i class="fas fa-trash-alt mr-2"></i>{{ 'Удалить'|trans|raw }}</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="col-sm-7">
+        <div class="mb-3">
+            <ul class="list-group">
+                <li class="list-group-item rounded-0">
+                    <strong>{{ 'Заказы'|trans|raw }}:</strong>
+                    <div class="my-1">
+                        {#{% if user.orders.count > 0 %}
+                            {% for order in user.orders %}
+                                <div class="mb-2">
+                                    <a href="{{ path('admin_order_single', {'id': order.id}) }}">
 
+
+                                    </a>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
+                        {% endif %}#}
+                    </div>
+                </li>
+
+                {% if 'ROLE_ADMIN' in user.roles or 'ROLE_SUPERADMIN' in user.roles %}
+                <li class="list-group-item rounded-0">
+                    <strong>{{ 'Продукты'|trans|raw }}:</strong>
+                    <div class="my-1">
+                        {% if user.products.count > 0 %}
+                            {% for product in user.products %}
+                                <div class="mb-2"><a href="{{ path('admin_product_single', {'id': product.id}) }}">{{ product.name }}</a></div>
+                            {% endfor %}
+                        {% else %}
+                            <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
+                        {% endif %}
+                    </div>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</div>
 {% endblock %}
 

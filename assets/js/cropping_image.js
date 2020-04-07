@@ -111,7 +111,9 @@ $(document).ready(function() {
         let modal = $('#modal');
         modal.find('.modal-title').text(title);
         modal.find('.modal-body').html('<i class="fas fa-spinner fa-spin mr-2"></i>loading ...').ready(function(){
-            modal.modal('show');
+            modal.modal({
+                backdrop: 'static'
+            });
             modal.find('.modal-body').load('/admin/common/cropping/image');
         });
     });
