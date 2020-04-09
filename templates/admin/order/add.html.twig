@@ -1,0 +1,121 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% endblock %}
+
+{% block body %}
+    <div>
+        <h1 class="admin-h1">{{ title }}</h1>
+        <fieldset class="custom-project">
+            {{ form_start(form_add) }}
+
+            <div class="p-3 my-1 bg-light border">
+                <div class="mb-3 text-primary font-weight-bold h5">{{ 'Продукты'|trans|raw }}:</div>
+                <div id="product_list" data-product-length="{{ form_add.products|length }}">
+                    {% for product in form_add.products %}
+                        <div class="row mb-2 srt">
+                            <div class="col-auto">
+                                <div class="position-relative">
+                                    {% if product.image.vars.value and fileExists(asset(image_order_dir ~ '/' ~ product.image.vars.value)) %}
+                                        {% set img = asset(image_order_dir ~ '/' ~ product.image.vars.value) %}
+                                    {% else %}
+                                        {% set img = asset('build/images/common/no-image-150.png') %}
+                                    {% endif %}
+                                    <img src="{{ img }}" class="img-fluid" alt="">
+                                    {{ form_widget(product.image) }}
+                                    <div class="position-absolute bg-light-opacity px-2 py-1" style="top:10px;left:10px">
+                                        <a href="javascript:void(0);" class="delete-element text-decoration-none"><i class="fad fa-trash-alt text-danger h4 mb-0"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="mb-2 text-uppercase">{{ product.name.vars.value }}</div>
+                                {{ form_widget(product.name) }}
+                                <div class="mb-2 max-width-100">
+                                    {{ form_widget(product.quantity) }}
+                                </div>
+                                <div class="mb-2">
+                                    <strong>{{ product.price.vars.value }}</strong>
+                                    {{ form_widget(product.price) }}
+                                </div>
+                                <div class="d-none">{{ form_widget(product.product) }}</div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <a href="javascript:void(0);"
+                   class="btn btn-secondary mt-3 add-item"
+                   data-list="#product-items-list" data-title="{{ 'Поиск продуктов'|trans|raw }}"><i class="fad fa-plus-square mr-2"></i>{{ 'Добавить'|trans|raw }}</a>
+
+                <div class="h4 text-primary mt-3"><span class="text-muted">{{ 'Стоимость'|trans|raw }}: </span><strong id="full_order_price">0</strong></div>
+            </div>
+
+            <div class="row no-gutters">
+                <div class="col-md-6">
+                    <div class="p-3 my-1 mr-0 mr-md-2 bg-light border">
+                        {{ form_row(form_add.full_name) }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="p-3 my-1 bg-light border">
+                        {{ form_row(form_add.phone) }}
+                    </div>
+                </div>
+            </div>
+            <div class="row no-gutters">
+                <div class="col-md-6">
+                    <div class="p-3 my-1 mr-0 mr-md-2 bg-light border">
+                        {{ form_row(form_add.region) }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="p-3 my-1 bg-light border">
+                        {{ form_row(form_add.city) }}
+                    </div>
+                </div>
+            </div>
+            <div class="row no-gutters">
+                <div class="col-md-8">
+                    <div class="p-3 my-1 mr-0 mr-md-2 bg-light border">
+                        {{ form_row(form_add.address) }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="p-3 my-1 bg-light border">
+                        {{ form_row(form_add.postcode) }}
+                    </div>
+                </div>
+            </div>
+            <div class="row no-gutters">
+                <div class="col-md-6">
+                    <div class="p-3 my-1 mr-0 mr-md-2 bg-light border">
+                        {{ form_row(form_add.payment_method) }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="p-3 my-1 bg-light border">
+                        {{ form_row(form_add.delivery_method) }}
+                    </div>
+                </div>
+            </div>
+            <div class="row no-gutters">
+                <div class="col-md-6">
+                    <div class="p-3 my-1 mr-0 mr-md-2 bg-light border">
+                        {{ form_row(form_add.comment) }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="p-3 my-1 bg-light border">
+                        {{ form_row(form_add.admin_note) }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-3">{{ form_row(form_add.submit) }}</div>
+            {{ form_end(form_add) }}
+        </fieldset>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('admin_order_add') }}
+{% endblock %}

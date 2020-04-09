@@ -200,6 +200,18 @@ select option[value=""] {
   display: none;
 }
 
+li.check-item {
+  cursor: pointer;
+}
+
+li.check-item:hover {
+  background: $gray-100;
+}
+
+.editor-content img {
+  max-width: 100%;
+  height: auto;
+}
 
 
 

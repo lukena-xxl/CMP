@@ -67,6 +67,7 @@
             {% endif %}
 
             {% set navs = {} %}
+            {% set navs = navs|merge({ 0: { controller: 'OrderController', route: 'admin_order_all', name: 'Все заказы'|trans|raw } }) %}
 
             <div class="p-2 bg-secondary font-weight-bold"><i class="fas fa-shopping-bag mr-2"></i>{{ 'Заказы'|trans|raw }}</div>
             {% for nav in navs %}

@@ -34,6 +34,7 @@ Encore
     .addEntry('calculate_price', './assets/js/calculate_price.js')
     .addEntry('cropping_image', './assets/js/cropping_image.js')
     .addEntry('single_image_add', './assets/js/single_image_add.js')
+    .addEntry('admin_order_add', './assets/js/admin_order_add.js')
 
     //.addStyleEntry('menu', './assets/css/component-card.css')
 

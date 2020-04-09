@@ -4,6 +4,7 @@ namespace App\Form\Admin\ProductItem;
 
 use App\Entity\Coefficient;
 use App\Entity\ProductItem;
+use App\Repository\CoefficientRepository;
 use App\Services\Common\TranslationRecipient;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -16,14 +17,18 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Security\Core\Security;
 
 class ProductItemType extends AbstractType
 {
     private $translationRecipient;
+    private $security;
+    private $user;
 
-    public function __construct(TranslationRecipient $translationRecipient)
+    public function __construct(TranslationRecipient $translationRecipient, Security $security)
     {
         $this->translationRecipient = $translationRecipient;
+        $this->security = $security;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -42,32 +47,6 @@ class ProductItemType extends AbstractType
                     'placeholder' => '0',
                     'class' => 'max-width-100 calc-price product_price',
                 ],
-                'row_attr' => [
-                    'class' => 'mb-1',
-                ],
-            ])
-            ->add('coefficient', EntityType::class, [
-                'required' => false,
-                'label' => false,
-                'class' => Coefficient::class,
-                'choice_label' => function (Coefficient $coefficient = null) {
-                    if ($coefficient) {
-                        return $coefficient->getName() . " (" .$coefficient->getRatio() . ")";
-                    }
-                    return '';
-                },
-                'placeholder' => 'выберите коэффициент',
-                'attr' => [
-                    'class' => 'calc-price product_coefficient',
-                ],
-                'choice_attr' => function (Coefficient $coefficient = null) {
-                    $k = false;
-                    if ($coefficient) {
-                        $k = $coefficient->getRatio();
-                    }
-
-                    return $k ? ['data-coefficient' => $k] : [];
-                },
                 'row_attr' => [
                     'class' => 'mb-1',
                 ],
@@ -154,8 +133,7 @@ class ProductItemType extends AbstractType
                 'attr' => [
                     'class' => 'input-position',
                 ],
-            ])
-        ;
+            ]);
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($builder) {
             /** @var ProductItem $data */
@@ -176,6 +154,45 @@ class ProductItemType extends AbstractType
             }
 
             $form->add('translation_name', TextType::class, $opt);
+
+            if ($data) {
+                $this->user = $data->getProduct()->getUser();
+            } else {
+                $this->user = $this->security->getUser();
+            }
+
+            $form->add('coefficient', EntityType::class, [
+                'required' => false,
+                'label' => false,
+                'class' => Coefficient::class,
+                'query_builder' => function (CoefficientRepository $er) {
+                    return $er->createQueryBuilder('c')
+                        ->andWhere('c.user = :user')
+                        ->setParameter('user', $this->user)
+                        ->orderBy('c.id', 'DESC');
+                },
+                'choice_label' => function (Coefficient $coefficient = null) {
+                    if ($coefficient) {
+                        return $coefficient->getName() . " (" .$coefficient->getRatio() . ")";
+                    }
+                    return '';
+                },
+                'placeholder' => 'выберите коэффициент',
+                'attr' => [
+                    'class' => 'calc-price product_coefficient',
+                ],
+                'choice_attr' => function (Coefficient $coefficient = null) {
+                    $k = false;
+                    if ($coefficient) {
+                        $k = $coefficient->getRatio();
+                    }
+
+                    return $k ? ['data-coefficient' => $k] : [];
+                },
+                'row_attr' => [
+                    'class' => 'mb-1',
+                ],
+            ]);
         });
     }
 

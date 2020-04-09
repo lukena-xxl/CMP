@@ -102,12 +102,24 @@ class User implements UserInterface
      */
     private $productCaptions;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Orders", mappedBy="user")
+     */
+    private $orders;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Orders", mappedBy="admin")
+     */
+    private $admin_orders;
+
     public function __construct()
     {
         $this->products = new ArrayCollection();
         $this->coefficients = new ArrayCollection();
         $this->availabilities = new ArrayCollection();
         $this->productCaptions = new ArrayCollection();
+        $this->orders = new ArrayCollection();
+        $this->admin_orders = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -402,6 +414,68 @@ class User implements UserInterface
             // set the owning side to null (unless already changed)
             if ($productCaption->getUser() === $this) {
                 $productCaption->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Orders[]
+     */
+    public function getOrders(): Collection
+    {
+        return $this->orders;
+    }
+
+    public function addOrder(Orders $order): self
+    {
+        if (!$this->orders->contains($order)) {
+            $this->orders[] = $order;
+            $order->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrder(Orders $order): self
+    {
+        if ($this->orders->contains($order)) {
+            $this->orders->removeElement($order);
+            // set the owning side to null (unless already changed)
+            if ($order->getUser() === $this) {
+                $order->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Orders[]
+     */
+    public function getAdminOrders(): Collection
+    {
+        return $this->admin_orders;
+    }
+
+    public function addAdminOrder(Orders $adminOrder): self
+    {
+        if (!$this->admin_orders->contains($adminOrder)) {
+            $this->admin_orders[] = $adminOrder;
+            $adminOrder->setAdmin($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAdminOrder(Orders $adminOrder): self
+    {
+        if ($this->admin_orders->contains($adminOrder)) {
+            $this->admin_orders->removeElement($adminOrder);
+            // set the owning side to null (unless already changed)
+            if ($adminOrder->getAdmin() === $this) {
+                $adminOrder->setAdmin(null);
             }
         }
 

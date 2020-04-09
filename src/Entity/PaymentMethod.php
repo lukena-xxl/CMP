@@ -89,9 +89,15 @@ class PaymentMethod implements Translatable
      */
     private $products;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Orders", mappedBy="payment_method")
+     */
+    private $orders;
+
     public function __construct()
     {
         $this->products = new ArrayCollection();
+        $this->orders = new ArrayCollection();
     }
 
     public function setTranslatableLocale($locale)
@@ -259,6 +265,37 @@ class PaymentMethod implements Translatable
         if ($this->products->contains($product)) {
             $this->products->removeElement($product);
             $product->removePayment($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Orders[]
+     */
+    public function getOrders(): Collection
+    {
+        return $this->orders;
+    }
+
+    public function addOrder(Orders $order): self
+    {
+        if (!$this->orders->contains($order)) {
+            $this->orders[] = $order;
+            $order->setPaymentMethod($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrder(Orders $order): self
+    {
+        if ($this->orders->contains($order)) {
+            $this->orders->removeElement($order);
+            // set the owning side to null (unless already changed)
+            if ($order->getPaymentMethod() === $this) {
+                $order->setPaymentMethod(null);
+            }
         }
 
         return $this;

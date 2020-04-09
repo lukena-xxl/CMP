@@ -12,7 +12,9 @@ use App\Entity\Product;
 use App\Entity\ProductCaption;
 use App\Form\Admin\ProductImage\ProductImageType;
 use App\Form\Admin\ProductItem\ProductItemType;
+use App\Repository\AvailabilityRepository;
 use App\Repository\FilterElementRepository;
+use App\Repository\ProductCaptionRepository;
 use App\Services\Common\TranslationRecipient;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -25,14 +27,18 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Security\Core\Security;
 
 class ProductType extends AbstractType
 {
     private $translationRecipient;
+    private $security;
+    private $user;
 
-    public function __construct(TranslationRecipient $translationRecipient)
+    public function __construct(TranslationRecipient $translationRecipient, Security $security)
     {
         $this->translationRecipient = $translationRecipient;
+        $this->security = $security;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -79,18 +85,6 @@ class ProductType extends AbstractType
                 'label' => 'Валюта показа',
                 'class' => Currency::class,
                 'choice_label' => 'abbr',
-            ])
-            ->add('availability', EntityType::class, [
-                'label' => 'Доступность',
-                'class' => Availability::class,
-                'choice_label' => 'name',
-            ])
-            ->add('captions', EntityType::class, [
-                'required' => false,
-                'label' => 'Подписи',
-                'class' => ProductCaption::class,
-                'choice_label' => 'name',
-                'multiple' => true,
             ])
             ->add('delivery', EntityType::class, [
                 'required' => false,
@@ -187,6 +181,37 @@ class ProductType extends AbstractType
             }
 
             $form->add('translation_description', TextareaType::class, $opt);
+
+            if ($data) {
+                $this->user = $data->getUser();
+            } else {
+                $this->user = $this->security->getUser();
+            }
+
+            $form->add('availability', EntityType::class, [
+                'label' => 'Доступность',
+                'class' => Availability::class,
+                'query_builder' => function (AvailabilityRepository $er) {
+                    return $er->createQueryBuilder('a')
+                        ->andWhere('a.user = :user')
+                        ->setParameter('user', $this->user)
+                        ->orderBy('a.id', 'DESC');
+                },
+                'choice_label' => 'name',
+            ])
+            ->add('captions', EntityType::class, [
+                'required' => false,
+                'label' => 'Подписи',
+                'class' => ProductCaption::class,
+                'query_builder' => function (ProductCaptionRepository $er) {
+                    return $er->createQueryBuilder('pc')
+                        ->andWhere('pc.user = :user')
+                        ->setParameter('user', $this->user)
+                        ->orderBy('pc.position', 'ASC');
+                },
+                'choice_label' => 'name',
+                'multiple' => true,
+            ]);
         });
     }
 

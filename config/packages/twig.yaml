@@ -9,3 +9,4 @@ twig:
         image_item_dir: 'uploads/product/item'
         image_category_dir: 'uploads/category'
         image_article_dir: 'uploads/article'
+        image_order_dir: 'uploads/order'

@@ -59,7 +59,7 @@
                         <strong>{{ 'Категория'|trans|raw }}:</strong>
                         <div class="my-1">
                             {% if product.category %}
-                                <a href="{{ path('admin_category_single', {'id': product.category.id}) }}">{{ product.category.name }}</a>
+                                {{ product.category.name }}
                             {% else %}
                                 <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
                             {% endif %}
@@ -240,7 +240,6 @@
                                 {% endif %}
                                 <strong>{{ total|round }}</strong> {{ product.currency.abbr }}
                             </div>
-
                             <hr />
                         </div>
                     </div>

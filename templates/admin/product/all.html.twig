@@ -29,7 +29,7 @@
                     <td class="min-width-150"><strong>{{ product.cost|round }}</strong> {{ product.currency_name }}</td>
                     <td class="min-width-150">
                         {% if product.category_id %}
-                            <a href="{{ path('admin_category_single', {'id': product.category_id}) }}">{{ product.category_name }}</a>
+                            {{ product.category_name }}
                         {% else %}
                             <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
                         {% endif %}

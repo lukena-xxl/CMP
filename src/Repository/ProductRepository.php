@@ -24,7 +24,7 @@ class ProductRepository extends ServiceEntityRepository
      * @var User $user
      * @return mixed
      */
-    public function adminProductsList($user)
+    public function adminProductsList($user = null)
     {
         $qb = $this->createQueryBuilder('p');
         $qb->select(['p.id', 'p.name', 'p.slug', 'p.is_visible'])
@@ -33,7 +33,7 @@ class ProductRepository extends ServiceEntityRepository
             ->join('p.currency', 'cur')->addSelect('cur.abbr as currency_name')
             ->join('p.user', 'u');
 
-        if (!in_array('ROLE_SUPERADMIN', $user->getRoles())) {
+        if ($user && !in_array('ROLE_SUPERADMIN', $user->getRoles())) {
             $qb->andWhere('u.login = :login')
                 ->setParameter('login', $user->getLogin());
         }
@@ -75,6 +75,29 @@ class ProductRepository extends ServiceEntityRepository
             ->andWhere('f.id = :filter')
             ->setParameter('filter', $filter_id)
             ->orderBy('fe.position', 'ASC');
+
+        $query = $qb->getQuery();
+        return $query->execute();
+    }
+
+    /**
+     * @param $text
+     * @var User $user
+     * @return mixed
+     */
+    public function searchProducts($text, $user = null)
+    {
+        $qb = $this->createQueryBuilder('p');
+
+        $qb->where(
+            $qb->expr()->like('p.name', ':text')
+        )->setParameter('text', '%' . $text . '%');
+
+        if ($user) {
+            $qb->join('p.user', 'u')
+                ->andWhere('u.login = :login')
+                ->setParameter('login', $user->getLogin());
+        }
 
         $query = $qb->getQuery();
         return $query->execute();
