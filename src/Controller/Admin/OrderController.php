@@ -7,7 +7,6 @@ use App\Form\Admin\Order\OrderType;
 use App\Repository\OrderRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -60,10 +59,9 @@ class OrderController extends AbstractController
      * @param Request $request
      * @param EntityManagerInterface $entityManager
      * @param TranslatorInterface $translator
-     * @param ParameterBagInterface $parameterBag
      * @return RedirectResponse|Response
      */
-    public function orderAdd(Request $request, EntityManagerInterface $entityManager, TranslatorInterface $translator, ParameterBagInterface $parameterBag)
+    public function orderAdd(Request $request, EntityManagerInterface $entityManager, TranslatorInterface $translator)
     {
         $form = $this->createForm(OrderType::class, null, [
             'action' => $this->generateUrl('admin_order_add'),
@@ -105,10 +103,9 @@ class OrderController extends AbstractController
      * @param Request $request
      * @param EntityManagerInterface $entityManager
      * @param TranslatorInterface $translator
-     * @param ParameterBagInterface $parameterBag
      * @return RedirectResponse|Response
      */
-    public function orderEdit(Orders $order, Request $request, EntityManagerInterface $entityManager, TranslatorInterface $translator, ParameterBagInterface $parameterBag)
+    public function orderEdit(Orders $order, Request $request, EntityManagerInterface $entityManager, TranslatorInterface $translator)
     {
         $user = $this->getUser();
 
