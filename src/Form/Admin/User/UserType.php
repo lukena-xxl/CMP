@@ -63,7 +63,7 @@ class UserType extends AbstractType
                         'class' => 'password-field'
                     ]
                 ],
-                'required' => true,
+                'required' => false,
                 'first_options'  => [
                     'label' => 'Пароль',
                     'attr' => [
@@ -76,12 +76,6 @@ class UserType extends AbstractType
                         'placeholder' => 'Введите пароль повторно',
                     ],
                 ],
-                'empty_data' => function (User $entity = null) {
-                    if ($entity) {
-                        return $entity->getPassword();
-                    }
-                    return '';
-                },
             ])
             ->add('email', EmailType::class, [
                 'label' => 'Email',
@@ -116,11 +110,6 @@ class UserType extends AbstractType
                 'attr' => [
                     'placeholder' => 'Введите фамилию',
                 ],
-            ])
-            ->add('region', ChoiceType::class, [
-                'required' => false,
-                'label' => 'Область',
-                'placeholder' => 'выберите область',
             ])
             ->add('birth_date', BirthdayType::class, [
                 'required' => false,

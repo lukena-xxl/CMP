@@ -34,7 +34,7 @@ class Filter implements Translatable
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Category", inversedBy="filters")
      */
-    private $filter_categories;
+    private $categories;
 
     /**
      * @Gedmo\Locale
@@ -42,14 +42,21 @@ class Filter implements Translatable
     private $locale = 'ru';
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\ProductFilter", mappedBy="filter")
+     * @ORM\OneToMany(targetEntity="App\Entity\FilterElement", mappedBy="filter", orphanRemoval=true)
+     * @ORM\OrderBy({"position" = "ASC"})
      */
-    private $product;
+    private $elements;
+
+    /**
+     * @Gedmo\SortablePosition
+     * @ORM\Column(type="integer")
+     */
+    private $position;
 
     public function __construct()
     {
-        $this->filter_categories = new ArrayCollection();
-        $this->product = new ArrayCollection();
+        $this->categories = new ArrayCollection();
+        $this->elements = new ArrayCollection();
     }
 
     public function setTranslatableLocale($locale)
@@ -89,56 +96,68 @@ class Filter implements Translatable
     /**
      * @return Collection|Category[]
      */
-    public function getFilterCategories(): Collection
+    public function getCategories(): Collection
     {
-        return $this->filter_categories;
+        return $this->categories;
     }
 
-    public function addFilterCategory(Category $filterCategory): self
+    public function addCategory(Category $category): self
     {
-        if (!$this->filter_categories->contains($filterCategory)) {
-            $this->filter_categories[] = $filterCategory;
+        if (!$this->categories->contains($category)) {
+            $this->categories[] = $category;
         }
 
         return $this;
     }
 
-    public function removeFilterCategory(Category $filterCategory): self
+    public function removeCategory(Category $category): self
     {
-        if ($this->filter_categories->contains($filterCategory)) {
-            $this->filter_categories->removeElement($filterCategory);
+        if ($this->categories->contains($category)) {
+            $this->categories->removeElement($category);
         }
 
         return $this;
     }
 
     /**
-     * @return Collection|ProductFilter[]
+     * @return Collection|FilterElement[]
      */
-    public function getProduct(): Collection
+    public function getElements(): Collection
     {
-        return $this->product;
+        return $this->elements;
     }
 
-    public function addProduct(ProductFilter $product): self
+    public function addElement(FilterElement $element): self
     {
-        if (!$this->product->contains($product)) {
-            $this->product[] = $product;
-            $product->setFilter($this);
+        if (!$this->elements->contains($element)) {
+            $this->elements[] = $element;
+            $element->setFilter($this);
         }
 
         return $this;
     }
 
-    public function removeProduct(ProductFilter $product): self
+    public function removeElement(FilterElement $element): self
     {
-        if ($this->product->contains($product)) {
-            $this->product->removeElement($product);
+        if ($this->elements->contains($element)) {
+            $this->elements->removeElement($element);
             // set the owning side to null (unless already changed)
-            if ($product->getFilter() === $this) {
-                $product->setFilter(null);
+            if ($element->getFilter() === $this) {
+                $element->setFilter(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getPosition(): ?int
+    {
+        return $this->position;
+    }
+
+    public function setPosition(int $position): self
+    {
+        $this->position = $position;
 
         return $this;
     }

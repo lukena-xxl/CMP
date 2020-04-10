@@ -8,7 +8,6 @@ use Gedmo\Translatable\Translatable;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ProductImageRepository")
- * @ORM\EntityListeners({"App\EventListener\ProductImageListener"})
  */
 class ProductImage implements Translatable
 {
@@ -47,7 +46,6 @@ class ProductImage implements Translatable
     private $is_visible = false;
 
     /**
-     * @Gedmo\SortablePosition
      * @ORM\Column(type="integer")
      */
     private $position;
@@ -60,7 +58,6 @@ class ProductImage implements Translatable
     /**
      * @var Product
      *
-     * @Gedmo\SortableGroup
      * @ORM\ManyToOne(targetEntity="App\Entity\Product", inversedBy="images")
      * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE")
      */

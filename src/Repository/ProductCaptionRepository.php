@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\ProductCaption;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
@@ -19,32 +20,23 @@ class ProductCaptionRepository extends ServiceEntityRepository
         parent::__construct($registry, ProductCaption::class);
     }
 
-    // /**
-    //  * @return ProductCaption[] Returns an array of ProductCaption objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * @var User $user
+     * @return mixed
+     */
+    public function adminProductCaptionsList($user)
     {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('p.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+        $qb = $this->createQueryBuilder('pc');
 
-    /*
-    public function findOneBySomeField($value): ?ProductCaption
-    {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        if (!in_array('ROLE_SUPERADMIN', $user->getRoles())) {
+            $qb->join('pc.user', 'u');
+            $qb->andWhere('u.login = :login')
+                ->setParameter('login', $user->getLogin());
+        }
+
+        $qb->orderBy('pc.position', 'ASC');
+
+        $query = $qb->getQuery();
+        return $query->execute();
     }
-    */
 }

@@ -5,7 +5,6 @@
 {% block body %}
     <div class="row">
         <div class="col-sm-5">
-            <h3 class="admin-h3">{{ 'Данные'|trans|raw }}</h3>
             <div class="mb-3">
                 <ul class="list-group">
                     <li class="list-group-item rounded-0 text-white">
@@ -23,7 +22,6 @@
                     </li>
                 </ul>
             </div>
-            <h3 class="admin-h3">{{ 'Привязки'|trans|raw }}</h3>
             <div class="mb-3">
                 <ul class="list-group">
                     <li class="list-group-item rounded-0">
@@ -58,7 +56,7 @@
                             {% else %}
                                 <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
                             {% endif %}
-                            <div class="mt-2"><a href="#{{ path('admin_product_add') }}" class="text-success"><i class="fas fa-plus-circle mr-2"></i>{{ 'Добавить'|trans|raw }}</a></div>
+                            <div class="mt-2"><a href="{{ path('admin_product_add') }}" class="text-success"><i class="fas fa-plus-circle mr-2"></i>{{ 'Добавить'|trans|raw }}</a></div>
                         </div>
                     </li>
                     <li class="list-group-item rounded-0">
@@ -78,7 +76,6 @@
             </div>
         </div>
         <div class="col-sm-7">
-            <h3 class="admin-h3">{{ 'Информация'|trans|raw }}</h3>
             <div class="mb-3 custom-project">
                 <ul class="nav nav-tabs" id="nameTab" role="tablist">
                     <li class="nav-item">
@@ -94,8 +91,9 @@
                     </div>
                     <div class="tab-pane fade" id="uk-name" role="tabpanel" aria-labelledby="uk-name-tab">
                         <div class="h2 px-2">
-                            {% if translation['uk']['name'] is defined and translation['uk']['name'] %}
-                                {{ translation['uk']['name'] }}
+                            {% set trns = translate(category, 'uk', 'name') %}
+                            {% if trns %}
+                                {{ trns }}
                             {% else %}
                                 <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
                             {% endif %}
@@ -105,9 +103,9 @@
                 <ul class="list-group">
                     <li class="list-group-item rounded-0">
                         <strong>{{ 'Изображение'|trans|raw }}:</strong>
-                        <div class="row mt-2">
+                        <div class="row mt-2 small">
                             <div class="col-sm-6">
-                                <img src="{% if category.image and fileExists(asset('uploads/category/'~category.image)) %}{% set image = asset('uploads/category/'~category.image) %}{{ image }}{% else %}{{ asset('build/images/common/no-image.png') }}{% endif %}" class="img-fluid" alt="">
+                                <img src="{% if category.image and fileExists(asset(image_category_dir ~ '/' ~ category.image)) %}{% set image = asset(image_category_dir ~ '/' ~ category.image) %}{{ image }}{% else %}{{ asset('build/images/common/no-image.png') }}{% endif %}" class="img-fluid" alt="">
                             </div>
                             <div class="col-sm-6">
                                 {% if image  is defined %}
@@ -119,7 +117,7 @@
                                         <li class="list-group-item rounded-0"><strong>{{ 'Тип'|trans|raw }}:</strong> {{ image|img_type }}</li>
                                     </ul>
                                 {% else %}
-                                    <span class="small text-muted">{{ 'нет изображения'|trans|raw }}</span>
+                                    <span class="text-muted">{{ 'нет изображения'|trans|raw }}</span>
                                 {% endif %}
                             </div>
                         </div>
@@ -144,9 +142,10 @@
                                 {% endif %}
                             </div>
                             <div class="tab-pane fade" id="uk-description" role="tabpanel" aria-labelledby="uk-description-tab">
-                                {% if translation['uk']['description'] is defined and translation['uk']['description'] %}
+                                {% set trns = translate(category, 'uk', 'description') %}
+                                {% if trns %}
                                     {% autoescape %}
-                                        {{ translation['uk']['description']|raw }}
+                                        {{ trns|raw }}
                                     {% endautoescape %}
                                 {% else %}
                                     <span class="small text-muted">{{ 'нет'|trans|raw }}</span>

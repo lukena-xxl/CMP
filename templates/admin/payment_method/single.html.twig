@@ -5,7 +5,6 @@
 {% block body %}
     <div class="row">
         <div class="col-sm-5">
-            <h3 class="admin-h3">{{ 'Данные'|trans|raw }}</h3>
             <div class="mb-3">
                 <ul class="list-group">
                     <li class="list-group-item rounded-0 text-white">
@@ -42,7 +41,6 @@
             </div>
         </div>
         <div class="col-sm-7">
-            <h3 class="admin-h3">{{ 'Информация'|trans|raw }}</h3>
             <div class="mb-3 custom-project">
                 <ul class="nav nav-tabs" id="nameTab" role="tablist">
                     <li class="nav-item">
@@ -58,38 +56,15 @@
                     </div>
                     <div class="tab-pane fade" id="uk-name" role="tabpanel" aria-labelledby="uk-name-tab">
                         <div class="h2 px-2">
-                            {% if translation['uk']['name'] is defined and translation['uk']['name'] %}
-                                {{ translation['uk']['name'] }}
+                            {% set trns = translate(payment, 'uk', 'name') %}
+                            {% if trns %}
+                                {{ trns }}
                             {% else %}
                                 <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
                             {% endif %}
                         </div>
                     </div>
                 </div>
-                <ul class="list-group">
-                    <li class="list-group-item rounded-0">
-                        <strong>{{ 'Изображение'|trans|raw }}:</strong>
-                        <div class="row mt-2">
-                            <div class="col-sm-6">
-                                <img src="{% if payment.image and fileExists(asset('uploads/payment/'~payment.image)) %}{% set image = asset('uploads/payment/'~payment.image) %}{{ image }}{% else %}{{ asset('build/images/common/no-image.png') }}{% endif %}" class="img-fluid" alt="">
-                            </div>
-                            <div class="col-sm-6">
-                                {% if image  is defined %}
-                                    <ul class="list-group">
-                                        <li class="list-group-item rounded-0"><strong>{{ 'Имя'|trans|raw }}:</strong> <a href="{{ image }}" target="_blank">{{ payment.image }}</a></li>
-                                        <li class="list-group-item rounded-0"><strong>{{ 'Объем'|trans|raw }}:</strong> {{ image|img_length }}</li>
-                                        <li class="list-group-item rounded-0"><strong>{{ 'Размер'|trans|raw }}:</strong> {{ image|img_width }}&times;{{ image|img_height }}px</li>
-                                        <li class="list-group-item rounded-0"><strong>{{ 'Формат'|trans|raw }}:</strong> {{ image|img_format }}</li>
-                                        <li class="list-group-item rounded-0"><strong>{{ 'Тип'|trans|raw }}:</strong> {{ image|img_type }}</li>
-                                    </ul>
-                                {% else %}
-                                    <span class="small text-muted">{{ 'нет изображения'|trans|raw }}</span>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </li>
-                </ul>
-
                 <div class="font-weight-bold mt-3 mb-2">{{ 'Краткое описание'|trans|raw }}:</div>
                 <ul class="nav nav-tabs" id="short_descriptionTab" role="tablist">
                     <li class="nav-item">
@@ -110,16 +85,16 @@
                         {% endif %}
                     </div>
                     <div class="tab-pane fade" id="uk-short_description" role="tabpanel" aria-labelledby="uk-short_description-tab">
-                        {% if translation['uk']['short_description'] is defined and translation['uk']['short_description'] %}
+                        {% set trns = translate(payment, 'uk', 'short_description') %}
+                        {% if trns %}
                             {% autoescape %}
-                                {{ translation['uk']['short_description']|raw }}
+                                {{ trns|raw }}
                             {% endautoescape %}
                         {% else %}
                             <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
                         {% endif %}
                     </div>
                 </div>
-
                 <div class="font-weight-bold mt-3 mb-2">{{ 'Описание'|trans|raw }}:</div>
                 <ul class="nav nav-tabs" id="descriptionTab" role="tablist">
                     <li class="nav-item">
@@ -140,9 +115,10 @@
                         {% endif %}
                     </div>
                     <div class="tab-pane fade" id="uk-description" role="tabpanel" aria-labelledby="uk-description-tab">
-                        {% if translation['uk']['description'] is defined and translation['uk']['description'] %}
+                        {% set trns = translate(payment, 'uk', 'description') %}
+                        {% if trns %}
                             {% autoescape %}
-                                {{ translation['uk']['description']|raw }}
+                                {{ trns|raw }}
                             {% endautoescape %}
                         {% else %}
                             <span class="small text-muted">{{ 'нет'|trans|raw }}</span>

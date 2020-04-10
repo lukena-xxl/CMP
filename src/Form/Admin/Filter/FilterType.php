@@ -4,7 +4,6 @@ namespace App\Form\Admin\Filter;
 
 use App\Entity\Category;
 use App\Entity\Filter;
-use App\Repository\CategoryRepository;
 use App\Services\Common\TranslationRecipient;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -12,27 +11,26 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class FilterType extends AbstractType
 {
     protected $translationRecipient;
-    protected $categoryRepository;
 
-    public function __construct(CategoryRepository $categoryRepository, TranslationRecipient $translationRecipient)
+    public function __construct(TranslationRecipient $translationRecipient)
     {
         $this->translationRecipient = $translationRecipient;
-        $this->categoryRepository = $categoryRepository;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('filter_categories', EntityType::class, [
+            ->add('categories', EntityType::class, [
                 'required' => false,
                 'label' => 'Категории',
                 'class' => Category::class,
-                //'choices' => $this->categoryRepository->getCategoryTree(),
                 'choice_label' => 'name',
                 'multiple' => true,
             ])
@@ -41,14 +39,6 @@ class FilterType extends AbstractType
                 'attr' => [
                     'placeholder' => 'Введите название',
                 ],
-            ])
-            ->add('translation_name', TextType::class, [
-                'label' => 'Название',
-                'attr' => [
-                    'placeholder' => 'Введите название',
-                ],
-                'mapped' => false,
-                'data' => $this->translationRecipient->getTranslation(isset($options['data']) ? $options['data'] : false, 'uk', 'name'),
             ])
             ->add('is_visible', CheckboxType::class, [
                 'required' => false,
@@ -62,8 +52,28 @@ class FilterType extends AbstractType
                 'attr' => [
                     'class' => 'btn-primary',
                 ],
-            ])
-        ;
+            ]);
+
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($builder) {
+            /** @var Filter $data */
+            $data = $event->getData();
+            $form = $event->getForm();
+
+            $opt = [
+                'required' => false,
+                'label' => 'Название',
+                'attr' => [
+                    'placeholder' => 'Введите название',
+                ],
+                'mapped' => false,
+            ];
+
+            if ($data) {
+                $opt['data'] = $this->translationRecipient->getTranslation($data, 'uk', 'name');
+            }
+
+            $form->add('translation_name', TextType::class, $opt);
+        });
     }
 
     public function configureOptions(OptionsResolver $resolver)

@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Repository\UserRepository;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -11,6 +12,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * Class UserRoleController
  * @package App\Controller\Admin
+ * @IsGranted("ROLE_SUPERADMIN", message="Access denied for you!")
  * @Route("/admin/user/role", name="admin_user_role")
  */
 class UserRoleController extends AbstractController

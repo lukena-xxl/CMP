@@ -28,7 +28,7 @@ class CategoryController extends AbstractController
     public function categorySingle()
     {
 
-        $primary = true;
+        $primary = false;
 
         if ($primary) {
             return $this->render('frontend/category/primary.html.twig', [

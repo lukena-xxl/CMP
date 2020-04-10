@@ -5,7 +5,6 @@
 {% block body %}
     <div class="row">
         <div class="col-sm-5">
-            <h3 class="admin-h3">{{ 'Данные'|trans|raw }}</h3>
             <div class="mb-3">
                 <ul class="list-group">
                     <li class="list-group-item rounded-0 text-white">
@@ -23,7 +22,6 @@
                     </li>
                 </ul>
             </div>
-            <h3 class="admin-h3">{{ 'Привязки'|trans|raw }}</h3>
             <div class="mb-3">
                 <ul class="list-group">
                      <li class="list-group-item rounded-0">
@@ -31,19 +29,18 @@
                          <div class="my-1">
                              {% if category.articles.count > 0 %}
                                  {% for article in category.articles %}
-                                     <div><a href="#{#{{ path('admin_article_single', {'id': article.id}) }}#}">{{ article.name }}</a></div>
+                                     <div><a href="{{ path('admin_article_single', {'id': article.id}) }}">{{ article.name }}</a></div>
                                  {% endfor %}
                              {% else %}
                                  <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
                              {% endif %}
-                             <div class="mt-2"><a href="#{#{{ path('admin_article_add') }}#}" class="text-success"><i class="fas fa-plus-circle mr-2"></i>{{ 'Добавить'|trans|raw }}</a></div>
+                             <div class="mt-2"><a href="{{ path('admin_article_add') }}" class="text-success"><i class="fas fa-plus-circle mr-2"></i>{{ 'Добавить'|trans|raw }}</a></div>
                          </div>
                      </li>
                 </ul>
             </div>
         </div>
         <div class="col-sm-7">
-            <h3 class="admin-h3">{{ 'Информация'|trans|raw }}</h3>
             <div class="mb-3 custom-project">
                 <ul class="nav nav-tabs" id="nameTab" role="tablist">
                     <li class="nav-item">
@@ -59,67 +56,44 @@
                     </div>
                     <div class="tab-pane fade" id="uk-name" role="tabpanel" aria-labelledby="uk-name-tab">
                         <div class="h2 px-2">
-                            {% if translation['uk']['name'] is defined and translation['uk']['name'] %}
-                                {{ translation['uk']['name'] }}
+                            {% set trns = translate(category, 'uk', 'name') %}
+                            {% if trns %}
+                                {{ trns }}
                             {% else %}
                                 <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
                             {% endif %}
                         </div>
                     </div>
                 </div>
-                <ul class="list-group">
-                    <li class="list-group-item rounded-0">
-                        <strong>{{ 'Изображение'|trans|raw }}:</strong>
-                        <div class="row mt-2">
-                            <div class="col-sm-6">
-                                <img src="{% if category.image and fileExists(asset('uploads/article/category/'~category.image)) %}{% set image = asset('uploads/article/category/'~category.image) %}{{ image }}{% else %}{{ asset('build/images/common/no-image.png') }}{% endif %}" class="img-fluid" alt="">
-                            </div>
-                            <div class="col-sm-6">
-                                {% if image  is defined %}
-                                    <ul class="list-group">
-                                        <li class="list-group-item rounded-0"><strong>{{ 'Имя'|trans|raw }}:</strong> <a href="{{ image }}" target="_blank">{{ category.image }}</a></li>
-                                        <li class="list-group-item rounded-0"><strong>{{ 'Объем'|trans|raw }}:</strong> {{ image|img_length }}</li>
-                                        <li class="list-group-item rounded-0"><strong>{{ 'Размер'|trans|raw }}:</strong> {{ image|img_width }}&times;{{ image|img_height }}px</li>
-                                        <li class="list-group-item rounded-0"><strong>{{ 'Формат'|trans|raw }}:</strong> {{ image|img_format }}</li>
-                                        <li class="list-group-item rounded-0"><strong>{{ 'Тип'|trans|raw }}:</strong> {{ image|img_type }}</li>
-                                    </ul>
-                                {% else %}
-                                    <span class="small text-muted">{{ 'нет изображения'|trans|raw }}</span>
-                                {% endif %}
-                            </div>
-                        </div>
+                <ul class="nav nav-tabs" id="descriptionTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="ru-description-tab" data-toggle="tab" href="#ru-description" role="tab" aria-controls="ru-description" aria-selected="true">RU</a>
                     </li>
-                    <li class="list-group-item rounded-0">
-                        <ul class="nav nav-tabs" id="descriptionTab" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link active" id="ru-description-tab" data-toggle="tab" href="#ru-description" role="tab" aria-controls="ru-description" aria-selected="true">RU</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" id="uk-description-tab" data-toggle="tab" href="#uk-description" role="tab" aria-controls="uk-description" aria-selected="false">UK</a>
-                            </li>
-                        </ul>
-                        <div class="tab-content editor-content p-2 bg-light border border-top-0 mb-3" id="descriptionTabContent">
-                            <div class="tab-pane fade show active" id="ru-description" role="tabpanel" aria-labelledby="ru-description-tab">
-                                {% if category.description %}
-                                    {% autoescape %}
-                                        {{ category.description|raw }}
-                                    {% endautoescape %}
-                                {% else %}
-                                    <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
-                                {% endif %}
-                            </div>
-                            <div class="tab-pane fade" id="uk-description" role="tabpanel" aria-labelledby="uk-description-tab">
-                                {% if translation['uk']['description'] is defined and translation['uk']['description'] %}
-                                    {% autoescape %}
-                                        {{ translation['uk']['description']|raw }}
-                                    {% endautoescape %}
-                                {% else %}
-                                    <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
-                                {% endif %}
-                            </div>
-                        </div>
+                    <li class="nav-item">
+                        <a class="nav-link" id="uk-description-tab" data-toggle="tab" href="#uk-description" role="tab" aria-controls="uk-description" aria-selected="false">UK</a>
                     </li>
                 </ul>
+                <div class="tab-content editor-content p-2 bg-light border border-top-0 mb-3" id="descriptionTabContent">
+                    <div class="tab-pane fade show active" id="ru-description" role="tabpanel" aria-labelledby="ru-description-tab">
+                        {% if category.description %}
+                            {% autoescape %}
+                                {{ category.description|raw }}
+                            {% endautoescape %}
+                        {% else %}
+                            <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="tab-pane fade" id="uk-description" role="tabpanel" aria-labelledby="uk-description-tab">
+                        {% set trns = translate(category, 'uk', 'description') %}
+                        {% if trns %}
+                            {% autoescape %}
+                                {{ trns|raw }}
+                            {% endautoescape %}
+                        {% else %}
+                            <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
         </div>
     </div>

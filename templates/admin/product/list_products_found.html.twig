@@ -1,0 +1,113 @@
+{% if products %}
+    <ul class="list-group">
+        {% for product in products %}
+            <li class="list-group-item rounded-0">
+                <div class="h4 mb-0 font-weight-bold{% if product.isVisible != 1 %} text-disabled{% endif %}">{{ product.name }}</div>
+                <div class="small" style="color:{{ product.availability.color }}">{{ product.availability.name }}</div>
+
+                {% if product.items.count > 0 %}
+                    {% set total = 0 %}
+                    {% set totalNoDiscount = 0 %}
+                    <div class="row">
+                        <div class="col-12 order-2">
+                            <ul class="list-group">
+                            {% for item in product.items %}
+                                <li class="list-group-item rounded-0 check-item">
+                                    <div class="row">
+                                        <div class="col-lg-auto img-check">
+                                            {% if item.isVisible not in [1]  %}
+                                                <div class="small text-white px-1 bg-danger text-center mb-1">{{ 'Отключено'|trans|raw }}</div>
+                                            {% endif %}
+                                            <img src="{% if item.img and fileExists(asset(image_item_dir ~ '/' ~ item.img)) %}{% set img = asset(image_item_dir ~ '/' ~ item.img) %}{% else %}{% set img = asset('build/images/common/no-image-150.png') %}{% endif %}{{ img }}" class="img-fluid checked-img{% if item.isChecked == 1 %} checked{% endif %}" alt="">
+                                        </div>
+                                        <div class="col-lg-auto">
+                                            <div class="font-weight-bold">{{ item.name }}</div>
+                                            <div class="small">
+                                                {% set cost = item.price %}
+                                                <div>{{ 'Цена'|trans|raw }}: <strong>{{ item.price }}</strong></div>
+                                                {% if item.coefficient %}
+                                                    {% set cost = cost * item.coefficient.ratio %}
+                                                {% endif %}
+
+                                                {% set costNoDiscount = cost * item.displayedQuantity %}
+
+                                                {% if item.discountPercentage %}
+                                                    {% if (item.discountStartDate is null or item.discountStartDate.diff(date()).format('%R') == '+') and (item.discountEndDate is null or item.discountEndDate.diff(date()).format('%R') == '-') %}
+                                                        <div class="text-muted">
+                                                            {{ 'Скидка'|trans|raw }}: {{ item.discountPercentage }}%
+                                                            {% if (item.discountStartDate is not null) %}
+                                                                {{ 'с'|trans|raw }} {{ item.discountStartDate.format("d.m.Y H:i") }}
+                                                            {% endif %}
+                                                            {% if (item.discountEndDate is not null) %}
+                                                                {{ 'по'|trans|raw }} {{ item.discountEndDate.format("d.m.Y H:i") }}
+                                                            {% endif %}
+                                                        </div>
+                                                        {% set cost = cost * (1 - item.discountPercentage / 100) %}
+                                                        <div>{{ 'Цена со скидкой'|trans|raw }}: <strong>{{ cost|round }}</strong></div>
+                                                    {% endif %}
+                                                {% endif %}
+
+                                                <div class="text-muted">
+                                                    {{ 'Количество по умолчанию'|trans|raw }}: <strong>{{ item.displayedQuantity }}</strong>
+                                                    <span>(min: {{ item.minOrderQuantity }}{% if item.maxOrderQuantity %}, max: {{ item.maxOrderQuantity }}{% endif %})</span>
+                                                </div>
+                                                {% set costOneItem = cost %}
+                                                {% set cost = cost * item.displayedQuantity %}
+                                                <div class="h5">{{ 'Итого'|trans|raw }}:{% if costNoDiscount != cost %} <s class="small text-muted">{{ costNoDiscount|round }}</s>{% endif %} <strong>{{ cost|round }}</strong></div>
+
+                                                {% if item.isChecked == 1 and item.isVisible == 1 %}
+                                                    {% set total = total + cost %}
+                                                    {% set totalNoDiscount = totalNoDiscount + costNoDiscount %}
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="d-none path-form">
+                                        <div class="row mb-2 srt">
+                                            <div class="col-auto">
+                                                <div class="position-relative">
+                                                    <img src="{{ img }}" class="img-fluid" alt="">
+                                                    <input type="hidden" name="order[products][__name__][image]" value="{{ item.img }}">
+                                                    <div class="position-absolute bg-light-opacity px-2 py-1" style="top:10px;left:10px">
+                                                        <a href="javascript:void(0);" class="delete-element text-decoration-none"><i class="fad fa-trash-alt text-danger h4 mb-0"></i></a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <div class="mb-2 text-uppercase">{{ product.name }} ({{ item.name }})</div>
+                                                <input type="hidden" name="order[products][__name__][name]" value="{{ product.name }} ({{ item.name }})">
+                                                <div class="mb-2 max-width-100">
+                                                    <input type="number" class="form-control product-quantity" name="order[products][__name__][quantity]" min="1" placeholder="1" value="1">
+                                                </div>
+                                                <div class="mb-2">
+                                                    <strong>{{ costOneItem|round }}</strong>
+                                                    <input type="hidden" name="order[products][__name__][price]" class="product-price" value="{{ costOneItem|round }}">
+                                                </div>
+                                                <input type="hidden" name="order[products][__name__][product]" value="{{ item.id }}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                            </ul>
+                        </div>
+                        <div class="col-12 order-1">
+                            <div class="h4">
+                                {% if totalNoDiscount != total %}
+                                    <span class="text-danger">(- {{ (100 - (total * 100 / totalNoDiscount))|round(1) }}%)</span>
+                                    <s class="small text-muted">{{ totalNoDiscount|round }}</s>
+                                {% endif %}
+                                <strong>{{ total|round }}</strong> {{ product.currency.abbr }}
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <span class="text-danger">{{ 'нет составляющих'|trans|raw }}</span>
+                {% endif %}
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p class="mt-3">{{ 'Нет продуктов'|trans|raw }}!</p>
+{% endif %}

@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20200302093158 extends AbstractMigration
+final class Version20200409083753 extends AbstractMigration
 {
     public function getDescription() : string
     {
@@ -22,8 +22,9 @@ final class Version20200302093158 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql('CREATE TABLE product_image (id INT AUTO_INCREMENT NOT NULL, name VARCHAR(100) NOT NULL, title VARCHAR(150) DEFAULT NULL, alt VARCHAR(150) DEFAULT NULL, is_main TINYINT(1) DEFAULT \'0\' NOT NULL, is_visible TINYINT(1) DEFAULT \'0\' NOT NULL, position INT NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
-        $this->addSql('ALTER TABLE availability ADD short_description VARCHAR(100) DEFAULT NULL');
+        $this->addSql('ALTER TABLE order_product DROP FOREIGN KEY FK_2530ADE6CA661164');
+        $this->addSql('ALTER TABLE order_product CHANGE in_order_id in_order_id INT DEFAULT NULL');
+        $this->addSql('ALTER TABLE order_product ADD CONSTRAINT FK_2530ADE6CA661164 FOREIGN KEY (in_order_id) REFERENCES orders (id) ON DELETE CASCADE');
     }
 
     public function down(Schema $schema) : void
@@ -31,7 +32,8 @@ final class Version20200302093158 extends AbstractMigration
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql('DROP TABLE product_image');
-        $this->addSql('ALTER TABLE availability DROP short_description');
+        $this->addSql('ALTER TABLE order_product DROP FOREIGN KEY FK_2530ADE6CA661164');
+        $this->addSql('ALTER TABLE order_product CHANGE in_order_id in_order_id INT NOT NULL');
+        $this->addSql('ALTER TABLE order_product ADD CONSTRAINT FK_2530ADE6CA661164 FOREIGN KEY (in_order_id) REFERENCES orders (id)');
     }
 }

@@ -1,0 +1,109 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-sm-5">
+            <div class="mb-3">
+                <ul class="list-group">
+                    <li class="list-group-item rounded-0"><strong>ID:</strong> {{ order.id }}</li>
+                    <li class="list-group-item rounded-0">
+                        <strong>{{ 'Дата создания'|trans|raw }}:</strong>
+                        <span class="text-info">
+                        <span class="text-muted">{{ 'более'|trans|raw }}</span>
+                        {% set difference = order.created.diff(date()) %}
+                        <strong>{% if difference.format('%Y') > 0 %}
+                                {{ difference.format('%Y') }} {{ 'лет'|trans|raw }}
+                            {% elseif difference.format('%m') > 0 %}
+                                {{ difference.format('%m') }} {{ 'месяцев'|trans|raw }}
+                            {% elseif difference.format('%a') > 0 %}
+                                {{ difference.format('%a') }} {{ 'дней'|trans|raw }}
+                            {% elseif difference.format('%h') > 0 %}
+                                {{ difference.format('%h') }} {{ 'часов'|trans|raw }}
+                            {% elseif difference.format('%i') > 0 %}
+                                {{ difference.format('%i') }} {{ 'минут'|trans|raw }}
+                            {% elseif difference.format('%s') > 0 %}
+                                {{ difference.format('%s') }} {{ 'секунд'|trans|raw }}
+                            {% endif %} {{ 'назад'|trans|raw }}</strong>
+                        <span class="text-muted"> / {{ order.created.format("d.m.Y H:i") }}</span>
+                    </span>
+                    </li>
+                    <li class="list-group-item rounded-0"><strong>{{ 'Пользователь'|trans|raw }}:</strong> {{ order.user.login }} ({{ order.user.email }})</li>
+                    <li class="list-group-item rounded-0"><strong>{{ 'Имя'|trans|raw }}:</strong> {{ order.fullName }}</li>
+                    <li class="list-group-item rounded-0"><strong>{{ 'Телефон'|trans|raw }}:</strong> {{ order.phone }}</li>
+                    <li class="list-group-item rounded-0">
+                        <strong>{{ 'Способ доставки'|trans|raw }}:</strong>
+                        {% if order.deliveryMethod %}
+                            {{ order.deliveryMethod.name }}
+                        {% else %}
+                            <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
+                        {% endif %}
+                    </li>
+                    <li class="list-group-item rounded-0">
+                        <strong>{{ 'Почтовый индекс'|trans|raw }}:</strong>
+                        {% if order.postcode %}
+                            {{ order.postcode }}
+                        {% else %}
+                            <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
+                        {% endif %}
+                    </li>
+                    <li class="list-group-item rounded-0"><strong>{{ 'Область'|trans|raw }}:</strong> {{ order.region }}</li>
+                    <li class="list-group-item rounded-0"><strong>{{ 'Город'|trans|raw }}:</strong> {{ order.city }}</li>
+                    <li class="list-group-item rounded-0"><strong>{{ 'Адрес'|trans|raw }}:</strong> {{ order.address }}</li>
+                    <li class="list-group-item rounded-0">
+                        <strong>{{ 'Способ оплаты'|trans|raw }}:</strong>
+                        {% if order.paymentMethod %}
+                            {{ order.paymentMethod.name }}
+                        {% else %}
+                            <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
+                        {% endif %}
+                    </li>
+                    <li class="list-group-item rounded-0">
+                        <a class="btn btn-light mb-1 text-primary" href="{{ path('admin_order_edit', {'id': order.id}) }}" role="button"><i class="fas fa-edit mr-2"></i>{{ 'Редактировать'|trans|raw }}</a>
+                        <a class="btn btn-light mb-1 text-danger" href="{{ path('admin_order_delete', {'id': order.id}) }}" role="button"><i class="fas fa-trash-alt mr-2"></i>{{ 'Удалить'|trans|raw }}</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-sm-7">
+            {% set total = 0 %}
+            <div class="row">
+                <div class="col-12 order-2">
+                    <ul class="list-group">
+                        <li class="list-group-item rounded-0">
+                            <div class="my-1">
+                                {% if order.products.count > 0 %}
+                                    {% for product in order.products %}
+                                        <div class="row mb-2">
+                                            <div class="col-auto">
+                                                <img src="{% if product.image and fileExists(asset(image_order_dir ~ '/' ~ product.image)) %}{% set img = asset(image_order_dir ~ '/' ~ product.image) %}{% else %}{% set img = asset('build/images/common/no-image-150.png') %}{% endif %}{{ img }}" class="img-fluid" alt="">
+                                            </div>
+                                            <div class="col">
+                                                <div class="mb-2 text-uppercase"><a href="#">{{ product.name }}</a></div>
+                                                <div class="text-muted">
+                                                    <strong>{{ product.price * product.quantity }}</strong> {{ 'за'|trans|raw }} <strong>{{ product.quantity }} {{ 'шт'|trans|raw }}</strong>
+                                                    {% if product.quantity > 1 %}
+                                                        <span class="text-disabled">({{ product.price }}/{{ 'шт'|trans|raw }})</span>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% set total = total + (product.price * product.quantity) %}
+                                    {% endfor %}
+                                {% else %}
+                                    <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
+                                {% endif %}
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-12 order-1">
+                    <div class="h4 p-3 mb-0 bg-light border-top">
+                        {{ 'Стоимость заказа'|trans|raw }}: <strong>{{ total }}</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

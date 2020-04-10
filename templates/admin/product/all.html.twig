@@ -20,16 +20,16 @@
             {% for product in products %}
                 <tr>
                     <td>{{ product.id }}</td>
-                    <td><img src="{% if product.image_name and product.image_is_visible %}{{ asset('uploads/product/150/'~product.image_name) }}{% else %}{{ asset('build/images/common/no-image-150.png') }}{% endif %}" class="img-fluid"></td>
+                    <td><img src="{% if product.image_name and product.image_is_visible and fileExists(asset(image_product_subdir_small ~ '/' ~ product.image_name)) %}{{ asset(image_product_subdir_small ~ '/' ~ product.image_name) }}{% else %}{{ asset('build/images/common/no-image-150.png') }}{% endif %}" class="img-fluid"></td>
                     <td class="min-width-300">
                         <a href="{{ path('admin_product_single', {'id': product.id}) }}" class="text-decoration-none{% if product.is_visible != 1 %} text-disabled{% endif %}">{{ product.name }}</a>
                         <div class="small font-weight-bold" style="color:{{ product.availability_color }}">{{ product.availability_name }}</div>
-                        <div class="small">{{ 'Добавил'|trans|raw }}: {{ product.user_login }}</div>
+                        <div class="small">{{ 'Добавил'|trans|raw }}: <strong>{{ product.user_login }}</strong></div>
                     </td>
                     <td class="min-width-150"><strong>{{ product.cost|round }}</strong> {{ product.currency_name }}</td>
                     <td class="min-width-150">
                         {% if product.category_id %}
-                            <a href="{{ path('admin_category_single', {'id': product.category_id}) }}">{{ product.category_name }}</a>
+                            {{ product.category_name }}
                         {% else %}
                             <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
                         {% endif %}

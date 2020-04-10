@@ -5,7 +5,6 @@
 {% block body %}
     <div class="row">
         <div class="col-sm-6">
-            <h3 class="admin-h3">{{ 'Информация'|trans|raw }}</h3>
             <div class="mb-2 font-weight-bold">{{ 'Название'|trans|raw }}:</div>
             <div class="mb-3 custom-project">
                 <ul class="nav nav-tabs" id="nameTab" role="tablist">
@@ -22,8 +21,9 @@
                     </div>
                     <div class="tab-pane fade" id="uk-name" role="tabpanel" aria-labelledby="uk-name-tab">
                         <div class="h2 px-2">
-                            {% if translation['uk']['name'] is defined and translation['uk']['name'] %}
-                                {{ translation['uk']['name'] }}
+                            {% set trns = translate(filter, 'uk', 'name') %}
+                            {% if trns %}
+                                {{ trns }}
                             {% else %}
                                 <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
                             {% endif %}
@@ -45,14 +45,43 @@
                     <a class="btn btn-light mb-1 text-danger" href="{{ path('admin_filter_delete', {'id': filter.id}) }}" role="button"><i class="fas fa-trash-alt mr-2"></i>{{ 'Удалить'|trans|raw }}</a>
                 </li>
             </ul>
-        </div>
-        <div class="col-sm-6">
-            <h3 class="admin-h3">{{ 'Категории'|trans|raw }}</h3>
+
+            <h3 class="admin-h3 mt-3">{{ 'Категории'|trans|raw }}</h3>
             <div class="my-1">
-                {% if filter.filterCategories.count > 0 %}
-                    {% for category in filter.filterCategories %}
+                {% if filter.categories %}
+                    {% for category in filter.categories %}
                         <div class="mb-1"><a href="{{ path('admin_category_single', {'id': category.id}) }}">{{ category.name }}</a></div>
                     {% endfor %}
+                {% else %}
+                    <span class="text-muted">{{ 'нет'|trans|raw }}</span>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="mb-2 font-weight-bold">{{ 'Элементы'|trans|raw }}:</div>
+            <div class="mb-3">
+                <a href="{{ path('admin_filter_element_add', {'id': filter.id}) }}" class="btn btn-primary" role="button"><i class="fas fa-plus-circle mr-2"></i>{{ 'Добавить'|trans|raw }}</a>
+            </div>
+            <div class="my-1">
+                {% if filter.elements.count > 0 %}
+                <ul class="list-group">
+                    {% for element in filter.elements %}
+                        <li class="list-group-item rounded-0">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <div class="text-{% if element.isVisible %}dark{% else %}disabled{% endif %}">
+                                        {{ element.name }}
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <a class="btn btn-light" href="{{ path('admin_filter_element_sort', {'id': element.id}) }}" role="button"><i class="fas fa-exchange-alt fa-rotate-90"></i></a>
+                                    <a class="btn btn-light mb-1 text-primary" href="{{ path('admin_filter_element_edit', {'id': element.id}) }}" role="button"><i class="fas fa-edit"></i></a>
+                                    <a class="btn btn-light mb-1 text-danger" href="{{ path('admin_filter_element_delete', {'id': element.id}) }}" role="button"><i class="fas fa-trash-alt"></i></a>
+                                </div>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
                 {% else %}
                     <span class="text-muted">{{ 'нет'|trans|raw }}</span>
                 {% endif %}

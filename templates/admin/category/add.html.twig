@@ -41,7 +41,42 @@
                     {{ form_row(form_add.translation_description) }}
                 </div>
             </div>
-            {{ form_row(form_add.image) }}
+
+            <div class="text-dark font-weight-bold h5">{{ 'Изображение'|trans|raw }}</div>
+            <div class="position-relative mb-3 img-block" style="max-width: 350px;">
+                {% set noImg = asset('build/images/common/no-image.png') %}
+                {% if form_add.image.vars.value %}
+                    {% set src = asset(image_category_dir ~ '/' ~ form_add.image.vars.value) %}
+                    {% set val = form_add.image.vars.value %}
+                {% else %}
+                    {% set src = noImg %}
+                    {% set val = '' %}
+                {% endif %}
+                <div class="d-none">
+                    {{ form_widget(form_add.image, {'value' : val}) }}
+                </div>
+                <img src="{{ src }}" id="category_img_tag" class="img-tag img-fluid m-1" data-no-image="{{ noImg }}" data-old-image="{{ src }}" data-name-image="{{ form_add.image.vars.value }}">
+                <div class="position-absolute bg-light-opacity px-2 py-1" style="top:10px;left:10px">
+                    <div class="dropdown d-inline-block">
+                        <a class="no-caret dropdown-toggle h4 mb-0 pl-1 text-decoration-none text-dark" href="#" id="dropdownImageAdd" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="far fa-image"></i>
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="dropdownImageAdd">
+                            <a href="javascript:void(0);"
+                               class="dropdown-item add-image small"
+                               data-ratio="{{ 800/600 }}"
+                               data-min-length="150/113"
+                               data-max-size="{{ 2*1024*1024 }}"
+                               data-output-length="800/600"
+                               data-idn="category_img_tag"
+                               data-title="{{ 'Добавление изображения'|trans|raw }}">{{ 'Изменить'|trans|raw }}</a>
+                            <a class="dropdown-item small reset-img" href="javascript:void(0);">{{ 'Сбросить'|trans|raw }}</a>
+                            <a class="dropdown-item small clear-img" href="javascript:void(0);">{{ 'Нет изображения'|trans|raw }}</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             {{ form_row(form_add.is_visible) }}
             <div class="d-inline-block">{{ form_row(form_add.submitAndAdd) }}</div>
             <div class="d-inline-block">{{ form_row(form_add.submit) }}</div>
@@ -52,4 +87,6 @@
 {% block javascripts %}
     {{ parent() }}
     {{ encore_entry_script_tags('ckeditor') }}
+    {{ encore_entry_script_tags('single_image_add') }}
+    {{ encore_entry_script_tags('cropping_image') }}
 {% endblock %}

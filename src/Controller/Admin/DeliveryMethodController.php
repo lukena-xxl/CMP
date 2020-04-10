@@ -6,9 +6,9 @@ use App\Entity\DeliveryMethod;
 use App\Form\Admin\Common\SortableType;
 use App\Form\Admin\DeliveryMethod\DeliveryMethodType;
 use App\Repository\DeliveryMethodRepository;
-use App\Services\Common\TranslationRecipient;
 use Doctrine\ORM\EntityManagerInterface;
 use Gedmo\Translatable\Entity\Translation;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,6 +19,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * Class DeliveryMethodController
  * @package App\Controller\Admin
+ * @IsGranted("ROLE_SUPERADMIN", message="Access denied for you!")
  * @Route("/admin/delivery", name="admin_delivery")
  */
 class DeliveryMethodController extends AbstractController
@@ -26,37 +27,26 @@ class DeliveryMethodController extends AbstractController
     /**
      * @Route("", name="_all")
      * @param DeliveryMethodRepository $deliveryMethodRepository
-     * @param TranslationRecipient $translationRecipient
      * @return Response
      */
-    public function deliveryAll(DeliveryMethodRepository $deliveryMethodRepository, TranslationRecipient $translationRecipient)
+    public function deliveryAll(DeliveryMethodRepository $deliveryMethodRepository)
     {
-        $deliveries = [];
-        $deliveriesAll = $deliveryMethodRepository->findBy([], ['position' => 'ASC']);
-        foreach ($deliveriesAll as $delivery) {
-            $deliveries[] = $translationRecipient->getTranslatedEntity($delivery);
-        }
-
         return $this->render('admin/delivery_method/all.html.twig', [
             'controller_name' => 'DeliveryMethodController',
-            'deliveries' => $deliveries,
+            'deliveries' => $deliveryMethodRepository->findBy([], ['position' => 'ASC']),
         ]);
     }
 
     /**
      * @Route("/{id}", name="_single", requirements={"id"="\d+"})
      * @param DeliveryMethod $deliveryMethod
-     * @param TranslationRecipient $translationRecipient
      * @return Response
      */
-    public function deliverySingle(DeliveryMethod $deliveryMethod, TranslationRecipient $translationRecipient)
+    public function deliverySingle(DeliveryMethod $deliveryMethod)
     {
-        $translation = $translationRecipient->getTranslation($deliveryMethod);
-
         return $this->render('admin/delivery_method/single.html.twig', [
             'controller_name' => 'DeliveryMethodController',
             'delivery' => $deliveryMethod,
-            'translation' => $translation,
         ]);
     }
 
@@ -180,10 +170,9 @@ class DeliveryMethodController extends AbstractController
      * @param DeliveryMethod $delivery
      * @param EntityManagerInterface $entityManager
      * @param TranslatorInterface $translator
-     * @param TranslationRecipient $translationRecipient
      * @return Response
      */
-    public function deliverySort(Request $request, DeliveryMethod $delivery, EntityManagerInterface $entityManager, TranslatorInterface $translator, TranslationRecipient $translationRecipient)
+    public function deliverySort(Request $request, DeliveryMethod $delivery, EntityManagerInterface $entityManager, TranslatorInterface $translator)
     {
         $form = $this->createForm(SortableType::class, null, [
             'action' => $this->generateUrl('admin_delivery_sort', ['id' => $delivery->getId()]),
@@ -214,13 +203,6 @@ class DeliveryMethodController extends AbstractController
         }
 
         $deliveries = $entityManager->getRepository(DeliveryMethod::class)->findBy([], ['position' => 'ASC']);
-
-        // КОРЯВО (нужно исправить)
-        if ($deliveries) {
-            foreach ($deliveries as $del) {
-                $translationRecipient->getTranslatedEntity($del);
-            }
-        }
 
         return $this->render('admin/delivery_method/sort.html.twig', [
             'controller_name' => 'DeliveryMethodController',

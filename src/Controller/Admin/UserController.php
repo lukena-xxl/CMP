@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -24,6 +25,7 @@ class UserController extends AbstractController
 {
     /**
      * @Route("", name="_all")
+     * @IsGranted("ROLE_SUPERADMIN", message="Access denied for you!")
      * @param UserRepository $userRepository
      * @return Response
      */
@@ -40,23 +42,31 @@ class UserController extends AbstractController
     /**
      * @Route("/{id}", name="_single", requirements={"id"="\d+"})
      * @param User $user
+     * @param TranslatorInterface $translator
      * @return Response
      */
-    public function userSingle(User $user)
+    public function userSingle(User $user, TranslatorInterface $translator)
     {
-        return $this->render('admin/user/single.html.twig', [
-            'controller_name' => 'UserController',
-            'user' => $user,
-        ]);
+        $current_user = $this->getUser();
+
+        if ($current_user === $user || $this->isGranted('ROLE_SUPERADMIN')) {
+            return $this->render('admin/user/single.html.twig', [
+                'controller_name' => 'UserController',
+                'user' => $user,
+            ]);
+        } else {
+            throw new AccessDeniedException($translator->trans('У вас нет доступа для данной операции'));
+        }
     }
 
     /**
      * @Route("/add", name="_add")
+     * @IsGranted("ROLE_SUPERADMIN", message="Access denied for you!")
      * @param Request $request
      * @param EntityManagerInterface $entityManager
      * @param TranslatorInterface $translator
+     * @param UserPasswordEncoderInterface $encoder
      * @return Response
-     * @IsGranted("ROLE_SUPERADMIN")
      */
     public function userAdd(Request $request, EntityManagerInterface $entityManager, TranslatorInterface $translator, UserPasswordEncoderInterface $encoder)
     {
@@ -98,45 +108,50 @@ class UserController extends AbstractController
      * @param EntityManagerInterface $entityManager
      * @param TranslatorInterface $translator
      * @return Response
-     * @IsGranted("ROLE_SUPERADMIN")
      */
     public function userEdit(User $user, Request $request, EntityManagerInterface $entityManager, TranslatorInterface $translator)
     {
-        $form = $this->createForm(UserType::class, $user, [
-            'action' => $this->generateUrl('admin_user_edit', ['id' => $user->getId()]),
-            'method' => 'post',
-            'attr' => [
-                'id' => 'user_form',
-            ],
-        ])->remove('password');
+        $current_user = $this->getUser();
 
-        $form->handleRequest($request);
+        if ($current_user === $user || $this->isGranted('ROLE_SUPERADMIN')) {
+            $form = $this->createForm(UserType::class, $user, [
+                'action' => $this->generateUrl('admin_user_edit', ['id' => $user->getId()]),
+                'method' => 'post',
+                'attr' => [
+                    'id' => 'user_form',
+                ],
+            ]);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($user);
-            $entityManager->flush();
+            $form->handleRequest($request);
 
-            $message = $translator->trans('Пользователь успешно изменен');
-            $this->addFlash('success', $message);
+            if ($form->isSubmitted() && $form->isValid()) {
+                $entityManager->persist($user);
+                $entityManager->flush();
 
-            return $this->redirectToRoute('admin_user_single', ['id' => $user->getId()]);
+                $message = $translator->trans('Пользователь успешно изменен');
+                $this->addFlash('success', $message);
+
+                return $this->redirectToRoute('admin_user_single', ['id' => $user->getId()]);
+            }
+
+            return $this->render('admin/user/add.html.twig', [
+                'controller_name' => 'UserController',
+                'form_add' => $form->createView(),
+                'title' => $translator->trans('Редактирование пользователя'),
+                'no_password' => true,
+            ]);
+        } else {
+            throw new AccessDeniedException($translator->trans('У вас нет доступа для данной операции'));
         }
-
-        return $this->render('admin/user/add.html.twig', [
-            'controller_name' => 'UserController',
-            'form_add' => $form->createView(),
-            'title' => $translator->trans('Редактирование пользователя'),
-            'no_password' => true,
-        ]);
     }
 
     /**
      * @Route("/delete/{id}", name="_delete", requirements={"id"="\d+"})
+     * @IsGranted("ROLE_SUPERADMIN", message="Access denied for you!")
      * @param User $user
      * @param EntityManagerInterface $entityManager
      * @param TranslatorInterface $translator
      * @return RedirectResponse
-     * @IsGranted("ROLE_SUPERADMIN")
      */
     public function userDelete(User $user, EntityManagerInterface $entityManager, TranslatorInterface $translator)
     {

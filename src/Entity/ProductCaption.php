@@ -57,6 +57,11 @@ class ProductCaption implements Translatable
      */
     private $products;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="productCaptions")
+     */
+    private $user;
+
     public function __construct()
     {
         $this->products = new ArrayCollection();
@@ -156,6 +161,18 @@ class ProductCaption implements Translatable
             $this->products->removeElement($product);
             $product->removeCaption($this);
         }
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
 
         return $this;
     }

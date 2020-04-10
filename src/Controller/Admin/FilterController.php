@@ -3,11 +3,12 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Filter;
+use App\Form\Admin\Common\SortableType;
 use App\Form\Admin\Filter\FilterType;
 use App\Repository\FilterRepository;
-use App\Services\Common\TranslationRecipient;
 use Doctrine\ORM\EntityManagerInterface;
 use Gedmo\Translatable\Entity\Translation;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,6 +19,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * Class FilterController
  * @package App\Controller\Admin
+ * @IsGranted("ROLE_SUPERADMIN", message="Access denied for you!")
  * @Route("/admin/filter", name="admin_filter")
  */
 class FilterController extends AbstractController
@@ -25,37 +27,26 @@ class FilterController extends AbstractController
     /**
      * @Route("", name="_all")
      * @param FilterRepository $filterRepository
-     * @param TranslationRecipient $translationRecipient
      * @return Response
      */
-    public function filterAll(FilterRepository $filterRepository, TranslationRecipient $translationRecipient)
+    public function filterAll(FilterRepository $filterRepository)
     {
-        $filters = [];
-        $filtersAll = $filterRepository->findAll();
-        foreach ($filtersAll as $filter) {
-            $filters[] = $translationRecipient->getTranslatedEntity($filter);
-        }
-
         return $this->render('admin/filter/all.html.twig', [
             'controller_name' => 'FilterController',
-            'filters' => $filters,
+            'filters' => $filterRepository->findBy([], ['position' => 'ASC']),
         ]);
     }
 
     /**
      * @Route("/{id}", name="_single", requirements={"id"="\d+"})
      * @param Filter $filter
-     * @param TranslationRecipient $translationRecipient
      * @return Response
      */
-    public function filterSingle(Filter $filter, TranslationRecipient $translationRecipient)
+    public function filterSingle(Filter $filter)
     {
-        $translation = $translationRecipient->getTranslation($filter);
-
         return $this->render('admin/filter/single.html.twig', [
             'controller_name' => 'FilterController',
             'filter' => $filter,
-            'translation' => $translation,
         ]);
     }
 
@@ -159,5 +150,54 @@ class FilterController extends AbstractController
         $this->addFlash('success', $message);
 
         return $this->redirectToRoute('admin_filter_all');
+    }
+
+    /**
+     * @Route("/sort/{id}", name="_sort", requirements={"id"="\d+"})
+     * @param Request $request
+     * @param Filter $filter
+     * @param EntityManagerInterface $entityManager
+     * @param TranslatorInterface $translator
+     * @return Response
+     */
+    public function filterElementSort(Request $request, Filter $filter, EntityManagerInterface $entityManager, TranslatorInterface $translator)
+    {
+        $form = $this->createForm(SortableType::class, null, [
+            'action' => $this->generateUrl('admin_filter_sort', ['id' => $filter->getId()]),
+            'method' => 'post',
+        ]);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            if (!empty($data['sorted_data'])) {
+                $arrayId = explode(',', $data['sorted_data']);
+                foreach ($arrayId as $position=>$id) {
+                    if ($filter->getId() == $id) {
+                        $filter->setPosition($position);
+
+                        $entityManager->persist($filter);
+                        $entityManager->flush();
+
+                        break;
+                    }
+                }
+
+                $this->addFlash('success', $translator->trans('Фильтры успешно отсортированы'));
+            } else {
+                $this->addFlash('warning', $translator->trans('Ничего не изменено'));
+            }
+        }
+
+        $filters = $entityManager->getRepository(Filter::class)->findBy([], ['position' => 'ASC']);
+
+        return $this->render('admin/filter/sort.html.twig', [
+            'controller_name' => 'FilterController',
+            'filters' => $filters,
+            'current' => $filter,
+            'form_sort' => $form->createView(),
+        ]);
+
     }
 }

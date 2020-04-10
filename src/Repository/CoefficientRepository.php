@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Coefficient;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
@@ -19,32 +20,23 @@ class CoefficientRepository extends ServiceEntityRepository
         parent::__construct($registry, Coefficient::class);
     }
 
-    // /**
-    //  * @return Coefficient[] Returns an array of Coefficient objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * @var User $user
+     * @return mixed
+     */
+    public function adminCoefficientsList($user)
     {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('c.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+        $qb = $this->createQueryBuilder('c');
 
-    /*
-    public function findOneBySomeField($value): ?Coefficient
-    {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        if (!in_array('ROLE_SUPERADMIN', $user->getRoles())) {
+            $qb->join('c.user', 'u');
+            $qb->andWhere('u.login = :login')
+                ->setParameter('login', $user->getLogin());
+        }
+
+        $qb->orderBy('c.id', 'DESC');
+
+        $query = $qb->getQuery();
+        return $query->execute();
     }
-    */
 }

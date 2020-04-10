@@ -4,34 +4,41 @@ namespace App\Form\Admin\Product;
 
 use App\Entity\Availability;
 use App\Entity\Category;
-use App\Entity\Coefficient;
 use App\Entity\Currency;
 use App\Entity\DeliveryMethod;
+use App\Entity\FilterElement;
 use App\Entity\PaymentMethod;
 use App\Entity\Product;
 use App\Entity\ProductCaption;
 use App\Form\Admin\ProductImage\ProductImageType;
 use App\Form\Admin\ProductItem\ProductItemType;
+use App\Repository\AvailabilityRepository;
+use App\Repository\FilterElementRepository;
+use App\Repository\ProductCaptionRepository;
 use App\Services\Common\TranslationRecipient;
-use Gedmo\Translatable\Entity\Translation;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Security\Core\Security;
 
 class ProductType extends AbstractType
 {
     private $translationRecipient;
+    private $security;
+    private $user;
 
-    public function __construct(TranslationRecipient $translationRecipient)
+    public function __construct(TranslationRecipient $translationRecipient, Security $security)
     {
         $this->translationRecipient = $translationRecipient;
+        $this->security = $security;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -54,14 +61,6 @@ class ProductType extends AbstractType
                     'placeholder' => 'Введите название',
                 ],
             ])
-            ->add('translation_name', TextType::class, [
-                'label' => 'Название',
-                'attr' => [
-                    'placeholder' => 'Введите название',
-                ],
-                'mapped' => false,
-                'data' => $this->translationRecipient->getTranslation(isset($options['data']) ? $options['data'] : false, 'uk', 'name'),
-            ])
             ->add('description', TextareaType::class, [
                 'required' => false,
                 'label' => 'Описание',
@@ -69,16 +68,6 @@ class ProductType extends AbstractType
                     'placeholder' => 'Введите описание',
                     'class' => 'editor',
                 ],
-            ])
-            ->add('translation_description', TextareaType::class, [
-                'required' => false,
-                'label' => 'Описание',
-                'attr' => [
-                    'placeholder' => 'Введите описание',
-                    'class' => 'editor',
-                ],
-                'mapped' => false,
-                'data' => $this->translationRecipient->getTranslation(isset($options['data']) ? $options['data'] : false, 'uk', 'description'),
             ])
             ->add('isVisible', CheckboxType::class, [
                 'required' => false,
@@ -96,18 +85,6 @@ class ProductType extends AbstractType
                 'label' => 'Валюта показа',
                 'class' => Currency::class,
                 'choice_label' => 'abbr',
-            ])
-            ->add('availability', EntityType::class, [
-                'label' => 'Доступность',
-                'class' => Availability::class,
-                'choice_label' => 'name',
-            ])
-            ->add('captions', EntityType::class, [
-                'required' => false,
-                'label' => 'Подписи',
-                'class' => ProductCaption::class,
-                'choice_label' => 'name',
-                'multiple' => true,
             ])
             ->add('delivery', EntityType::class, [
                 'required' => false,
@@ -139,6 +116,23 @@ class ProductType extends AbstractType
                 'allow_add' => true,
                 'allow_delete' => true,
             ])
+            ->add('filterElements', EntityType::class, [
+                'required' => false,
+                'label' => 'Фильтры',
+                'class' => FilterElement::class,
+                'query_builder' => function (FilterElementRepository $er) {
+                    return $er->createQueryBuilder('fe')
+                        ->orderBy('fe.position', 'ASC');
+                },
+                'choice_label' => 'name',
+                'group_by' => function (FilterElement $element) {
+                    return $element->getFilter()->getName();
+                },
+                'attr' => [
+                    'size' => '15',
+                ],
+                'multiple' => true,
+            ])
             ->add('submit', SubmitType::class, [
                 'label' => 'Сохранить',
                 'attr' => [
@@ -150,8 +144,75 @@ class ProductType extends AbstractType
                 'attr' => [
                     'class' => 'btn-secondary',
                 ],
+            ]);
+
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($builder) {
+            /** @var Product $data */
+            $data = $event->getData();
+            $form = $event->getForm();
+
+            $opt = [
+                'required' => false,
+                'label' => 'Название',
+                'attr' => [
+                    'placeholder' => 'Введите название',
+                ],
+                'mapped' => false,
+            ];
+
+            if ($data) {
+                $opt['data'] = $this->translationRecipient->getTranslation($data, 'uk', 'name');
+            }
+
+            $form->add('translation_name', TextType::class, $opt);
+
+            $opt = [
+                'required' => false,
+                'label' => 'Описание',
+                'attr' => [
+                    'placeholder' => 'Введите описание',
+                    'class' => 'editor',
+                ],
+                'mapped' => false,
+            ];
+
+            if ($data) {
+                $opt['data'] = $this->translationRecipient->getTranslation($data, 'uk', 'description');
+            }
+
+            $form->add('translation_description', TextareaType::class, $opt);
+
+            if ($data) {
+                $this->user = $data->getUser();
+            } else {
+                $this->user = $this->security->getUser();
+            }
+
+            $form->add('availability', EntityType::class, [
+                'label' => 'Доступность',
+                'class' => Availability::class,
+                'query_builder' => function (AvailabilityRepository $er) {
+                    return $er->createQueryBuilder('a')
+                        ->andWhere('a.user = :user')
+                        ->setParameter('user', $this->user)
+                        ->orderBy('a.id', 'DESC');
+                },
+                'choice_label' => 'name',
             ])
-        ;
+            ->add('captions', EntityType::class, [
+                'required' => false,
+                'label' => 'Подписи',
+                'class' => ProductCaption::class,
+                'query_builder' => function (ProductCaptionRepository $er) {
+                    return $er->createQueryBuilder('pc')
+                        ->andWhere('pc.user = :user')
+                        ->setParameter('user', $this->user)
+                        ->orderBy('pc.position', 'ASC');
+                },
+                'choice_label' => 'name',
+                'multiple' => true,
+            ]);
+        });
     }
 
     public function configureOptions(OptionsResolver $resolver)

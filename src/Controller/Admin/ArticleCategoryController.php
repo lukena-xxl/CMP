@@ -6,9 +6,9 @@ use App\Entity\ArticleCategory;
 use App\Form\Admin\ArticleCategory\ArticleCategoryType;
 use App\Form\Admin\Common\SortableType;
 use App\Repository\ArticleCategoryRepository;
-use App\Services\Common\TranslationRecipient;
 use Doctrine\ORM\EntityManagerInterface;
 use Gedmo\Translatable\Entity\Translation;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,6 +19,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * Class ArticleCategoryController
  * @package App\Controller\Admin
+ * @IsGranted("ROLE_SUPERADMIN", message="Access denied for you!")
  * @Route("/admin/article/category", name="admin_article_category")
  */
 class ArticleCategoryController extends AbstractController
@@ -26,37 +27,26 @@ class ArticleCategoryController extends AbstractController
     /**
      * @Route("", name="_all")
      * @param ArticleCategoryRepository $articleCategoryRepository
-     * @param TranslationRecipient $translationRecipient
      * @return Response
      */
-    public function articleCategoryAll(ArticleCategoryRepository $articleCategoryRepository, TranslationRecipient $translationRecipient)
+    public function articleCategoryAll(ArticleCategoryRepository $articleCategoryRepository)
     {
-        $categories = [];
-        $categoriesAll = $articleCategoryRepository->findBy([], ['position' => 'ASC']);
-        foreach ($categoriesAll as $category) {
-            $categories[] = $translationRecipient->getTranslatedEntity($category);
-        }
-
         return $this->render('admin/article_category/all.html.twig', [
             'controller_name' => 'ArticleCategoryController',
-            'categories' => $categories,
+            'categories' => $articleCategoryRepository->findBy([], ['position' => 'ASC']),
         ]);
     }
 
     /**
      * @Route("/{id}", name="_single", requirements={"id"="\d+"})
      * @param ArticleCategory $articleCategory
-     * @param TranslationRecipient $translationRecipient
      * @return Response
      */
-    public function articleCategorySingle(ArticleCategory $articleCategory, TranslationRecipient $translationRecipient)
+    public function articleCategorySingle(ArticleCategory $articleCategory)
     {
-        $translation = $translationRecipient->getTranslation($articleCategory);
-
         return $this->render('admin/article_category/single.html.twig', [
             'controller_name' => 'ArticleCategoryController',
             'category' => $articleCategory,
-            'translation' => $translation,
         ]);
     }
 
@@ -178,10 +168,9 @@ class ArticleCategoryController extends AbstractController
      * @param ArticleCategory $articleCategory
      * @param EntityManagerInterface $entityManager
      * @param TranslatorInterface $translator
-     * @param TranslationRecipient $translationRecipient
      * @return Response
      */
-    public function articleCategorySort(Request $request, ArticleCategory $articleCategory, EntityManagerInterface $entityManager, TranslatorInterface $translator, TranslationRecipient $translationRecipient)
+    public function articleCategorySort(Request $request, ArticleCategory $articleCategory, EntityManagerInterface $entityManager, TranslatorInterface $translator)
     {
         $form = $this->createForm(SortableType::class, null, [
             'action' => $this->generateUrl('admin_article_category_sort', ['id' => $articleCategory->getId()]),
@@ -212,13 +201,6 @@ class ArticleCategoryController extends AbstractController
         }
 
         $categories = $entityManager->getRepository(ArticleCategory::class)->findBy([], ['position' => 'ASC']);
-
-        // КОРЯВО (нужно исправить)
-        if ($categories) {
-            foreach ($categories as $cat) {
-                $translationRecipient->getTranslatedEntity($cat);
-            }
-        }
 
         return $this->render('admin/article_category/sort.html.twig', [
             'controller_name' => 'ArticleCategoryController',

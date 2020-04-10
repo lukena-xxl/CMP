@@ -9,7 +9,7 @@
     </div>
     {% if captions %}
         <table class="table table-responsive">
-            <tr class="bg-light text-dark">
+            <tr class="bg-light text-dark small">
                 <th>ID</th>
                 <th>{{ 'Название'|trans|raw }}</th>
                 <th class="text-center">{{ 'Продукты'|trans|raw }}</th>
@@ -18,7 +18,10 @@
             {% for caption in captions %}
                 <tr>
                     <td>{{ caption.id }}</td>
-                    <td class="min-width-300"><a href="{{ path('admin_product_caption_single', {'id': caption.id}) }}" class="text-decoration-none px-3 py-1 d-inline-block" style="{% if caption.colorFill %}background-color:{{ caption.colorFill }};{% endif %}{% if caption.colorText %}color:{{ caption.colorText }};{% endif %}">{{ caption.name }}</a></td>
+                    <td class="min-width-300">
+                        <a href="{{ path('admin_product_caption_single', {'id': caption.id}) }}" class="text-decoration-none px-3 py-1 d-inline-block" style="{% if caption.colorFill %}background-color:{{ caption.colorFill }};{% endif %}{% if caption.colorText %}color:{{ caption.colorText }};{% endif %}">{{ caption.name }}</a>
+                        <div class="small p-1">{{ 'Добавил'|trans|raw }}: <strong>{{ caption.user.login }}</strong></div>
+                    </td>
                     <td class="text-center">{{ caption.products.count }}</td>
                     <td>
                         <div class="min-width-300 text-center">

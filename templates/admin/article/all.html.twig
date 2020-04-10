@@ -9,8 +9,9 @@
     </div>
     {% if articles %}
         <table class="table table-responsive">
-            <tr class="bg-light text-dark">
+            <tr class="bg-light text-dark small">
                 <th>ID</th>
+                <th>{{ 'Изображение'|trans|raw }}</th>
                 <th>{{ 'Название'|trans|raw }}</th>
                 <th class="text-center">{{ 'Категория'|trans|raw }}</th>
                 <th class="text-center">{{ 'Действия'|trans|raw }}</th>
@@ -18,6 +19,7 @@
             {% for article in articles %}
                 <tr>
                     <td>{{ article.id }}</td>
+                    <td><img src="{% if article.image and fileExists(asset(image_article_dir ~ '/' ~ article.image)) %}{{ asset(image_article_dir ~ '/' ~ article.image) }}{% else %}{{ asset('build/images/common/no-image-150.png') }}{% endif %}" class="img-fluid" alt=""></td>
                     <td class="min-width-300"><a href="{{ path('admin_article_single', {'id': article.id}) }}" class="text-decoration-none{% if article.isVisible != 1 %} text-disabled{% endif %}">{{ article.name }}</a></td>
                     <td class="text-center">
                         {% if article.articleCategory %}

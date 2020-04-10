@@ -71,7 +71,7 @@ class Category implements Translatable
     private $locale = 'ru';
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Filter", mappedBy="filter_categories")
+     * @ORM\ManyToMany(targetEntity="App\Entity\Filter", mappedBy="categories")
      */
     private $filters;
 
@@ -203,7 +203,6 @@ class Category implements Translatable
     {
         if ($this->categories->contains($category)) {
             $this->categories->removeElement($category);
-            // set the owning side to null (unless already changed)
             if ($category->getParentCategory() === $this) {
                 $category->setParentCategory(null);
             }
@@ -224,7 +223,7 @@ class Category implements Translatable
     {
         if (!$this->filters->contains($filter)) {
             $this->filters[] = $filter;
-            $filter->addFilterCategory($this);
+            $filter->addCategory($this);
         }
 
         return $this;
@@ -234,7 +233,7 @@ class Category implements Translatable
     {
         if ($this->filters->contains($filter)) {
             $this->filters->removeElement($filter);
-            $filter->removeFilterCategory($this);
+            $filter->removeCategory($this);
         }
 
         return $this;
@@ -262,7 +261,6 @@ class Category implements Translatable
     {
         if ($this->products->contains($product)) {
             $this->products->removeElement($product);
-            // set the owning side to null (unless already changed)
             if ($product->getCategory() === $this) {
                 $product->setCategory(null);
             }

@@ -6,7 +6,6 @@ use App\Entity\ProductCaption;
 use App\Form\Admin\Common\SortableType;
 use App\Form\Admin\ProductCaption\ProductCaptionType;
 use App\Repository\ProductCaptionRepository;
-use App\Services\Common\TranslationRecipient;
 use Doctrine\ORM\EntityManagerInterface;
 use Gedmo\Translatable\Entity\Translation;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -14,6 +13,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -26,38 +26,34 @@ class ProductCaptionController extends AbstractController
     /**
      * @Route("", name="_all")
      * @param ProductCaptionRepository $productCaptionRepository
-     * @param TranslationRecipient $translationRecipient
      * @return Response
      */
-    public function productCaptionAll(ProductCaptionRepository $productCaptionRepository, TranslationRecipient $translationRecipient)
+    public function productCaptionAll(ProductCaptionRepository $productCaptionRepository)
     {
-        $captions = [];
-        $captionsAll = $productCaptionRepository->findBy([], ['position' => 'ASC']);
-        foreach ($captionsAll as $caption) {
-            $captions[] = $translationRecipient->getTranslatedEntity($caption);
-        }
+        $user = $this->getUser();
 
         return $this->render('admin/product_caption/all.html.twig', [
             'controller_name' => 'ProductCaptionController',
-            'captions' => $captions,
+            'captions' => $productCaptionRepository->adminProductCaptionsList($user),
         ]);
     }
 
     /**
      * @Route("/{id}", name="_single", requirements={"id"="\d+"})
      * @param ProductCaption $caption
-     * @param TranslationRecipient $translationRecipient
+     * @param TranslatorInterface $translator
      * @return Response
      */
-    public function productCaptionSingle(ProductCaption $caption, TranslationRecipient $translationRecipient)
+    public function productCaptionSingle(ProductCaption $caption, TranslatorInterface $translator)
     {
-        $translation = $translationRecipient->getTranslation($caption);
-
-        return $this->render('admin/product_caption/single.html.twig', [
-            'controller_name' => 'ProductCaptionController',
-            'caption' => $caption,
-            'translation' => $translation,
-        ]);
+        if ($this->getUser() === $caption->getUser() || $this->isGranted('ROLE_SUPERADMIN')) {
+            return $this->render('admin/product_caption/single.html.twig', [
+                'controller_name' => 'ProductCaptionController',
+                'caption' => $caption,
+            ]);
+        } else {
+            throw new AccessDeniedException($translator->trans('У вас нет доступа для данной операции'));
+        }
     }
 
     /**
@@ -85,6 +81,9 @@ class ProductCaptionController extends AbstractController
             $arrData = $request->request->get('product_caption');
             $repoTranslation = $entityManager->getRepository(Translation::class);
             $repoTranslation->translate($caption, 'name', 'uk', $arrData['translation_name']);
+
+            $user = $this->getUser();
+            $caption->setUser($user);
 
             $entityManager->persist($caption);
             $entityManager->flush();
@@ -116,39 +115,45 @@ class ProductCaptionController extends AbstractController
      */
     public function productCaptionEdit(ProductCaption $caption, Request $request, EntityManagerInterface $entityManager, TranslatorInterface $translator)
     {
-        $form = $this->createForm(ProductCaptionType::class, $caption, [
-            'action' => $this->generateUrl('admin_product_caption_edit', ['id' => $caption->getId()]),
-            'method' => 'post',
-            'attr' => [
-                'id' => 'product_caption_form',
-            ],
-        ]);
+        $user = $this->getUser();
 
-        $form->handleRequest($request);
+        if ($user === $caption->getUser() || $this->isGranted('ROLE_SUPERADMIN')) {
+            $form = $this->createForm(ProductCaptionType::class, $caption, [
+                'action' => $this->generateUrl('admin_product_caption_edit', ['id' => $caption->getId()]),
+                'method' => 'post',
+                'attr' => [
+                    'id' => 'product_caption_form',
+                ],
+            ]);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $arrData = $request->request->get('product_caption');
-            $repoTranslation = $entityManager->getRepository(Translation::class);
-            $repoTranslation->translate($caption, 'name', 'uk', $arrData['translation_name']);
+            $form->handleRequest($request);
 
-            $entityManager->persist($caption);
-            $entityManager->flush();
+            if ($form->isSubmitted() && $form->isValid()) {
+                $arrData = $request->request->get('product_caption');
+                $repoTranslation = $entityManager->getRepository(Translation::class);
+                $repoTranslation->translate($caption, 'name', 'uk', $arrData['translation_name']);
 
-            $message = $translator->trans('Подпись успешно изменена');
-            $this->addFlash('success', $message);
+                $entityManager->persist($caption);
+                $entityManager->flush();
 
-            if ($form->get('submitAndAdd')->isClicked()) {
-                return $this->redirectToRoute('admin_product_caption_add');
-            } else {
-                return $this->redirectToRoute('admin_product_caption_single', ['id' => $caption->getId()]);
+                $message = $translator->trans('Подпись успешно изменена');
+                $this->addFlash('success', $message);
+
+                if ($form->get('submitAndAdd')->isClicked()) {
+                    return $this->redirectToRoute('admin_product_caption_add');
+                } else {
+                    return $this->redirectToRoute('admin_product_caption_single', ['id' => $caption->getId()]);
+                }
             }
-        }
 
-        return $this->render('admin/product_caption/add.html.twig', [
-            'controller_name' => 'ProductCaptionController',
-            'form_add' => $form->createView(),
-            'title' => $translator->trans('Редактирование подписи'),
-        ]);
+            return $this->render('admin/product_caption/add.html.twig', [
+                'controller_name' => 'ProductCaptionController',
+                'form_add' => $form->createView(),
+                'title' => $translator->trans('Редактирование подписи'),
+            ]);
+        } else {
+            throw new AccessDeniedException($translator->trans('У вас нет доступа для данной операции'));
+        }
     }
 
     /**
@@ -160,14 +165,20 @@ class ProductCaptionController extends AbstractController
      */
     public function productCaptionDelete(ProductCaption $caption, EntityManagerInterface $entityManager, TranslatorInterface $translator)
     {
-        $entityManager->remove($caption);
-        $entityManager->flush();
+        $user = $this->getUser();
 
-        $message = $translator->trans('Подпись успешно удалена');
+        if ($user === $caption->getUser() || $this->isGranted('ROLE_SUPERADMIN')) {
+            $entityManager->remove($caption);
+            $entityManager->flush();
 
-        $this->addFlash('success', $message);
+            $message = $translator->trans('Подпись успешно удалена');
 
-        return $this->redirectToRoute('admin_product_caption_all');
+            $this->addFlash('success', $message);
+
+            return $this->redirectToRoute('admin_product_caption_all');
+        } else {
+            throw new AccessDeniedException($translator->trans('У вас нет доступа для данной операции'));
+        }
     }
 
     /**
@@ -176,10 +187,9 @@ class ProductCaptionController extends AbstractController
      * @param ProductCaption $caption
      * @param EntityManagerInterface $entityManager
      * @param TranslatorInterface $translator
-     * @param TranslationRecipient $translationRecipient
      * @return Response
      */
-    public function productCaptionSort(Request $request, ProductCaption $caption, EntityManagerInterface $entityManager, TranslatorInterface $translator, TranslationRecipient $translationRecipient)
+    public function productCaptionSort(Request $request, ProductCaption $caption, EntityManagerInterface $entityManager, TranslatorInterface $translator)
     {
         $form = $this->createForm(SortableType::class, null, [
             'action' => $this->generateUrl('admin_product_caption_sort', ['id' => $caption->getId()]),
@@ -210,13 +220,6 @@ class ProductCaptionController extends AbstractController
         }
 
         $captions = $entityManager->getRepository(ProductCaption::class)->findBy([], ['position' => 'ASC']);
-
-        // КОРЯВО (нужно исправить)
-        if ($captions) {
-            foreach ($captions as $cap) {
-                $translationRecipient->getTranslatedEntity($cap);
-            }
-        }
 
         return $this->render('admin/product_caption/sort.html.twig', [
             'controller_name' => 'ProductCaptionController',

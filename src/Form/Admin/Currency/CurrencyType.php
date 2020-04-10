@@ -9,6 +9,8 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CurrencyType extends AbstractType
@@ -29,27 +31,11 @@ class CurrencyType extends AbstractType
                     'placeholder' => 'Введите название',
                 ],
             ])
-            ->add('translation_name', TextType::class, [
-                'label' => 'Название',
-                'attr' => [
-                    'placeholder' => 'Введите название',
-                ],
-                'mapped' => false,
-                'data' => $this->translationRecipient->getTranslation(isset($options['data']) ? $options['data'] : false, 'uk', 'name'),
-            ])
             ->add('short', TextType::class, [
                 'label' => 'Сокращенно',
                 'attr' => [
                     'placeholder' => 'Введите сокращенное название',
                 ],
-            ])
-            ->add('translation_short', TextType::class, [
-                'label' => 'Сокращенно',
-                'attr' => [
-                    'placeholder' => 'Введите сокращенное название',
-                ],
-                'mapped' => false,
-                'data' => $this->translationRecipient->getTranslation(isset($options['data']) ? $options['data'] : false, 'uk', 'short'),
             ])
             ->add('abbr', \Symfony\Component\Form\Extension\Core\Type\CurrencyType::class, [
                 'label' => 'Международное обозначение',
@@ -73,8 +59,43 @@ class CurrencyType extends AbstractType
                 'attr' => [
                     'class' => 'btn-primary',
                 ],
-            ])
-        ;
+            ]);
+
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($builder) {
+            /** @var Currency $data */
+            $data = $event->getData();
+            $form = $event->getForm();
+
+            $opt = [
+                'required' => false,
+                'label' => 'Название',
+                'attr' => [
+                    'placeholder' => 'Введите название',
+                ],
+                'mapped' => false,
+            ];
+
+            if ($data) {
+                $opt['data'] = $this->translationRecipient->getTranslation($data, 'uk', 'name');
+            }
+
+            $form->add('translation_name', TextType::class, $opt);
+
+            $opt = [
+                'required' => false,
+                'label' => 'Сокращенно',
+                'attr' => [
+                    'placeholder' => 'Введите сокращенное название',
+                ],
+                'mapped' => false,
+            ];
+
+            if ($data) {
+                $opt['data'] = $this->translationRecipient->getTranslation($data, 'uk', 'short');
+            }
+
+            $form->add('translation_short', TextType::class, $opt);
+        });
     }
 
     public function configureOptions(OptionsResolver $resolver)

@@ -67,12 +67,6 @@ class ArticleCategory implements Translatable
     private $description;
 
     /**
-     * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read", "write"})
-     */
-    private $image;
-
-    /**
      * @ORM\Column(type="boolean", options={"default":"0"})
      * @Groups({"read", "write"})
      */
@@ -144,18 +138,6 @@ class ArticleCategory implements Translatable
     public function setDescription(?string $description): self
     {
         $this->description = $description;
-
-        return $this;
-    }
-
-    public function getImage(): ?string
-    {
-        return $this->image;
-    }
-
-    public function setImage(?string $image): self
-    {
-        $this->image = $image;
 
         return $this;
     }

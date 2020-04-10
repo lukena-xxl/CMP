@@ -11,6 +11,8 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ArticleTagType extends AbstractType
@@ -31,14 +33,6 @@ class ArticleTagType extends AbstractType
                     'placeholder' => 'Введите название',
                 ],
             ])
-            ->add('translation_name', TextType::class, [
-                'label' => 'Название',
-                'attr' => [
-                    'placeholder' => 'Введите название',
-                ],
-                'mapped' => false,
-                'data' => $this->translationRecipient->getTranslation(isset($options['data']) ? $options['data'] : false, 'uk', 'name'),
-            ])
             ->add('slug', TextType::class, [
                 'required' => false,
                 'label' => 'Slug',
@@ -58,16 +52,6 @@ class ArticleTagType extends AbstractType
                     'class' => 'editor',
                 ],
             ])
-            ->add('translation_description', TextareaType::class, [
-                'required' => false,
-                'label' => 'Описание',
-                'attr' => [
-                    'placeholder' => 'Введите описание',
-                    'class' => 'editor',
-                ],
-                'mapped' => false,
-                'data' => $this->translationRecipient->getTranslation(isset($options['data']) ? $options['data'] : false, 'uk', 'description'),
-            ])
             ->add('is_visible', CheckboxType::class, [
                 'required' => false,
                 'label' => 'Включено / Отключено',
@@ -86,8 +70,44 @@ class ArticleTagType extends AbstractType
                 'attr' => [
                     'class' => 'btn-secondary',
                 ],
-            ])
-        ;
+            ]);
+
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($builder) {
+            /** @var ArticleTag $data */
+            $data = $event->getData();
+            $form = $event->getForm();
+
+            $opt = [
+                'required' => false,
+                'label' => 'Название',
+                'attr' => [
+                    'placeholder' => 'Введите название',
+                ],
+                'mapped' => false,
+            ];
+
+            if ($data) {
+                $opt['data'] = $this->translationRecipient->getTranslation($data, 'uk', 'name');
+            }
+
+            $form->add('translation_name', TextType::class, $opt);
+
+            $opt = [
+                'required' => false,
+                'label' => 'Описание',
+                'attr' => [
+                    'placeholder' => 'Введите описание',
+                    'class' => 'editor',
+                ],
+                'mapped' => false,
+            ];
+
+            if ($data) {
+                $opt['data'] = $this->translationRecipient->getTranslation($data, 'uk', 'description');
+            }
+
+            $form->add('translation_description', TextareaType::class, $opt);
+        });
     }
 
     public function configureOptions(OptionsResolver $resolver)

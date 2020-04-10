@@ -5,9 +5,9 @@ namespace App\Controller\Admin;
 use App\Entity\Currency;
 use App\Form\Admin\Currency\CurrencyType;
 use App\Repository\CurrencyRepository;
-use App\Services\Common\TranslationRecipient;
 use Doctrine\ORM\EntityManagerInterface;
 use Gedmo\Translatable\Entity\Translation;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,6 +17,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * Class CurrencyController
  * @package App\Controller\Admin
+ * @IsGranted("ROLE_SUPERADMIN", message="Access denied for you!")
  * @Route("/admin/currency", name="admin_currency")
  */
 class CurrencyController extends AbstractController
@@ -24,37 +25,26 @@ class CurrencyController extends AbstractController
     /**
      * @Route("", name="_all")
      * @param CurrencyRepository $currencyRepository
-     * @param TranslationRecipient $translationRecipient
      * @return Response
      */
-    public function currencyAll(CurrencyRepository $currencyRepository, TranslationRecipient $translationRecipient)
+    public function currencyAll(CurrencyRepository $currencyRepository)
     {
-        $currencies = [];
-        $currenciesAll = $currencyRepository->findAll();
-        foreach ($currenciesAll as $currency) {
-            $currencies[] = $translationRecipient->getTranslatedEntity($currency);
-        }
-
         return $this->render('admin/currency/all.html.twig', [
             'controller_name' => 'CurrencyController',
-            'currencies' => $currencies,
+            'currencies' => $currencyRepository->findAll(),
         ]);
     }
 
     /**
      * @Route("/{id}", name="_single", requirements={"id"="\d+"})
      * @param Currency $currency
-     * @param TranslationRecipient $translationRecipient
      * @return Response
      */
-    public function currencySingle(Currency $currency, TranslationRecipient $translationRecipient)
+    public function currencySingle(Currency $currency)
     {
-        $translation = $translationRecipient->getTranslation($currency);
-
         return $this->render('admin/currency/single.html.twig', [
             'controller_name' => 'CurrencyController',
             'currency' => $currency,
-            'translation' => $translation,
         ]);
     }
 

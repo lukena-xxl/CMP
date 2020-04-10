@@ -23,12 +23,23 @@ window.printImage = function(src, idn){
     }
 };
 
+function setPosition(obj){
+    let x = 0;
+    obj.find('.srt').each(function () {
+        $(this).find('.input-position').val(x);
+        x++;
+    });
+}
+
 $(document).ready(function() {
     $(".sortable-list").sortable({
         items: ".srt",
         opacity: 0.5,
         containment: "body",
-        handle: ".sort-handle"
+        handle: ".sort-handle",
+        update: function () {
+            setPosition($(this).closest('.sortable-list'));
+        }
     });
 
     $(document).on('click', 'a.reset-img', function () {
@@ -54,16 +65,19 @@ $(document).ready(function() {
         let input = obj.closest('.srt').find('input.img-visible');
 
         if (input.prop('checked')) {
-            input.prop('checked', false);
+            input.prop('checked', false).removeAttr('checked');
             obj.find('svg').removeClass('fa-eye text-dark').addClass('fa-eye-slash text-danger');
         } else {
-            input.prop('checked', true);
+            input.prop('checked', true).attr('checked', 'checked');
             obj.find('svg').removeClass('fa-eye-slash text-danger').addClass('fa-eye text-dark');
         }
     });
 
     $(document).on('click', 'a.delete-element', function () {
-        $(this).closest('.srt').remove();
+        let obj = $(this);
+        let box = obj.closest('.sortable-list');
+        obj.closest('.srt').remove();
+        setPosition(box);
     });
 
     $('.add-another-collection-widget').click(function (e) {

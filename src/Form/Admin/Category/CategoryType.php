@@ -8,11 +8,13 @@ use App\Services\Common\TranslationRecipient;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CategoryType extends AbstractType
@@ -34,19 +36,7 @@ class CategoryType extends AbstractType
                 'label' => 'Родительская категория',
                 'class' => Category::class,
                 'choices' => $this->repository->getCategoryTree(false),
-                'choice_label' => function (Category $entity = null) {
-                    if ($entity) {
-
-                        $translation = $this->translationRecipient->checkAndGetTranslation($entity, 'uk', 'name');
-                        if (!empty($translation)) {
-                            return $translation;
-                        }
-
-                        return $entity->getName();
-                    }
-
-                    return '';
-                },
+                'choice_label' => 'name',
                 'placeholder' => 'нет',
                 'choice_attr' => function ($val, $key, $index) use ($options) {
                     $disabled = false;
@@ -64,14 +54,6 @@ class CategoryType extends AbstractType
                 'attr' => [
                     'placeholder' => 'Введите название',
                 ],
-            ])
-            ->add('translation_name', TextType::class, [
-                'label' => 'Название',
-                'attr' => [
-                    'placeholder' => 'Введите название',
-                ],
-                'mapped' => false,
-                'data' => $this->translationRecipient->getTranslation(isset($options['data']) ? $options['data'] : false, 'uk', 'name'),
             ])
             ->add('slug', TextType::class, [
                 'required' => false,
@@ -92,20 +74,12 @@ class CategoryType extends AbstractType
                     'class' => 'editor',
                 ],
             ])
-            ->add('translation_description', TextareaType::class, [
+            ->add('image', HiddenType::class, [
                 'required' => false,
-                'label' => 'Описание',
+                'label' => false,
                 'attr' => [
-                    'placeholder' => 'Введите описание',
-                    'class' => 'editor',
+                    'class' => 'input-img',
                 ],
-                'mapped' => false,
-                'data' => $this->translationRecipient->getTranslation(isset($options['data']) ? $options['data'] : false, 'uk', 'description'),
-            ])
-            ->add('image', FileType::class, [
-                'required' => false,
-                'label' => 'Изображение',
-                'data' => '',
             ])
             ->add('is_visible', CheckboxType::class, [
                 'required' => false,
@@ -125,8 +99,44 @@ class CategoryType extends AbstractType
                 'attr' => [
                     'class' => 'btn-secondary',
                 ],
-            ])
-        ;
+            ]);
+
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($builder) {
+            /** @var Category $data */
+            $data = $event->getData();
+            $form = $event->getForm();
+
+            $opt = [
+                'required' => false,
+                'label' => 'Название',
+                'attr' => [
+                    'placeholder' => 'Введите название',
+                ],
+                'mapped' => false,
+            ];
+
+            if ($data) {
+                $opt['data'] = $this->translationRecipient->getTranslation($data, 'uk', 'name');
+            }
+
+            $form->add('translation_name', TextType::class, $opt);
+
+            $opt = [
+                'required' => false,
+                'label' => 'Описание',
+                'attr' => [
+                    'placeholder' => 'Введите описание',
+                    'class' => 'editor',
+                ],
+                'mapped' => false,
+            ];
+
+            if ($data) {
+                $opt['data'] = $this->translationRecipient->getTranslation($data, 'uk', 'description');
+            }
+
+            $form->add('translation_description', TextareaType::class, $opt);
+        });
     }
 
     public function configureOptions(OptionsResolver $resolver)

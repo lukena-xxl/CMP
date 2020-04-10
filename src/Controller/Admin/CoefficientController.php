@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -27,9 +28,11 @@ class CoefficientController extends AbstractController
      */
     public function coefficientAll(CoefficientRepository $coefficientRepository)
     {
+        $user = $this->getUser();
+
         return $this->render('admin/coefficient/all.html.twig', [
             'controller_name' => 'CoefficientController',
-            'coefficients' => $coefficientRepository->findAll(),
+            'coefficients' => $coefficientRepository->adminCoefficientsList($user),
         ]);
     }
 
@@ -54,6 +57,9 @@ class CoefficientController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $coefficient = $form->getData();
+
+            $user = $this->getUser();
+            $coefficient->setUser($user);
 
             $entityManager->persist($coefficient);
             $entityManager->flush();
@@ -81,31 +87,37 @@ class CoefficientController extends AbstractController
      */
     public function coefficientEdit(Coefficient $coefficient, Request $request, EntityManagerInterface $entityManager, TranslatorInterface $translator)
     {
-        $form = $this->createForm(CoefficientType::class, $coefficient, [
-            'action' => $this->generateUrl('admin_coefficient_edit', ['id' => $coefficient->getId()]),
-            'method' => 'post',
-            'attr' => [
-                'id' => 'coefficient_form',
-            ],
-        ]);
+        $user = $this->getUser();
 
-        $form->handleRequest($request);
+        if ($user === $coefficient->getUser() || $this->isGranted('ROLE_SUPERADMIN')) {
+            $form = $this->createForm(CoefficientType::class, $coefficient, [
+                'action' => $this->generateUrl('admin_coefficient_edit', ['id' => $coefficient->getId()]),
+                'method' => 'post',
+                'attr' => [
+                    'id' => 'coefficient_form',
+                ],
+            ]);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($coefficient);
-            $entityManager->flush();
+            $form->handleRequest($request);
 
-            $message = $translator->trans('Коэффициент успешно изменен');
-            $this->addFlash('success', $message);
+            if ($form->isSubmitted() && $form->isValid()) {
+                $entityManager->persist($coefficient);
+                $entityManager->flush();
 
-            return $this->redirectToRoute('admin_coefficient_edit', ['id' => $coefficient->getId()]);
+                $message = $translator->trans('Коэффициент успешно изменен');
+                $this->addFlash('success', $message);
+
+                return $this->redirectToRoute('admin_coefficient_edit', ['id' => $coefficient->getId()]);
+            }
+
+            return $this->render('admin/coefficient/add.html.twig', [
+                'controller_name' => 'CoefficientController',
+                'form_add' => $form->createView(),
+                'title' => $translator->trans('Редактирование коэффициента'),
+            ]);
+        } else {
+            throw new AccessDeniedException($translator->trans('У вас нет доступа для данной операции'));
         }
-
-        return $this->render('admin/coefficient/add.html.twig', [
-            'controller_name' => 'CoefficientController',
-            'form_add' => $form->createView(),
-            'title' => $translator->trans('Редактирование коэффициента'),
-        ]);
     }
 
     /**
@@ -117,13 +129,19 @@ class CoefficientController extends AbstractController
      */
     public function availabilityDelete(Coefficient $coefficient, EntityManagerInterface $entityManager, TranslatorInterface $translator)
     {
-        $entityManager->remove($coefficient);
-        $entityManager->flush();
+        $user = $this->getUser();
 
-        $message = $translator->trans('Коэффициент успешно удален');
+        if ($user === $coefficient->getUser() || $this->isGranted('ROLE_SUPERADMIN')) {
+            $entityManager->remove($coefficient);
+            $entityManager->flush();
 
-        $this->addFlash('success', $message);
+            $message = $translator->trans('Коэффициент успешно удален');
 
-        return $this->redirectToRoute('admin_coefficient_all');
+            $this->addFlash('success', $message);
+
+            return $this->redirectToRoute('admin_coefficient_all');
+        } else {
+            throw new AccessDeniedException($translator->trans('У вас нет доступа для данной операции'));
+        }
     }
 }

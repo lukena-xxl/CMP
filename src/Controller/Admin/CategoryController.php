@@ -6,12 +6,14 @@ use App\Entity\Category;
 use App\Form\Admin\Category\CategoryType;
 use App\Form\Admin\Common\SortableType;
 use App\Repository\CategoryRepository;
-use App\Services\Common\TranslationRecipient;
+use App\Services\ImageUpload;
 use Doctrine\Common\Persistence\Mapping\MappingException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
 use Gedmo\Translatable\Entity\Translation;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -20,6 +22,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * Class CategoryController
  * @package App\Controller\Admin
+ * @IsGranted("ROLE_SUPERADMIN", message="Access denied for you!")
  * @Route("/admin/category", name="admin_category")
  */
 class CategoryController extends AbstractController
@@ -42,17 +45,13 @@ class CategoryController extends AbstractController
     /**
      * @Route("/{id}", name="_single", requirements={"id"="\d+"})
      * @param Category $category
-     * @param TranslationRecipient $translationRecipient
      * @return Response
      */
-    public function categorySingle(Category $category, TranslationRecipient $translationRecipient)
+    public function categorySingle(Category $category)
     {
-        $translation = $translationRecipient->getTranslation($category);
-
         return $this->render('admin/category/single.html.twig', [
             'controller_name' => 'CategoryController',
             'category' => $category,
-            'translation' => $translation,
         ]);
     }
 
@@ -61,9 +60,11 @@ class CategoryController extends AbstractController
      * @param Request $request
      * @param EntityManagerInterface $entityManager
      * @param TranslatorInterface $translator
+     * @param ParameterBagInterface $parameterBag
+     * @param ImageUpload $imageUpload
      * @return Response
      */
-    public function categoryAdd(Request $request, EntityManagerInterface $entityManager, TranslatorInterface $translator)
+    public function categoryAdd(Request $request, EntityManagerInterface $entityManager, TranslatorInterface $translator, ParameterBagInterface $parameterBag, ImageUpload $imageUpload)
     {
         $form = $this->createForm(CategoryType::class, null, [
             'action' => $this->generateUrl('admin_category_add'),
@@ -82,6 +83,15 @@ class CategoryController extends AbstractController
             $repoTranslation = $entityManager->getRepository(Translation::class);
             $repoTranslation->translate($category, 'name', 'uk', $arrData['translation_name'])
                 ->translate($category, 'description', 'uk', $arrData['translation_description']);
+
+            $image_category_dir = $parameterBag->get('image_category_dir');
+            $name_image = $imageUpload->base64ImageUpload($category->getImage(), $image_category_dir, $category->getName());
+
+            if (!$name_image) {
+                $name_image = '';
+            }
+
+            $category->setImage($name_image);
 
             $entityManager->persist($category);
             $entityManager->flush();
@@ -109,9 +119,11 @@ class CategoryController extends AbstractController
      * @param Request $request
      * @param EntityManagerInterface $entityManager
      * @param TranslatorInterface $translator
+     * @param ParameterBagInterface $parameterBag
+     * @param ImageUpload $imageUpload
      * @return Response
      */
-    public function categoryEdit(Category $category, Request $request, EntityManagerInterface $entityManager, TranslatorInterface $translator)
+    public function categoryEdit(Category $category, Request $request, EntityManagerInterface $entityManager, TranslatorInterface $translator, ParameterBagInterface $parameterBag, ImageUpload $imageUpload)
     {
         $form = $this->createForm(CategoryType::class, $category, [
             'action' => $this->generateUrl('admin_category_edit', ['id' => $category->getId()]),
@@ -125,6 +137,22 @@ class CategoryController extends AbstractController
             $repoTranslation = $entityManager->getRepository(Translation::class);
             $repoTranslation->translate($category, 'name', 'uk', $arrData['translation_name'])
                 ->translate($category, 'description', 'uk', $arrData['translation_description']);
+
+            $pattern_for_image = '/^data:image\/\w+;base64,/i';
+
+            $image = $category->getImage();
+            if (!empty($image)) {
+                if (preg_match($pattern_for_image, $image)) {
+                    $image_category_dir = $parameterBag->get('image_category_dir');
+                    $name_image = $imageUpload->base64ImageUpload($category->getImage(), $image_category_dir, $category->getName());
+
+                    if (!$name_image) {
+                        $name_image = '';
+                    }
+
+                    $category->setImage($name_image);
+                }
+            }
 
             $entityManager->persist($category);
             $entityManager->flush();
@@ -171,10 +199,9 @@ class CategoryController extends AbstractController
      * @param Category $category
      * @param EntityManagerInterface $entityManager
      * @param TranslatorInterface $translator
-     * @param TranslationRecipient $translationRecipient
      * @return Response
      */
-    public function categorySort(Request $request, Category $category, EntityManagerInterface $entityManager, TranslatorInterface $translator, TranslationRecipient $translationRecipient)
+    public function categorySort(Request $request, Category $category, EntityManagerInterface $entityManager, TranslatorInterface $translator)
     {
         $form = $this->createForm(SortableType::class, null, [
             'action' => $this->generateUrl('admin_category_sort', ['id' => $category->getId()]),
@@ -213,13 +240,6 @@ class CategoryController extends AbstractController
         }
 
         $categories = $entityManager->getRepository(Category::class)->findBy(['parent_category' => $value], ['position' => 'ASC']);
-
-        // КОРЯВО (нужно исправить)
-        if ($categories) {
-            foreach ($categories as $cat) {
-                $translationRecipient->getTranslatedEntity($cat);
-            }
-        }
 
         return $this->render('admin/category/sort.html.twig', [
             'controller_name' => 'CategoryController',

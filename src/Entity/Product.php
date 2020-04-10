@@ -82,18 +82,15 @@ class Product implements Translatable
 
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\ProductCaption", inversedBy="products")
+     * @ORM\OrderBy({"position" = "ASC"})
      */
     private $captions;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\ProductImage", mappedBy="product", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\OrderBy({"position" = "ASC"})
      */
     private $images;
-
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\ProductFilter", mappedBy="product")
-     */
-    private $filters;
 
     /**
      * @Gedmo\Locale
@@ -101,19 +98,28 @@ class Product implements Translatable
     private $locale = 'ru';
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\ProductItem", mappedBy="product", cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity="App\Entity\ProductItem", mappedBy="product", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\OrderBy({"position" = "ASC"})
      */
     private $items;
 
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\DeliveryMethod", inversedBy="products")
+     * @ORM\OrderBy({"position" = "ASC"})
      */
     private $delivery;
 
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\PaymentMethod", inversedBy="products")
+     * @ORM\OrderBy({"position" = "ASC"})
      */
     private $payment;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\FilterElement", inversedBy="products")
+     * @ORM\OrderBy({"position" = "ASC"})
+     */
+    private $filter_elements;
 
     public function setTranslatableLocale($locale)
     {
@@ -124,10 +130,10 @@ class Product implements Translatable
     {
         $this->captions = new ArrayCollection();
         $this->images = new ArrayCollection();
-        $this->filters = new ArrayCollection();
         $this->items = new ArrayCollection();
         $this->delivery = new ArrayCollection();
         $this->payment = new ArrayCollection();
+        $this->filter_elements = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -312,37 +318,6 @@ class Product implements Translatable
     }
 
     /**
-     * @return Collection|ProductFilter[]
-     */
-    public function getFilters(): Collection
-    {
-        return $this->filters;
-    }
-
-    public function addFilter(ProductFilter $filter): self
-    {
-        if (!$this->filters->contains($filter)) {
-            $this->filters[] = $filter;
-            $filter->setProduct($this);
-        }
-
-        return $this;
-    }
-
-    public function removeFilter(ProductFilter $filter): self
-    {
-        if ($this->filters->contains($filter)) {
-            $this->filters->removeElement($filter);
-            // set the owning side to null (unless already changed)
-            if ($filter->getProduct() === $this) {
-                $filter->setProduct(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      * @return Collection|ProductItem[]
      */
     public function getItems(): Collection
@@ -364,7 +339,6 @@ class Product implements Translatable
     {
         if ($this->items->contains($item)) {
             $this->items->removeElement($item);
-            // set the owning side to null (unless already changed)
             if ($item->getProduct() === $this) {
                 $item->setProduct(null);
             }
@@ -420,6 +394,32 @@ class Product implements Translatable
     {
         if ($this->payment->contains($payment)) {
             $this->payment->removeElement($payment);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|FilterElement[]
+     */
+    public function getFilterElements(): Collection
+    {
+        return $this->filter_elements;
+    }
+
+    public function addFilterElement(FilterElement $filterElement): self
+    {
+        if (!$this->filter_elements->contains($filterElement)) {
+            $this->filter_elements[] = $filterElement;
+        }
+
+        return $this;
+    }
+
+    public function removeFilterElement(FilterElement $filterElement): self
+    {
+        if ($this->filter_elements->contains($filterElement)) {
+            $this->filter_elements->removeElement($filterElement);
         }
 
         return $this;

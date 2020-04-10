@@ -7,8 +7,7 @@ use App\Entity\ProductImage;
 use App\Entity\ProductItem;
 use App\Form\Admin\Product\ProductType;
 use App\Repository\ProductRepository;
-use App\Services\Common\SlugCreator;
-use App\Services\Common\TranslationRecipient;
+use App\Services\ImageUpload;
 use Doctrine\ORM\EntityManagerInterface;
 use Gedmo\Translatable\Entity\Translation;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -34,28 +33,37 @@ class ProductController extends AbstractController
      */
     public function productAll(ProductRepository $productRepository)
     {
+        $user = $this->getUser();
+
         return $this->render('admin/product/all.html.twig', [
             'controller_name' => 'ProductController',
-            'products' => $productRepository->adminProductsList(),
+            'products' => $productRepository->adminProductsList($user),
         ]);
     }
 
     /**
      * @Route("/{id}", name="_single", requirements={"id"="\d+"})
      * @param Product $product
-     * @param TranslationRecipient $translationRecipient
+     * @param ProductRepository $productRepository
      * @param TranslatorInterface $translator
      * @return Response
      */
-    public function productSingle(Product $product, TranslationRecipient $translationRecipient, TranslatorInterface $translator)
+    public function productSingle(Product $product, ProductRepository $productRepository, TranslatorInterface $translator)
     {
         if ($this->getUser() === $product->getUser() || $this->isGranted('ROLE_SUPERADMIN')) {
-            $translation = $translationRecipient->getTranslation($product);
+            $productFilters = [];
+            $filters = $productRepository->findProductFilters($product->getId());
+            foreach ($filters as $filter) {
+                $productFilters[] = [
+                    'filter' => $filter,
+                    'elements' => $productRepository->findProductFilterElements($filter['id'], $product->getId())
+                ];
+            }
 
             return $this->render('admin/product/single.html.twig', [
                 'controller_name' => 'ProductController',
                 'product' => $product,
-                'translation' => $translation,
+                'filters' => $productFilters,
             ]);
         } else {
             throw new AccessDeniedException($translator->trans('У вас нет доступа для данной операции'));
@@ -67,11 +75,11 @@ class ProductController extends AbstractController
      * @param Request $request
      * @param EntityManagerInterface $entityManager
      * @param TranslatorInterface $translator
-     * @param SlugCreator $slugCreator
      * @param ParameterBagInterface $parameterBag
+     * @param ImageUpload $imageUpload
      * @return RedirectResponse|Response
      */
-    public function productAdd(Request $request, EntityManagerInterface $entityManager, TranslatorInterface $translator, SlugCreator $slugCreator, ParameterBagInterface $parameterBag)
+    public function productAdd(Request $request, EntityManagerInterface $entityManager, TranslatorInterface $translator, ParameterBagInterface $parameterBag, ImageUpload $imageUpload)
     {
         $form = $this->createForm(ProductType::class, null, [
             'action' => $this->generateUrl('admin_product_add'),
@@ -87,7 +95,6 @@ class ProductController extends AbstractController
             $user = $this->getUser();
 
             $product = $form->getData();
-            $image_product_dir = $parameterBag->get('image_product_dir');
             $product->setUser($user);
 
             $arrData = $request->request->get('product');
@@ -99,32 +106,29 @@ class ProductController extends AbstractController
              * @var ProductItem $item
              */
             $items = $form->get('items')->getData();
-            $x = 0;
+            $image_item_dir = $parameterBag->get('image_item_dir');
 
             foreach ($items as $key=>$item) {
                 $repoTranslation->translate($item, 'name', 'uk', $arrData['items'][$key]['translation_name']);
 
-                $img = $item->getImg();
-                if (!empty($img)) {
-                    $data = base64_decode(preg_replace('/^data:image\/\w+;base64,/i', '', $img));
+                $image_item = $item->getImg();
 
-                    $path_name = $product->getName();
+                if (!empty($image_item)) {
                     $name_item = $item->getName();
+
                     if (!empty($name_item)) {
-                        $path_name .= " " . $name_item;
+                        $path_name = $name_item;
+                    } else {
+                        $path_name = $product->getName();
                     }
 
-                    $name_img = $slugCreator->createSlug($path_name) . "-" . $x . "-" . time() . ".jpg";
+                    $name_image_item = $imageUpload->base64ImageUpload($image_item, $image_item_dir, $path_name);
 
-                    $im = imagecreatefromstring($data);
-                    imageinterlace($im, true);
-                    $out = $image_product_dir . "item/" . $name_img;
-                    imagejpeg($im, $out);
-                    imagedestroy($im);
+                    if (!$name_image_item) {
+                        $name_image_item = '';
+                    }
 
-                    $item->setImg($name_img);
-
-                    $x++;
+                    $item->setImg($name_image_item);
                 }
             }
 
@@ -132,42 +136,21 @@ class ProductController extends AbstractController
              * @var ProductImage $image
              */
             $images = $form->get('images')->getData();
-            $x = 0;
-            $arrDir = [800, 150];
+            $image_product_dir = $parameterBag->get('image_product_dir');
+            $image_product_subdirs = $parameterBag->get('image_product_subdirs');
 
             foreach ($images as $image) {
-                $data = base64_decode(preg_replace('/^data:image\/\w+;base64,/i', '', $image->getName()));
-                $name_img = $slugCreator->createSlug($product->getName()) . "-" . $x . "-" . time() . ".jpg";
+                $name_image = $imageUpload->base64ImageUpload($image->getName(), $image_product_dir, $product->getName(), $image_product_subdirs);
 
-                $im = imagecreatefromstring($data);
-                $W = imagesx($im);
-                $H = imagesy($im);
+                if ($name_image) {
+                    $image->setName($name_image);
 
-                foreach ($arrDir as $dir) {
-                    $Ws = $dir;
-                    $Hs = ($dir * $H / $W);
-                    $ims = imagecreatetruecolor($Ws, $Hs);
-                    imagecopyresampled($ims, $im, 0, 0, 0, 0, $Ws, $Hs, $W, $H);
-                    imageinterlace($ims, true);
-
-                    $out = $image_product_dir . $dir . "/" . $name_img;
-
-                    imagejpeg($ims, $out);
-                    imagedestroy($ims);
+                    if ($image->getPosition() == 0) {
+                        $image->setIsMain(true);
+                    }
+                } else {
+                    unset($image);
                 }
-
-                imageinterlace($im, true);
-                $out = $image_product_dir . $name_img;
-                imagejpeg($im, $out);
-                imagedestroy($im);
-
-                $image->setName($name_img);
-
-                if ($x == 0) {
-                    $image->setIsMain(true);
-                }
-
-                $x++;
             }
 
             $entityManager->persist($product);
@@ -196,11 +179,11 @@ class ProductController extends AbstractController
      * @param Request $request
      * @param EntityManagerInterface $entityManager
      * @param TranslatorInterface $translator
-     * @param SlugCreator $slugCreator
      * @param ParameterBagInterface $parameterBag
+     * @param ImageUpload $imageUpload
      * @return RedirectResponse|Response
      */
-    public function productEdit(Product $product, Request $request, EntityManagerInterface $entityManager, TranslatorInterface $translator, SlugCreator $slugCreator, ParameterBagInterface $parameterBag)
+    public function productEdit(Product $product, Request $request, EntityManagerInterface $entityManager, TranslatorInterface $translator, ParameterBagInterface $parameterBag, ImageUpload $imageUpload)
     {
         $user = $this->getUser();
 
@@ -224,89 +207,61 @@ class ProductController extends AbstractController
                 $repoTranslation->translate($product, 'name', 'uk', $arrData['translation_name'])
                     ->translate($product, 'description', 'uk', $arrData['translation_description']);
 
+                $pattern_for_image = '/^data:image\/\w+;base64,/i';
+
                 /**
                  * @var ProductItem $item
                  */
                 $items = $form->get('items')->getData();
-                $x = 0;
+                $image_item_dir = $parameterBag->get('image_item_dir');
 
                 foreach ($items as $key=>$item) {
                     $repoTranslation->translate($item, 'name', 'uk', $arrData['items'][$key]['translation_name']);
-                    $img = $item->getImg();
-                    if (!empty($img)) {
-                        if (preg_match('/^data:image\/\w+;base64,/i', $img)) {
-                            $data = base64_decode(preg_replace('/^data:image\/\w+;base64,/i', '', $img));
-
-                            $path_name = $product->getName();
+                    $image_item = $item->getImg();
+                    if (!empty($image_item)) {
+                        if (preg_match($pattern_for_image, $image_item)) {
                             $name_item = $item->getName();
+
                             if (!empty($name_item)) {
-                                $path_name .= " " . $name_item;
+                                $path_name = $name_item;
+                            } else {
+                                $path_name = $product->getName();
                             }
 
-                            $name_img = $slugCreator->createSlug($path_name) . "-" . $x . "-" . time() . ".jpg";
+                            $name_image_item = $imageUpload->base64ImageUpload($image_item, $image_item_dir, $path_name);
 
-                            $im = imagecreatefromstring($data);
-                            imageinterlace($im, true);
-                            $out = $image_product_dir . "item/" . $name_img;
-                            imagejpeg($im, $out);
-                            imagedestroy($im);
+                            if (!$name_image_item) {
+                                $name_image_item = '';
+                            }
 
-                            $item->setImg($name_img);
+                            $item->setImg($name_image_item);
                         }
                     }
-
-                    $item->setPosition($x);
-
-                    $x++;
                 }
 
                 /**
                  * @var ProductImage $image
                  */
                 $images = $form->get('images')->getData();
-                $x = 0;
-                $arrDir = [800, 150];
+                $image_product_subdirs = $parameterBag->get('image_product_subdirs');
 
                 foreach ($images as $image) {
-                    $img = $image->getName();
-                    if (!empty($img)) {
-                        if (preg_match('/^data:image\/\w+;base64,/i', $img)) {
-                            $data = base64_decode(preg_replace('/^data:image\/\w+;base64,/i', '', $img));
-                            $name_img = $slugCreator->createSlug($product->getName()) . "-" . $x . "-" . time() . ".jpg";
-
-                            $im = imagecreatefromstring($data);
-                            $W = imagesx($im);
-                            $H = imagesy($im);
-
-                            foreach ($arrDir as $dir) {
-                                $Ws = $dir;
-                                $Hs = ($dir * $H / $W);
-                                $ims = imagecreatetruecolor($Ws, $Hs);
-                                imagecopyresampled($ims, $im, 0, 0, 0, 0, $Ws, $Hs, $W, $H);
-                                imageinterlace($ims, true);
-
-                                $out = $image_product_dir . $dir . "/" . $name_img;
-
-                                imagejpeg($ims, $out);
-                                imagedestroy($ims);
-                            }
-
-                            imageinterlace($im, true);
-                            $out = $image_product_dir . $name_img;
-                            imagejpeg($im, $out);
-                            imagedestroy($im);
-
-                            $image->setName($name_img);
+                    if (preg_match($pattern_for_image, $image->getName())) {
+                        $name_image = $imageUpload->base64ImageUpload($image->getName(), $image_product_dir, $product->getName(), $image_product_subdirs);
+                        if ($name_image) {
+                            $image->setName($name_image);
+                        } else {
+                            unset($image);
+                            continue;
                         }
-
-                        if ($x == 0) {
-                            $image->setIsMain(true);
-                            $image->setPosition($x);
-                        }
-
-                        //$image->setPosition($x);
-                        $x++;
                     }
+
+                    $is_main = false;
+                    if ($image->getPosition() == 0) {
+                        $is_main = true;
+                    }
+
+                    $image->setIsMain($is_main);
                 }
 
                 $entityManager->persist($product);
@@ -334,8 +289,26 @@ class ProductController extends AbstractController
 
     /**
      * @Route("/delete/{id}", name="_delete", requirements={"id"="\d+"})
+     * @param Product $product
+     * @param EntityManagerInterface $entityManager
+     * @param TranslatorInterface $translator
+     * @return RedirectResponse
      */
-    public function productDelete()
+    public function productDelete(Product $product, EntityManagerInterface $entityManager, TranslatorInterface $translator)
     {
+        $user = $this->getUser();
+
+        if ($user === $product->getUser() || $this->isGranted('ROLE_SUPERADMIN')) {
+            $entityManager->remove($product);
+            $entityManager->flush();
+
+            $message = $translator->trans('Продукт успешно удален');
+
+            $this->addFlash('success', $message);
+
+            return $this->redirectToRoute('admin_product_all');
+        } else {
+            throw new AccessDeniedException($translator->trans('У вас нет доступа для данной операции'));
+        }
     }
 }
