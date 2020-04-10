@@ -2,17 +2,18 @@
 
 namespace App\Entity;
 
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  * @UniqueEntity(fields={"login"}, message="There is already an account with this login")
  * @UniqueEntity(fields={"email"}, message="There is already an account with this email")
- * @UniqueEntity(fields={"phone"}, message="There is already an account with this phone")
  */
 class User implements UserInterface
 {
@@ -40,12 +41,12 @@ class User implements UserInterface
     private $password;
 
     /**
-     * @ORM\Column(type="string", length=100, nullable=true, unique=true)
+     * @ORM\Column(type="string", length=100, unique=true)
      */
     private $email;
 
     /**
-     * @ORM\Column(type="string", length=20, nullable=true, unique=true)
+     * @ORM\Column(type="string", length=20, nullable=true)
      */
     private $phone;
 
@@ -75,6 +76,9 @@ class User implements UserInterface
     private $birth_date;
 
     /**
+     * @var datetime $created
+     *
+     * @Gedmo\Timestampable(on="create")
      * @ORM\Column(type="datetime")
      */
     private $registration_date;
@@ -83,6 +87,16 @@ class User implements UserInterface
      * @ORM\Column(type="boolean", options={"default":"0"})
      */
     private $is_block = false;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Product", mappedBy="user")
+     */
+    private $products;
+
+    public function __construct()
+    {
+        $this->products = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -266,6 +280,37 @@ class User implements UserInterface
     public function setIsBlock(bool $is_block): self
     {
         $this->is_block = $is_block;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Product[]
+     */
+    public function getProducts(): Collection
+    {
+        return $this->products;
+    }
+
+    public function addProduct(Product $product): self
+    {
+        if (!$this->products->contains($product)) {
+            $this->products[] = $product;
+            $product->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProduct(Product $product): self
+    {
+        if ($this->products->contains($product)) {
+            $this->products->removeElement($product);
+            // set the owning side to null (unless already changed)
+            if ($product->getUser() === $this) {
+                $product->setUser(null);
+            }
+        }
 
         return $this;
     }

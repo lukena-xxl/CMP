@@ -48,19 +48,19 @@
                             {% endif %}
                         </div>
                     </li>
-                   {# <li class="list-group-item rounded-0">
+                    <li class="list-group-item rounded-0">
                         <strong>{{ 'Продукты категории'|trans|raw }}:</strong>
                         <div class="my-1">
                             {% if category.products.count > 0 %}
                                 {% for product in category.products %}
-                                    <div><a href="##}{#{{ path('admin_product_single', {'id': product.id}) }}#}{#">{{ product.name }}</a></div>
+                                    <div><a href="{{ path('admin_product_single', {'id': product.id}) }}">{{ product.name }}</a></div>
                                 {% endfor %}
                             {% else %}
                                 <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
                             {% endif %}
-                            <div class="mt-2"><a href="##}{#{{ path('admin_product_add') }}#}{#" class="text-success"><i class="fas fa-plus-circle mr-2"></i>{{ 'Добавить'|trans|raw }}</a></div>
+                            <div class="mt-2"><a href="#{{ path('admin_product_add') }}" class="text-success"><i class="fas fa-plus-circle mr-2"></i>{{ 'Добавить'|trans|raw }}</a></div>
                         </div>
-                    </li>#}
+                    </li>
                     <li class="list-group-item rounded-0">
                         <strong>{{ 'Фильтры продуктов категории'|trans|raw }}:</strong>
                         <div class="my-1">
@@ -72,19 +72,6 @@
                                 <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
                             {% endif %}
                             <div class="mt-2"><a href="{{ path('admin_filter_add') }}" class="text-success"><i class="fas fa-plus-circle mr-2"></i>{{ 'Добавить'|trans|raw }}</a></div>
-                        </div>
-                    </li>
-                    <li class="list-group-item rounded-0">
-                        <strong>{{ 'Характеристики продуктов категории'|trans|raw }}:</strong>
-                        <div class="my-1">
-                            {% if category.parameters.count > 0 %}
-                                {% for parameter in category.parameters %}
-                                    <div><a href="{{ path('admin_parameter_single', {'id': parameter.id}) }}">{{ parameter.name }}</a></div>
-                                {% endfor %}
-                            {% else %}
-                                <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
-                            {% endif %}
-                            <div class="mt-2"><a href="{{ path('admin_parameter_add') }}" class="text-success"><i class="fas fa-plus-circle mr-2"></i>{{ 'Добавить'|trans|raw }}</a></div>
                         </div>
                     </li>
                 </ul>
@@ -106,7 +93,13 @@
                         <div class="h2 px-2">{{ category.name }}</div>
                     </div>
                     <div class="tab-pane fade" id="uk-name" role="tabpanel" aria-labelledby="uk-name-tab">
-                        <div class="h2 px-2">{{ translation['uk']['name'] }}</div>
+                        <div class="h2 px-2">
+                            {% if translation['uk']['name'] is defined and translation['uk']['name'] %}
+                                {{ translation['uk']['name'] }}
+                            {% else %}
+                                <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
                 <ul class="list-group">
@@ -151,7 +144,7 @@
                                 {% endif %}
                             </div>
                             <div class="tab-pane fade" id="uk-description" role="tabpanel" aria-labelledby="uk-description-tab">
-                                {% if translation['uk']['description'] %}
+                                {% if translation['uk']['description'] is defined and translation['uk']['description'] %}
                                     {% autoescape %}
                                         {{ translation['uk']['description']|raw }}
                                     {% endautoescape %}

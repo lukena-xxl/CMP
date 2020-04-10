@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% endblock %}
+
+{% block body %}
+    <h1 class="admin-h1">{{ 'Роли пользователей'|trans|raw }}</h1>
+    <div class="text-muted mb-3">{{ 'Для пользователей доступны следующие роли (идентификаторы доступа к контенту)'|trans|raw }}:</div>
+    {% if roles %}
+        <ul class="list-group">
+            {% for role in roles %}
+                {% set arr = role['role']|split('ROLE_') %}
+                <li class="list-group-item rounded-0">
+                    <div class="d-flex align-items-center">
+                        <div class="">
+                            <strong class="mr-2 h3 text-primary">{{ arr[1] }}</strong>
+                            <div class="text-muted small">{{ role['role'] }}</div>
+                        </div>
+                        <div class="ml-auto h5">
+                            <a href="{{ path('admin_user_role_single', {'role': role['role']}) }}" class="badge badge-primary p-2">{{ role['users'] }} <span class="text-disabled font-weight-normal d-none d-sm-inline">{{ 'пользователей'|trans|raw }}</span></a>
+                        </div>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <span class="text-muted">{{ 'нет'|trans|raw }}</span>
+    {% endif %}
+{% endblock %}

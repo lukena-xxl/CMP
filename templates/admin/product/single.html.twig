@@ -1,0 +1,285 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-md-4">
+
+            <div class="mb-3">
+                <ul class="list-group">
+                    <li class="list-group-item rounded-0 text-white">
+                        {% if product.isVisible == 0 %}
+                            <span class="d-inline-block px-2 bg-danger">{{ 'Отключено'|trans|raw }}</span>
+                        {% else %}
+                            <span class="d-inline-block px-2 bg-success">{{ 'Включено'|trans|raw }}</span>
+                        {% endif %}
+                    </li>
+                    <li class="list-group-item rounded-0">
+                        <div class="small font-weight-bold" style="color:{{ product.availability.color }}">{{ product.availability.name }}</div>
+                        {% if product.availability.shortDescription %}
+                            <div class="text-muted small">({{ product.availability.shortDescription }})</div>
+                        {% endif %}
+                    </li>
+                    <li class="list-group-item rounded-0"><strong>ID:</strong> {{ product.id }}</li>
+                    <li class="list-group-item rounded-0"><strong>Slug:</strong> {{ product.slug }}</li>
+                    <li class="list-group-item rounded-0"><strong>{{ 'Дата создания'|trans|raw }}:</strong> {{ product.creationDate.format("d.m.Y H:i") }}</li>
+                    <li class="list-group-item rounded-0">
+                        <strong>{{ 'Дата обновления'|trans|raw }}:</strong>
+                        <span class="text-info">
+                        <span class="text-muted">{{ 'более'|trans|raw }}</span>
+                        {% set difference = product.updateDate.diff(date()) %}
+                        <strong>{% if difference.format('%Y') > 0 %}
+                                {{ difference.format('%Y') }} {{ 'лет'|trans|raw }}
+                            {% elseif difference.format('%m') > 0 %}
+                                {{ difference.format('%m') }} {{ 'месяцев'|trans|raw }}
+                            {% elseif difference.format('%a') > 0 %}
+                                {{ difference.format('%a') }} {{ 'дней'|trans|raw }}
+                            {% elseif difference.format('%h') > 0 %}
+                                {{ difference.format('%h') }} {{ 'часов'|trans|raw }}
+                            {% elseif difference.format('%i') > 0 %}
+                                {{ difference.format('%i') }} {{ 'минут'|trans|raw }}
+                            {% elseif difference.format('%s') > 0 %}
+                                {{ difference.format('%s') }} {{ 'секунд'|trans|raw }}
+                            {% endif %} {{ 'назад'|trans|raw }}</strong>
+                        <span class="text-muted"> / {{ product.updateDate.format("d.m.Y H:i") }}</span>
+                    </span>
+                    </li>
+                    <li class="list-group-item rounded-0"><strong>{{ 'Добавил'|trans|raw }}:</strong> <a href="{{ path('admin_user_single', {'id': product.user.id}) }}">{{ product.user.login }}</a></li>
+                    <li class="list-group-item rounded-0">
+                        <a class="btn btn-light mb-1 text-primary" href="{{ path('admin_product_edit', {'id': product.id}) }}" role="button"><i class="fas fa-edit mr-2"></i>{{ 'Редактировать'|trans|raw }}</a>
+                        <a class="btn btn-light mb-1 text-danger" href="{{ path('admin_product_delete', {'id': product.id}) }}" role="button"><i class="fas fa-trash-alt mr-2"></i>{{ 'Удалить'|trans|raw }}</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="mb-3">
+                <ul class="list-group">
+                    <li class="list-group-item rounded-0">
+                        <strong>{{ 'Категория'|trans|raw }}:</strong>
+                        <div class="my-1">
+                            {% if product.category %}
+                                <a href="{{ path('admin_category_single', {'id': product.category.id}) }}">{{ product.category.name }}</a>
+                            {% else %}
+                                <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
+                            {% endif %}
+                        </div>
+                    </li>
+                    <li class="list-group-item rounded-0">
+                        <strong>{{ 'Способы доставки'|trans|raw }}:</strong>
+                        <div class="my-1">
+                            {% if product.delivery.count > 0 %}
+                                {% for delivery in product.delivery|sort((a, b) => a.position <=> b.position) %}
+                                    <div><a href="{{ path('admin_delivery_single', {'id': delivery.id}) }}">{{ delivery.name }}</a></div>
+                                {% endfor %}
+                            {% else %}
+                                <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
+                            {% endif %}
+                            <div class="mt-2"><a href="{{ path('admin_delivery_add') }}" class="text-success"><i class="fas fa-plus-circle mr-2"></i>{{ 'Добавить'|trans|raw }}</a></div>
+                        </div>
+                    </li>
+                    <li class="list-group-item rounded-0">
+                        <strong>{{ 'Способы оплаты'|trans|raw }}:</strong>
+                        <div class="my-1">
+                            {% if product.payment.count > 0 %}
+                                {% for payment in product.payment|sort((a, b) => a.position <=> b.position) %}
+                                    <div><a href="{{ path('admin_payment_single', {'id': payment.id}) }}">{{ payment.name }}</a></div>
+                                {% endfor %}
+                            {% else %}
+                                <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
+                            {% endif %}
+                            <div class="mt-2"><a href="{{ path('admin_payment_add') }}" class="text-success"><i class="fas fa-plus-circle mr-2"></i>{{ 'Добавить'|trans|raw }}</a></div>
+                        </div>
+                    </li>
+                    <li class="list-group-item rounded-0">
+                        <strong>{{ 'Подписи'|trans|raw }}:</strong>
+                        <div class="my-1">
+                            {% if product.captions.count > 0 %}
+                                {% for caption in product.captions|sort((a, b) => a.position <=> b.position) %}
+                                    <div class="mb-2"><a href="{{ path('admin_product_caption_single', {'id': caption.id}) }}" class="text-decoration-none px-3 py-1 d-inline-block" style="{% if caption.colorFill %}background-color:{{ caption.colorFill }};{% endif %}{% if caption.colorText %}color:{{ caption.colorText }};{% endif %}">{{ caption.name }}</a></div>
+                                {% endfor %}
+                            {% else %}
+                                <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
+                            {% endif %}
+                            <div class="mt-2"><a href="{{ path('admin_product_caption_add') }}" class="text-success"><i class="fas fa-plus-circle mr-2"></i>{{ 'Добавить'|trans|raw }}</a></div>
+                        </div>
+                    </li>
+                    <li class="list-group-item rounded-0">
+                        <strong>{{ 'Фильтры'|trans|raw }}:</strong>
+                        <div class="my-1">
+                            {% if product.filters.count > 0 %}
+                                {% for filter in product.filters %}
+                                    <div><a href="{{ path('admin_filter_single', {'id': filter.filter.id}) }}">{{ filter.filter.name }}</a></div>
+                                {% endfor %}
+                            {% else %}
+                                <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
+                            {% endif %}
+                            <div class="mt-2"><a href="{{ path('admin_filter_add') }}" class="text-success"><i class="fas fa-plus-circle mr-2"></i>{{ 'Добавить'|trans|raw }}</a></div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="mb-3 custom-project">
+                <ul class="nav nav-tabs" id="nameTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="ru-name-tab" data-toggle="tab" href="#ru-name" role="tab" aria-controls="ru-name" aria-selected="true">RU</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="uk-name-tab" data-toggle="tab" href="#uk-name" role="tab" aria-controls="uk-name" aria-selected="false">UK</a>
+                    </li>
+                </ul>
+                <div class="tab-content p-2 bg-light border border-top-0 mb-3" id="nameTabContent">
+                    <div class="tab-pane fade show active" id="ru-name" role="tabpanel" aria-labelledby="ru-name-tab">
+                        <div class="h2 px-2">{{ product.name }}</div>
+                    </div>
+                    <div class="tab-pane fade" id="uk-name" role="tabpanel" aria-labelledby="uk-name-tab">
+                        <div class="h2 px-2">
+                            {% if translation['uk']['name'] is defined and translation['uk']['name'] %}
+                                {{ translation['uk']['name'] }}
+                            {% else %}
+                                <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="my-3 border p-2">
+                {% if product.items.count > 0 %}
+                    {% set total = 0 %}
+                    {% set totalNoDiscount = 0 %}
+                    <div class="row">
+                        <div class="col-12 order-2">
+                            {% for item in product.items|sort((a, b) => a.position <=> b.position) %}
+                                <div class="row mb-3">
+                                    <div class="col-lg-auto img-check">
+                                        <img src="{% if item.img and fileExists(asset('uploads/product/item/'~item.img)) %}{{ asset('uploads/product/item/'~item.img) }}{% else %}{{ asset('build/images/common/no-image-150.png') }}{% endif %}" class="img-fluid checked-img{% if item.isChecked == 1 %} checked{% endif %}" alt="">
+                                    </div>
+                                    <div class="col-lg-auto">
+                                        <div class="font-weight-bold text-muted">
+                                            {{ item.name }}
+                                        </div>
+                                        <div class="small">
+                                            {% set cost = item.price %}
+                                            <div>{{ 'Цена'|trans|raw }}: <strong>{{ item.price }}</strong></div>
+                                            {% if item.coefficient %}
+                                                <div class="text-muted">{{ 'Коэффициенты пересчета цены'|trans|raw }}: {{ item.coefficient.ratio }}</div>
+                                                {% set cost = cost * item.coefficient.ratio %}
+                                                <div>{{ 'Пересчет'|trans|raw }}: <strong>{{ cost|round }}</strong></div>
+                                            {% endif %}
+
+                                            {% set costNoDiscount = cost * item.displayedQuantity %}
+
+                                            {% if item.discountPercentage %}
+                                                {% if (item.discountStartDate is null or item.discountStartDate.diff(date()).format('%R') == '+') and (item.discountEndDate is null or item.discountEndDate.diff(date()).format('%R') == '-') %}
+                                                    <div class="text-muted">
+                                                        {{ 'Скидка'|trans|raw }}: {{ item.discountPercentage }}%
+                                                        {% if (item.discountStartDate is not null) %}
+                                                            {{ 'с'|trans|raw }} {{ item.discountStartDate.format("d.m.Y H:i") }}
+                                                        {% endif %}
+                                                        {% if (item.discountEndDate is not null) %}
+                                                            {{ 'по'|trans|raw }} {{ item.discountEndDate.format("d.m.Y H:i") }}
+                                                        {% endif %}
+                                                    </div>
+                                                    {% set cost = cost * (1 - item.discountPercentage / 100) %}
+                                                    <div>{{ 'Цена со скидкой'|trans|raw }}: <strong>{{ cost|round }}</strong></div>
+                                                {% endif %}
+                                            {% endif %}
+
+                                            <div class="text-muted">
+                                                {{ 'Количество по умолчанию'|trans|raw }}: <strong>{{ item.displayedQuantity }}</strong>
+                                                <span>(min: {{ item.minOrderQuantity }}{% if item.maxOrderQuantity %}, max: {{ item.maxOrderQuantity }}{% endif %})</span>
+                                            </div>
+
+                                            {% set cost = cost * item.displayedQuantity %}
+                                            <div class="h5">{{ 'Итого'|trans|raw }}:{% if costNoDiscount != cost %} <s class="small text-muted">{{ costNoDiscount|round }}</s>{% endif %} <strong>{{ cost|round }}</strong></div>
+
+                                            {% if item.isChecked == 1 %}
+                                                {% set total = total + cost %}
+                                                {% set totalNoDiscount = totalNoDiscount + costNoDiscount %}
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-12 order-1">
+                            <div class="h4 text-center">
+                                {% if totalNoDiscount != total %}
+                                    <span class="text-danger">(- {{ (100 - (total * 100 / totalNoDiscount))|round(1) }}%)</span>
+                                    <s class="small text-muted">{{ totalNoDiscount|round }}</s>
+                                {% endif %}
+                                <strong>{{ total|round }}</strong> {{ product.currency.abbr }}
+                            </div>
+
+                            <hr />
+                        </div>
+                    </div>
+                {% else %}
+                    <span class="text-danger">{{ 'нет составляющих'|trans|raw }}</span>
+                {% endif %}
+                </div>
+
+                <ul class="nav nav-tabs" id="descriptionTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="ru-description-tab" data-toggle="tab" href="#ru-description" role="tab" aria-controls="ru-description" aria-selected="true">RU</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="uk-description-tab" data-toggle="tab" href="#uk-description" role="tab" aria-controls="uk-description" aria-selected="false">UK</a>
+                    </li>
+                </ul>
+                <div class="tab-content editor-content p-2 bg-light border border-top-0 mb-3" id="descriptionTabContent">
+                    <div class="tab-pane fade show active" id="ru-description" role="tabpanel" aria-labelledby="ru-description-tab">
+                        {% if product.description %}
+                            {% autoescape %}
+                                {{ product.description|raw }}
+                            {% endautoescape %}
+                        {% else %}
+                            <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="tab-pane fade" id="uk-description" role="tabpanel" aria-labelledby="uk-description-tab">
+                        {% if translation['uk']['description'] is defined and translation['uk']['description'] %}
+                            {% autoescape %}
+                                {{ translation['uk']['description']|raw }}
+                            {% endautoescape %}
+                        {% else %}
+                            <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                {% if product.images.count > 0 %}
+                    {% for image in product.images|sort((a, b) => a.position <=> b.position) %}
+                        <div class="row mt-3 no-gutters">
+                            <div class="col-lg-6 p-0 pr-lg-2">
+                                {% if image.isMain == 1 %}
+                                    <div class="font-weight-bold text-success p-2 border text-center mb-1">{{ 'Главное изображение'|trans|raw }}</div>
+                                {% endif %}
+                                <img src="{% if image and fileExists(asset('uploads/product/'~image.name)) %}{% set img = asset('uploads/product/'~image.name) %}{{ img }}{% else %}{{ asset('build/images/common/no-image.png') }}{% endif %}" class="img-fluid" alt="">
+                            </div>
+                            <div class="col-lg-6 small">
+                                {% if img is defined %}
+                                    <ul class="list-group">
+                                        <li class="list-group-item rounded-0"><strong>{{ 'Имя'|trans|raw }}:</strong> <a href="{{ img }}" target="_blank">{{ image.name }}</a></li>
+                                        <li class="list-group-item rounded-0"><strong>{{ 'Объем'|trans|raw }}:</strong> {{ img|img_length }}</li>
+                                        <li class="list-group-item rounded-0"><strong>{{ 'Размер'|trans|raw }}:</strong> {{ img|img_width }}&times;{{ img|img_height }}px</li>
+                                        <li class="list-group-item rounded-0"><strong>{{ 'Тип'|trans|raw }}:</strong> {{ img|img_type }}</li>
+                                    </ul>
+                                {% else %}
+                                    <span class="small text-muted">{{ 'нет изображения'|trans|raw }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('ckeditor_parse_media') }}
+{% endblock %}

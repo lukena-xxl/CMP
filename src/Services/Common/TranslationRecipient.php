@@ -40,6 +40,10 @@ class TranslationRecipient
         $repository = $this->entityManager->getRepository(Translation::class);
         $translation = $repository->findTranslations($entity);
 
+        if (!$translation) {
+            return '';
+        }
+
         if (!is_null($locale) && array_key_exists($locale, $translation)) {
             if (!is_null($property) && array_key_exists($property, $translation[$locale])) {
                 return $translation[$locale][$property];

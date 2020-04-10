@@ -4,6 +4,7 @@ namespace App\Twig;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
 use Twig\TwigFunction;
 
 class CommonExtension extends AbstractExtension
@@ -13,6 +14,13 @@ class CommonExtension extends AbstractExtension
     public function __construct(RequestStack $requestStack)
     {
         $this->requestStack = $requestStack;
+    }
+
+    public function getFilters(): array
+    {
+        return [
+            new TwigFilter('mbCaseTitleSimple', [$this, 'mbCaseTitleSimple']),
+        ];
     }
 
     public function getFunctions(): array
@@ -32,5 +40,10 @@ class CommonExtension extends AbstractExtension
         }
 
         return false;
+    }
+
+    public function mbCaseTitleSimple($string)
+    {
+        return mb_convert_case($string, MB_CASE_TITLE_SIMPLE, "UTF-8");
     }
 }

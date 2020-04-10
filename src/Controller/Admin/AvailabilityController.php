@@ -84,6 +84,7 @@ class AvailabilityController extends AbstractController
             $arrData = $request->request->get('availability');
             $repoTranslation = $entityManager->getRepository(Translation::class);
             $repoTranslation->translate($availability, 'name', 'uk', $arrData['translation_name'])
+                ->translate($availability, 'short_description', 'uk', $arrData['translation_short_description'])
                 ->translate($availability, 'description', 'uk', $arrData['translation_description']);
 
             $entityManager->persist($availability);
@@ -123,6 +124,7 @@ class AvailabilityController extends AbstractController
             $arrData = $request->request->get('availability');
             $repoTranslation = $entityManager->getRepository(Translation::class);
             $repoTranslation->translate($availability, 'name', 'uk', $arrData['translation_name'])
+                ->translate($availability, 'short_description', 'uk', $arrData['translation_short_description'])
                 ->translate($availability, 'description', 'uk', $arrData['translation_description']);
 
             $entityManager->persist($availability);

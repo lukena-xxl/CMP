@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% endblock %}
+
+{% block body %}
+    <div>
+        <h1 class="admin-h1">{{ title }}</h1>
+        <fieldset class="input-max-width-700 custom-project">
+            {{ form_start(form_add) }}
+
+            {{ form_row(form_add.roles) }}
+            {{ form_row(form_add.login) }}
+
+            {% if no_password is not defined %}
+                {{ form_row(form_add.password) }}
+            {% endif %}
+
+            {{ form_row(form_add.email) }}
+            <div class="form-row">
+                <div class="col-sm-4">
+                    {{ form_row(form_add.second_name) }}
+                </div>
+                <div class="col-sm-4">
+                    {{ form_row(form_add.first_name) }}
+                </div>
+                <div class="col-sm-4">
+                    {{ form_row(form_add.middle_name) }}
+                </div>
+            </div>
+            {{ form_row(form_add.phone) }}
+            {{ form_row(form_add.region) }}
+            {{ form_row(form_add.birth_date) }}
+            {{ form_row(form_add.is_block) }}
+            {{ form_row(form_add.submit) }}
+
+            {{ form_end(form_add) }}
+        </fieldset>
+    </div>
+{% endblock %}

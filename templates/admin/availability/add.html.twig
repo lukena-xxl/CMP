@@ -23,6 +23,22 @@
                     {{ form_row(form_add.translation_name) }}
                 </div>
             </div>
+            <ul class="nav nav-tabs" id="short_descriptionTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="ru-short_description-tab" data-toggle="tab" href="#ru-short_description" role="tab" aria-controls="ru-short_description" aria-selected="true">RU</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="uk-short_description-tab" data-toggle="tab" href="#uk-short_description" role="tab" aria-controls="uk-short_description" aria-selected="false">UK</a>
+                </li>
+            </ul>
+            <div class="tab-content p-2 bg-light border border-top-0 mb-3" id="short_descriptionTabContent">
+                <div class="tab-pane fade show active" id="ru-short_description" role="tabpanel" aria-labelledby="ru-short_description-tab">
+                    {{ form_row(form_add.short_description) }}
+                </div>
+                <div class="tab-pane fade" id="uk-short_description" role="tabpanel" aria-labelledby="uk-short_description-tab">
+                    {{ form_row(form_add.translation_short_description) }}
+                </div>
+            </div>
             <ul class="nav nav-tabs" id="descriptionTab" role="tablist">
                 <li class="nav-item">
                     <a class="nav-link active" id="ru-description-tab" data-toggle="tab" href="#ru-description" role="tab" aria-controls="ru-description" aria-selected="true">RU</a>

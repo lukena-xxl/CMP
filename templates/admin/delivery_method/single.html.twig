@@ -1,0 +1,159 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-sm-5">
+            <h3 class="admin-h3">{{ 'Данные'|trans|raw }}</h3>
+            <div class="mb-3">
+                <ul class="list-group">
+                    <li class="list-group-item rounded-0 text-white">
+                        {% if delivery.isVisible == 0 %}
+                            <span class="d-inline-block px-2 bg-danger">{{ 'Отключено'|trans|raw }}</span>
+                        {% else %}
+                            <span class="d-inline-block px-2 bg-success">{{ 'Включено'|trans|raw }}</span>
+                        {% endif %}
+                    </li>
+                    <li class="list-group-item rounded-0"><strong>ID:</strong> {{ delivery.id }}</li>
+                    {% if delivery.key1 %}
+                        <li class="list-group-item rounded-0">
+                            <strong>{{ 'API ключ'|trans|raw }} 1:</strong> {{ delivery.key1 }}
+                            <div class="text-muted small">{{ delivery.noteKey1 }}</div>
+                        </li>
+                    {% endif %}
+                    {% if delivery.key2 %}
+                        <li class="list-group-item rounded-0">
+                            <strong>{{ 'API ключ'|trans|raw }} 2:</strong> {{ delivery.key2 }}
+                            <div class="text-muted small">{{ delivery.noteKey2 }}</div>
+                        </li>
+                    {% endif %}
+                    {% if delivery.key3 %}
+                        <li class="list-group-item rounded-0">
+                            <strong>{{ 'API ключ'|trans|raw }} 3:</strong> {{ delivery.key3 }}
+                            <div class="text-muted small">{{ delivery.noteKey3 }}</div>
+                        </li>
+                    {% endif %}
+                    <li class="list-group-item rounded-0">
+                        <a class="btn btn-light mb-1 text-primary" href="{{ path('admin_delivery_edit', {'id': delivery.id}) }}" role="button"><i class="fas fa-edit mr-2"></i>{{ 'Редактировать'|trans|raw }}</a>
+                        <a class="btn btn-light mb-1 text-danger" href="{{ path('admin_delivery_delete', {'id': delivery.id}) }}" role="button"><i class="fas fa-trash-alt mr-2"></i>{{ 'Удалить'|trans|raw }}</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-sm-7">
+            <h3 class="admin-h3">{{ 'Информация'|trans|raw }}</h3>
+            <div class="mb-3 custom-project">
+                <ul class="nav nav-tabs" id="nameTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="ru-name-tab" data-toggle="tab" href="#ru-name" role="tab" aria-controls="ru-name" aria-selected="true">RU</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="uk-name-tab" data-toggle="tab" href="#uk-name" role="tab" aria-controls="uk-name" aria-selected="false">UK</a>
+                    </li>
+                </ul>
+                <div class="tab-content p-2 bg-light border border-top-0 mb-3" id="nameTabContent">
+                    <div class="tab-pane fade show active" id="ru-name" role="tabpanel" aria-labelledby="ru-name-tab">
+                        <div class="h2 px-2">{{ delivery.name }}</div>
+                    </div>
+                    <div class="tab-pane fade" id="uk-name" role="tabpanel" aria-labelledby="uk-name-tab">
+                        <div class="h2 px-2">
+                            {% if translation['uk']['name'] is defined and translation['uk']['name'] %}
+                                {{ translation['uk']['name'] }}
+                            {% else %}
+                                <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <ul class="list-group">
+                    <li class="list-group-item rounded-0">
+                        <strong>{{ 'Изображение'|trans|raw }}:</strong>
+                        <div class="row mt-2">
+                            <div class="col-sm-6">
+                                <img src="{% if delivery.image and fileExists(asset('uploads/delivery/'~delivery.image)) %}{% set image = asset('uploads/delivery/'~delivery.image) %}{{ image }}{% else %}{{ asset('build/images/common/no-image.png') }}{% endif %}" class="img-fluid" alt="">
+                            </div>
+                            <div class="col-sm-6">
+                                {% if image  is defined %}
+                                    <ul class="list-group">
+                                        <li class="list-group-item rounded-0"><strong>{{ 'Имя'|trans|raw }}:</strong> <a href="{{ image }}" target="_blank">{{ delivery.image }}</a></li>
+                                        <li class="list-group-item rounded-0"><strong>{{ 'Объем'|trans|raw }}:</strong> {{ image|img_length }}</li>
+                                        <li class="list-group-item rounded-0"><strong>{{ 'Размер'|trans|raw }}:</strong> {{ image|img_width }}&times;{{ image|img_height }}px</li>
+                                        <li class="list-group-item rounded-0"><strong>{{ 'Формат'|trans|raw }}:</strong> {{ image|img_format }}</li>
+                                        <li class="list-group-item rounded-0"><strong>{{ 'Тип'|trans|raw }}:</strong> {{ image|img_type }}</li>
+                                    </ul>
+                                {% else %}
+                                    <span class="small text-muted">{{ 'нет изображения'|trans|raw }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+
+                <div class="font-weight-bold mt-3 mb-2">{{ 'Краткое описание'|trans|raw }}:</div>
+                <ul class="nav nav-tabs" id="short_descriptionTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="ru-short_description-tab" data-toggle="tab" href="#ru-short_description" role="tab" aria-controls="ru-short_description" aria-selected="true">RU</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="uk-short_description-tab" data-toggle="tab" href="#uk-short_description" role="tab" aria-controls="uk-short_description" aria-selected="false">UK</a>
+                    </li>
+                </ul>
+                <div class="tab-content editor-content p-2 bg-light border border-top-0 mb-3" id="short_descriptionTabContent">
+                    <div class="tab-pane fade show active" id="ru-short_description" role="tabpanel" aria-labelledby="ru-short_description-tab">
+                        {% if delivery.shortDescription %}
+                            {% autoescape %}
+                                {{ delivery.shortDescription|raw }}
+                            {% endautoescape %}
+                        {% else %}
+                            <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="tab-pane fade" id="uk-short_description" role="tabpanel" aria-labelledby="uk-short_description-tab">
+                        {% if translation['uk']['short_description'] is defined and translation['uk']['short_description'] %}
+                            {% autoescape %}
+                                {{ translation['uk']['short_description']|raw }}
+                            {% endautoescape %}
+                        {% else %}
+                            <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="font-weight-bold mt-3 mb-2">{{ 'Описание'|trans|raw }}:</div>
+                <ul class="nav nav-tabs" id="descriptionTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="ru-description-tab" data-toggle="tab" href="#ru-description" role="tab" aria-controls="ru-description" aria-selected="true">RU</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="uk-description-tab" data-toggle="tab" href="#uk-description" role="tab" aria-controls="uk-description" aria-selected="false">UK</a>
+                    </li>
+                </ul>
+                <div class="tab-content editor-content p-2 bg-light border border-top-0 mb-3" id="descriptionTabContent">
+                    <div class="tab-pane fade show active" id="ru-description" role="tabpanel" aria-labelledby="ru-description-tab">
+                        {% if delivery.description %}
+                            {% autoescape %}
+                                {{ delivery.description|raw }}
+                            {% endautoescape %}
+                        {% else %}
+                            <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="tab-pane fade" id="uk-description" role="tabpanel" aria-labelledby="uk-description-tab">
+                        {% if translation['uk']['description'] is defined and translation['uk']['description'] %}
+                            {% autoescape %}
+                                {{ translation['uk']['description']|raw }}
+                            {% endautoescape %}
+                        {% else %}
+                            <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('ckeditor_parse_media') }}
+{% endblock %}

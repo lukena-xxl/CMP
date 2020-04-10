@@ -76,15 +76,15 @@ class Category implements Translatable
     private $filters;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Parameter", mappedBy="parameter_categories")
+     * @ORM\OneToMany(targetEntity="App\Entity\Product", mappedBy="category")
      */
-    private $parameters;
+    private $products;
 
     public function __construct()
     {
         $this->categories = new ArrayCollection();
         $this->filters = new ArrayCollection();
-        $this->parameters = new ArrayCollection();
+        $this->products = new ArrayCollection();
     }
 
     public function setTranslatableLocale($locale)
@@ -241,28 +241,31 @@ class Category implements Translatable
     }
 
     /**
-     * @return Collection|Parameter[]
+     * @return Collection|Product[]
      */
-    public function getParameters(): Collection
+    public function getProducts(): Collection
     {
-        return $this->parameters;
+        return $this->products;
     }
 
-    public function addParameter(Parameter $parameter): self
+    public function addProduct(Product $product): self
     {
-        if (!$this->parameters->contains($parameter)) {
-            $this->parameters[] = $parameter;
-            $parameter->addParameterCategory($this);
+        if (!$this->products->contains($product)) {
+            $this->products[] = $product;
+            $product->setCategory($this);
         }
 
         return $this;
     }
 
-    public function removeParameter(Parameter $parameter): self
+    public function removeProduct(Product $product): self
     {
-        if ($this->parameters->contains($parameter)) {
-            $this->parameters->removeElement($parameter);
-            $parameter->removeParameterCategory($this);
+        if ($this->products->contains($product)) {
+            $this->products->removeElement($product);
+            // set the owning side to null (unless already changed)
+            if ($product->getCategory() === $this) {
+                $product->setCategory(null);
+            }
         }
 
         return $this;

@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% endblock %}
+
+{% block body %}
+    <h1 class="admin-h1">{{ 'Продукты'|trans|raw }}</h1>
+    <div class="mb-3">
+        <a href="{{ path('admin_product_add') }}" class="btn btn-primary" role="button"><i class="fas fa-plus-circle mr-2"></i>{{ 'Добавить'|trans|raw }}</a>
+    </div>
+    {% if products %}
+        <table class="table table-responsive">
+            <tr class="bg-light text-dark small">
+                <th>ID</th>
+                <th>{{ 'Изображение'|trans|raw }}</th>
+                <th>{{ 'Название'|trans|raw }}</th>
+                <th>{{ 'Цена'|trans|raw }}</th>
+                <th>{{ 'Категория'|trans|raw }}</th>
+                <th class="text-center">{{ 'Действия'|trans|raw }}</th>
+            </tr>
+            {% for product in products %}
+                <tr>
+                    <td>{{ product.id }}</td>
+                    <td><img src="{% if product.image_name and product.image_is_visible %}{{ asset('uploads/product/150/'~product.image_name) }}{% else %}{{ asset('build/images/common/no-image-150.png') }}{% endif %}" class="img-fluid"></td>
+                    <td class="min-width-300">
+                        <a href="{{ path('admin_product_single', {'id': product.id}) }}" class="text-decoration-none{% if product.is_visible != 1 %} text-disabled{% endif %}">{{ product.name }}</a>
+                        <div class="small font-weight-bold" style="color:{{ product.availability_color }}">{{ product.availability_name }}</div>
+                        <div class="small">{{ 'Добавил'|trans|raw }}: {{ product.user_login }}</div>
+                    </td>
+                    <td class="min-width-150"><strong>{{ product.cost|round }}</strong> {{ product.currency_name }}</td>
+                    <td class="min-width-150">
+                        {% if product.category_id %}
+                            <a href="{{ path('admin_category_single', {'id': product.category_id}) }}">{{ product.category_name }}</a>
+                        {% else %}
+                            <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="min-width-150 text-center">
+                            <a class="btn btn-light" href="{{ path('admin_product_edit', {'id': product.id}) }}" role="button"><i class="fas fa-edit"></i></a>
+                            <a class="btn btn-light text-danger" href="{{ path('admin_product_delete', {'id': product.id}) }}" role="button"><i class="fas fa-trash-alt"></i></a>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p class="mt-3">{{ 'Нет продуктов'|trans|raw }}!</p>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,404 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% endblock %}
+
+{% block body_frontend %}
+
+<div class="product-block">
+
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-light">
+            <li class="breadcrumb-item"><a href="#">Главная</a></li>
+            <li class="breadcrumb-item"><a href="#">Мебель</a></li>
+            <li class="breadcrumb-item"><a href="#">Мебель для спальни</a></li>
+            <li class="breadcrumb-item"><a href="#">Кровати</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Кровать полуторная Франческа</li>
+        </ol>
+    </nav>
+
+    <h1 class="text-uppercase mb-1">Кровать полуторная Франческа</h1>
+    <div class="text-muted text-uppercase mb-3 ml-2">Код товара: <strong>12345</strong></div>
+
+    <div class="row">
+        <div class="col-sm-6">
+
+            <div class="fotorama"
+                 data-allowfullscreen="native"
+                 data-width="100%"
+                 data-ratio="800/600"
+                 data-nav="thumbs"
+                 data-thumbwidth="150"
+                 data-thumbheight="113"
+                 data-transition="slide"
+                 data-clicktransition="crossfade"
+                 data-hash="true"
+                 data-keyboard="true">
+                <a href="https://dommebelikiev.com.ua/assets/images/products/1643/20742097-images-2131493017.jpg" data-thumb="https://dommebelikiev.com.ua/assets/images/products/1643/20742097-images-2131493017.jpg"></a>
+                <a href="https://decart.ua/home/catalog/product30052/image_0000000100066.jpg" data-thumb="https://decart.ua/home/catalog/product30052/image_0000000100066.jpg"></a>
+                <a href="https://divan.plus/image/cache/catalog/!forsazh/divan-forsazh-001%20(3)-800x600.jpg" data-thumb="https://divan.plus/image/cache/catalog/!forsazh/divan-forsazh-001%20(3)-800x600.jpg"></a>
+                <a href="https://mebel-mag.com.ua/image/cache/data/amoti/amoti-vikatnoy-divan-astorio-800x600.jpg" data-thumb="https://mebel-mag.com.ua/image/cache/data/amoti/amoti-vikatnoy-divan-astorio-800x600.jpg"></a>
+            </div>
+
+
+            <ul class="nav nav-tabs justify-content-center mt-4" id="myTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link text-uppercase small active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Описание</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-uppercase small" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Комментарии</a>
+                </li>
+            </ul>
+            <div class="tab-content p-3" id="myTabContent">
+                <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+
+                    Корпус мебели изготавливается из ламинированного ДСП Swisspan, фасады - из высококачественного МДФ, покрытых пленкой ПВХ толщиной 0,5 мм., которая обеспечивает стойкость к истиранию в 10 раз выше, чем у обычного материала. Витрины комплектуются рамой цвета металлик.
+
+                </div>
+                <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+
+
+
+                </div>
+            </div>
+
+
+
+
+
+        </div>
+        <div class="col-sm-6">
+
+            <div class="product-order-block mb-2">
+
+                <div class="mb-4 text-center">
+
+                    <div class="mb-2 text-uppercase">
+                        <div class="d-inline-block font-weight-bold align-middle" style="color: #86C429">В наличии</div>
+                        <div class="d-inline-block text-muted small align-middle">Доставка до 7 дней</div>
+                    </div>
+
+                    <div class="main-price-block">
+                        <div class="price-block d-inline-block align-middle mr-3 mb-2">
+                            <span class="price-old"><s><span id="main-price-old">24000</span> грн.</s></span>
+                            <span class="h2"><span id="main-price">23100</span> грн.</span>
+                            <div class="text-muted saving-block">Экономия: <span class="font-weight-bold"><span id="saving">900</span> грн.</span></div>
+                        </div>
+
+                        <div class="d-inline-block align-middle mb-2">
+                            <button class="btn btn-lg btn-primary rounded-0 add-to-card"><i class="fad fa-cart-arrow-down mr-0 mr-sm-2"></i><span class="d-none d-sm-inline">Купить</span></button>
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="border-top position-relative mb-4"><div class="product-order-block-title">Разновидности</div></div>
+                <div class="product-items-block">
+
+                    <div class="row align-items-center mb-2 pt-3 pt-sm-0">
+                        <div class="col-md-auto">
+                            <div class="img-check">
+                                <img src="https://dommebelikiev.com.ua/assets/images/products/1643/20742097-images-2131493017.jpg" class="img-fluid checked-img checked" style="max-width: 150px;">
+                                <div class="d-none"><input type="checkbox" value="23" data-price="23100" data-price-old="24000" checked="checked"></div>
+                            </div>
+                        </div>
+                        <div class="col pt-2 pt-xl-0">
+                            <div class="text-muted small">Размер: 1200x300; Цвет: серый; Материал: ткань класса А</div>
+                            <div class="price-block">
+                                <span class="price-old"><s>24000 грн.</s></span>
+                                <span class="small">23100 грн.</span>
+                            </div>
+                            <div class="count-block">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <button class="input-group-text text-primary bg-light rounded-0 border count-prev"><i class="fas fa-angle-left"></i></button>
+                                    </div>
+                                    <input type="number" min="1" class="form-control rounded-0 max-width-100 count-product" value="1" readonly>
+                                    <div class="input-group-append">
+                                        <button class="input-group-text text-primary bg-light rounded-0 border count-next"><i class="fas fa-angle-right"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row align-items-center mb-2 pt-3 pt-sm-0">
+                        <div class="col-md-auto">
+                            <div class="img-check">
+                                <img src="https://decart.ua/home/catalog/product30052/image_0000000100066.jpg" class="img-fluid checked-img" style="max-width: 150px;">
+                                <div class="d-none"><input type="checkbox" value="23" data-price="29700" data-price-old="0"></div>
+                            </div>
+                        </div>
+                        <div class="col pt-2 pt-xl-0">
+                            <div class="text-muted small">Размер: 1500x300; Цвет: голубой;</div>
+                            <div class="price-block">
+                                <span class="small">29700 грн.</span>
+                            </div>
+                            <div class="count-block">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <button class="input-group-text text-primary bg-light rounded-0 border count-prev"><i class="fas fa-angle-left"></i></button>
+                                    </div>
+                                    <input type="number" min="1" class="form-control rounded-0 max-width-100 count-product" value="1" readonly>
+                                    <div class="input-group-append">
+                                        <button class="input-group-text text-primary bg-light rounded-0 border count-next"><i class="fas fa-angle-right"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row align-items-center mb-2 pt-3 pt-sm-0">
+                        <div class="col-md-auto">
+                            <div class="img-check">
+                                <img src="https://divan.plus/image/cache/catalog/!forsazh/divan-forsazh-001%20(3)-800x600.jpg" class="img-fluid checked-img" style="max-width: 150px;">
+                                <div class="d-none"><input type="checkbox" value="23" data-price="23300" data-price-old="0"></div>
+                            </div>
+                        </div>
+                        <div class="col pt-2 pt-xl-0">
+                            <div class="text-muted small">Размер: 1500x400; Цвет: топленое молоко;</div>
+                            <div class="price-block">
+                                <span class="small">23300 грн.</span>
+                            </div>
+                            <div class="count-block">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <button class="input-group-text text-primary bg-light rounded-0 border count-prev"><i class="fas fa-angle-left"></i></button>
+                                    </div>
+                                    <input type="number" min="1" class="form-control rounded-0 max-width-100 count-product" value="1" readonly>
+                                    <div class="input-group-append">
+                                        <button class="input-group-text text-primary bg-light rounded-0 border count-next"><i class="fas fa-angle-right"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row align-items-center mb-2 pt-3 pt-sm-0">
+                        <div class="col-md-auto">
+                            <div class="img-check">
+                                <img src="https://mebel-mag.com.ua/image/cache/data/amoti/amoti-vikatnoy-divan-astorio-800x600.jpg" class="img-fluid checked-img" style="max-width: 150px;">
+                                <div class="d-none"><input type="checkbox" value="23" data-price="13100" data-price-old="0"></div>
+                            </div>
+                        </div>
+                        <div class="col pt-2 pt-xl-0">
+                            <div class="text-muted small">Размер: 1100x200; Цвет: коричневый;</div>
+                            <div class="price-block">
+                                <span class="small">13100 грн.</span>
+                            </div>
+                            <div class="count-block">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <button class="input-group-text text-primary bg-light rounded-0 border count-prev"><i class="fas fa-angle-left"></i></button>
+                                    </div>
+                                    <input type="number" min="1" class="form-control rounded-0 max-width-100 count-product" value="1" readonly>
+                                    <div class="input-group-append">
+                                        <button class="input-group-text text-primary bg-light rounded-0 border count-next"><i class="fas fa-angle-right"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="product-order-block mb-2">
+                <div class="text-uppercase text-primary h5"><i class="fad fa-id-card mr-2"></i>Контакты</div>
+                <div class="row">
+                    <div class="col-md-auto">
+                        <div class="mb-2"><a href="#" class="text-dark font-weight-bold"><i class="fas fa-mobile-alt mr-2"></i>+38(095)00-11-222</a></div>
+                        <div class="mb-2"><a href="#" class="text-dark font-weight-bold"><i class="fas fa-mobile-alt mr-2"></i>+38(095)00-11-222</a></div>
+                        <div class="mb-2"><a href="#" class="text-dark font-weight-bold"><i class="fas fa-mobile-alt mr-2"></i>+38(095)00-11-222</a></div>
+                    </div>
+                    <div class="col-md-auto">
+                        <div class="font-weight-bold text-muted">График работы менеджеров:</div>
+                        с 09:00 до 18:00 (понедельник - пятница)<br />
+                        с 09:00 до 16:00 (суббота, воскресенье)
+                    </div>
+                </div>
+
+                <hr />
+
+                <div class="text-uppercase text-primary h5"><i class="fad fa-truck mr-2"></i>Доставка</div>
+                <div class="">
+                    Мы осуществляем бесплатную доставку* по всей территории Украины всех заказов стоимостью свыше 2000 грн!
+                    <a href="#"> ... подробнее</a>
+                </div>
+
+                <hr />
+
+                <div class="text-uppercase text-primary h5"><i class="fad fa-money-bill-wave-alt mr-2"></i>Оплата</div>
+                <div class="">
+                    Наличный расчет при получении. Безналичный расчет с НДС. Онлайн оплата картами Visa/MasterCard. Оплата частями от Приватбанк. Рассрочка от Альфа-банка и Приватбанка
+                    <a href="#"> ... подробнее</a>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="block-title mt-4 mb-3">
+        <strong>Похожие товары</strong>
+    </div>
+    <div class="owl-carousel-big owl-carousel owl-theme mb-3">
+        {% set x = 1 %}
+        {% set arr = [1,2,3,4,5,6] %}
+        {% for x in arr %}
+            <div class="card card-product h-100 position-relative rounded-0">
+                <div class="position-relative">
+                    <a href="#"><img src="https://mebelist.net/image/cache/catalog/divan-plus-new/pryamye/graf/pryamoy-divan-graf-marsel-sky-800x600.jpg" class="card-img-top rounded-0" alt="..."></a>
+                    <div class="gift-block">
+                        <div class="gift font-weight-bold small">Доставка в подарок</div>
+                    </div>
+                </div>
+                <div class="card-body pb-3">
+                    <div class="card-title-expansion">
+                        <a href="#" class="text-dark text-decoration-none d-block a-title">Кровать полуторная с мягким изголовьем</a>
+                        <div class="card-text text-muted small">Код товара: <strong>2134</strong></div>
+                    </div>
+
+                    <div class="pt-3">
+                        <div class="small">
+                            <span class="text-success">В наличии</span>
+                            <span class="text-muted">(доставка до 3 дней)</span>
+                        </div>
+                    </div>
+
+                    <div class="price-block mb-2">
+                        <div class="price-old-percent">-15%</div>
+                        <span class="price-old"><s>24000 грн.</s></span>
+                        <span>23100 грн.</span>
+                    </div>
+
+                    <a href="#" class="card-link btn btn-primary align-middle" role="button"><i class="fad fa-info-circle mr-2"></i>Больше</a>
+                    <a href="#" class="card-link h2 text-muted align-middle"><i class="fad fa-cart-arrow-down"></i></a>
+
+                    <div class="tag-block">
+                        <div class="mb-1"><a href="#" class="text-muted"><i class="fad fa-flag mr-2"></i>Кровати полуторные</a></div>
+                    </div>
+
+                </div>
+            </div>
+            {% set x = x + 1 %}
+        {% endfor %}
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="block-title mt-4 mb-3">
+                <strong>Вы смотрели</strong>
+            </div>
+
+            <div class="owl-carousel-middle owl-carousel owl-theme">
+                {% set x = 1 %}
+                {% set arr = [1,2,3,4,5,6] %}
+                {% for x in arr %}
+                    <div class="card card-product h-100 position-relative rounded-0">
+                        <div class="position-relative">
+                            <a href="#"><img src="https://divandivanuch.ua/image/cache/data/divan-elit-mini-1-800x600.jpg" class="card-img-top rounded-0" alt="..."></a>
+                            <div class="gift-block">
+                                <div class="gift font-weight-bold small">Доставка в подарок</div>
+                            </div>
+                        </div>
+                        <div class="card-body pb-3">
+                            <div class="card-title-expansion">
+                                <a href="#" class="text-dark text-decoration-none d-block a-title">Кровать полуторная с мягким изголовьем</a>
+                                <div class="card-text text-muted small">Код товара: <strong>2134</strong></div>
+                            </div>
+
+                            <div class="pt-3">
+                                <div class="small">
+                                    <span class="text-success">В наличии</span>
+                                    <span class="text-muted">(доставка до 3 дней)</span>
+                                </div>
+                            </div>
+
+                            <div class="price-block mb-2">
+                                <div class="price-old-percent">-15%</div>
+                                <span class="price-old"><s>24000 грн.</s></span>
+                                <span>23100 грн.</span>
+                            </div>
+
+                            <a href="#" class="card-link btn btn-primary align-middle" role="button"><i class="fad fa-info-circle mr-2"></i>Больше</a>
+                            <a href="#" class="card-link h2 text-muted align-middle"><i class="fad fa-cart-arrow-down"></i></a>
+
+                            <div class="tag-block">
+                                <div class="mb-1"><a href="#" class="text-muted"><i class="fad fa-flag mr-2"></i>Кровати полуторные</a></div>
+                            </div>
+
+                        </div>
+                    </div>
+                    {% set x = x + 1 %}
+                {% endfor %}
+            </div>
+
+
+
+        </div>
+        <div class="col-md-4">
+
+            <div class="block-title mt-4">
+                <strong>Часто спрашивают</strong>
+            </div>
+
+            <div class="accordion mt-3" id="accordionExample">
+                <div class="card">
+                    <div class="card-header" id="heading1">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse1" aria-expanded="true" aria-controls="collapse1">
+                                <i class="fad fa-question-square fa-2x mr-2 align-middle"></i><span class="d-inline align-middle">Разворачиваемая панель #1</span>
+                            </button>
+                        </h5>
+                    </div>
+
+                    <div id="collapse1" class="collapse show" aria-labelledby="heading1" data-parent="#accordionExample">
+                        <div class="card-body">
+                            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et.
+                        </div>
+                    </div>
+                </div>
+
+                {% set x = 2 %}
+                {% set arr = [2,3,4] %}
+                {% for x in arr %}
+
+                    <div class="card">
+                        <div class="card-header" id="heading{{ x }}">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapse{{ x }}" aria-expanded="false" aria-controls="collapse{{ x }}">
+                                    <i class="fad fa-question-square fa-2x mr-2 align-middle"></i><span class="d-inline align-middle">Разворачиваемая панель #{{ x }}</span>
+                                </button>
+                            </h5>
+                        </div>
+                        <div id="collapse{{ x }}" class="collapse" aria-labelledby="heading{{ x }}" data-parent="#accordionExample">
+                            <div class="card-body">
+                                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                            </div>
+                        </div>
+                    </div>
+
+                    {% set x = x + 1 %}
+                {% endfor %}
+
+            </div>
+
+        </div>
+    </div>
+
+
+
+</div>
+
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('fotorama') }}
+    {{ encore_entry_script_tags('owl_carousel') }}
+    {{ encore_entry_script_tags('calculate_price') }}
+{% endblock %}
+

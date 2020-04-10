@@ -19,7 +19,13 @@
                 <tr>
                     <td>{{ article.id }}</td>
                     <td class="min-width-300"><a href="{{ path('admin_article_single', {'id': article.id}) }}" class="text-decoration-none{% if article.isVisible != 1 %} text-disabled{% endif %}">{{ article.name }}</a></td>
-                    <td class="text-center">{{ article.articleCategory.name }}</td>
+                    <td class="text-center">
+                        {% if article.articleCategory %}
+                            <a href="{{ path('admin_article_category_single', {'id': article.articleCategory.id}) }}">{{ article.articleCategory.name }}</a>
+                        {% else %}
+                            <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
+                        {% endif %}
+                    </td>
                     <td>
                         <div class="min-width-300 text-center">
                             <a class="btn btn-light" href="{{ path('admin_article_sort', {'id': article.id}) }}" role="button"><i class="fas fa-exchange-alt fa-rotate-90"></i></a>

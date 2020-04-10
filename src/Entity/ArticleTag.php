@@ -2,13 +2,37 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\Translatable\Translatable;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
+ * Secured resource.
+ *
+ * @ApiResource(
+ *     attributes={
+ *         "security"="is_granted('ROLE_USER')",
+ *         "normalization_context"={"groups"={"read"}},
+ *         "denormalization_context"={"groups"={"write"}}},
+ *     collectionOperations={
+ *         "get",
+ *         "post"={"security"="is_granted('ROLE_ADMIN')"}
+ *     },
+ *     itemOperations={
+ *         "get",
+ *         "put"={"security"="is_granted('ROLE_ADMIN')"},
+ *         "patch"={"security"="is_granted('ROLE_ADMIN')"},
+ *         "delete"={"security"="is_granted('ROLE_ADMIN')"}
+ *     }
+ * )
+ * @ApiFilter(OrderFilter::class, properties={"id", "position"})
  * @ORM\Entity(repositoryClass="App\Repository\ArticleTagRepository")
  */
 class ArticleTag implements Translatable
@@ -17,40 +41,48 @@ class ArticleTag implements Translatable
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"read"})
      */
     private $id;
 
     /**
      * @Gedmo\Slug(fields={"name"}, updatable=false, separator="-")
      * @ORM\Column(type="string", length=255)
+     * @Groups({"read"})
      */
     private $slug;
 
     /**
      * @Gedmo\Translatable
      * @ORM\Column(name="name", type="string", length=200)
+     * @Groups({"read", "write"})
      */
     private $name;
 
     /**
      * @Gedmo\Translatable
      * @ORM\Column(type="text", nullable=true)
+     * @Groups({"read", "write"})
      */
     private $description;
 
     /**
      * @ORM\Column(type="boolean", options={"default":"0"})
+     * @Groups({"read", "write"})
      */
     private $is_visible = false;
 
     /**
      * @Gedmo\SortablePosition
      * @ORM\Column(type="integer")
+     * @Groups({"read"})
      */
     private $position;
 
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Article", mappedBy="article_tags")
+     * @Groups({"read"})
+     * @ApiSubresource
      */
     private $articles;
 

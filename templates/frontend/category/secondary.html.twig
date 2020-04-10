@@ -1,0 +1,334 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% endblock %}
+
+{% block body_frontend %}
+    <div class="product-block">
+
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb bg-light">
+                <li class="breadcrumb-item"><a href="#">Главная</a></li>
+                <li class="breadcrumb-item"><a href="#">Мебель</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Мебель для спальни</li>
+            </ol>
+        </nav>
+
+        <h1 class="text-uppercase mb-3">Мебель для спальни</h1>
+
+        <div class="sorting-block">
+
+            <div class="row align-items-center">
+                <div class="col-sm-6 col-md-5 col-lg-4 text-left">
+
+                    <div class="owl-carousel-single-no-nav owl-carousel owl-theme mb-3 mb-sm-0">
+                    {% set x = 1 %}
+                    {% set arr = [1,2,3,4,5,6] %}
+                    {% for x in arr %}
+
+                        <div class="">
+                            <a href="#" class="h5">Лучшее предложение на сегодня!</a>
+                            <div class="small">Функциональные и практичные, многими любимые трехдверные шкафы не теряют высоких позиций</div>
+                        </div>
+
+                        {% set x = x + 1 %}
+                    {% endfor %}
+                    </div>
+
+                </div>
+                <div class="col-sm-6 col-md-7 col-lg-8 text-right">
+
+                    <div class="d-inline-block mb-1">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <label class="input-group-text rounded-0 bg-light border-light" for="inputGroupSelect01"><i class="fad fa-sort-amount-down-alt mr-2"></i>Сортировать</label>
+                            </div>
+                            <select class="form-control rounded-0" id="inputGroupSelect01">
+                                <option selected>по умолчанию</option>
+                                <option value="1">One</option>
+                                <option value="2">Two</option>
+                                <option value="3">Three</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="d-inline-block mb-1">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <label class="input-group-text rounded-0 bg-light border-light" for="inputGroupSelect02"><i class="fad fa-eye mr-2"></i>Показать</label>
+                            </div>
+                            <select class="form-control rounded-0" id="inputGroupSelect02">
+                                <option value="11">11</option>
+                                <option value="19">19</option>
+                                <option value="31">31</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="d-inline-block mb-1">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <label class="input-group-text rounded-0 bg-light border-light" for=""><i class="fad fa-file-alt mr-2"></i>Страница</label>
+                            </div>
+                            <div>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <button class="input-group-text text-primary bg-light rounded-0 border" disabled><i class="fas fa-angle-left"></i></button>
+                                    </div>
+                                    <select class="form-control rounded-0" id="inputGroupSelect03">
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                    </select>
+                                    <div class="input-group-append">
+                                        <button class="input-group-text text-primary bg-light rounded-0 border"><i class="fas fa-angle-right"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col-sm-5 col-md-4 col-lg-3">
+
+                <nav class="navbar navbar-expand-sm navbar-light p-2 p-sm-0 mb-3 mb-sm-0 navbar-filter">
+                    <span class="navbar-brand d-block d-sm-none ml-3" href="#"><span class="text-muted">Фильтры</span></span>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse pt-3 pt-sm-0" id="navbarSupportedContent">
+
+                        <div class="block-right pb-3 w-100">
+
+                            <div class="block-title">
+                                <strong>Уточнить раздел</strong>
+                            </div>
+                            <div class="mt-3 p-2">
+                                <div class="list-group w-100 category-list">
+                                    {% set x = 1 %}
+                                    {% set arr = [1,2,3,4,5,6] %}
+                                    {% for x in arr %}
+
+                                        <a class="list-group-item list-group-item-action rounded-0 border-0 py-2" href="#"><span class="d-inline-block text-wrap">Кровати односпальные {{ x }}</span></a>
+
+                                        {% set x = x + 1 %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <div class="block-title mt-3">
+                                <strong>Фильтры</strong>
+                            </div>
+                            <div class="mt-3 p-2">
+                                <div class="font-weight-bold text-primary mb-2">Производитель</div>
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="customCheck1">
+                                    <label class="custom-control-label text-muted font-weight-normal" for="customCheck1">Check checkbox</label>
+                                </div>
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="customCheck2">
+                                    <label class="custom-control-label text-muted font-weight-normal" for="customCheck2">Check this custom checkbox</label>
+                                </div>
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="customCheck3">
+                                    <label class="custom-control-label text-muted font-weight-normal" for="customCheck3">Check custom checkbox</label>
+                                </div>
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="customCheck4">
+                                    <label class="custom-control-label text-muted font-weight-normal" for="customCheck4">Check this checkbox</label>
+                                </div>
+
+                                <div class="font-weight-bold text-primary mb-2 mt-3">Материал</div>
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="customCheck11">
+                                    <label class="custom-control-label text-muted font-weight-normal" for="customCheck11">Check this custom checkbox</label>
+                                </div>
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="customCheck22">
+                                    <label class="custom-control-label text-muted font-weight-normal" for="customCheck22">Check this</label>
+                                </div>
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="customCheck33">
+                                    <label class="custom-control-label text-muted font-weight-normal" for="customCheck33">Check custom checkbox</label>
+                                </div>
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="customCheck44">
+                                    <label class="custom-control-label text-muted font-weight-normal" for="customCheck44">Check checkbox</label>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                </nav>
+
+            </div>
+            <div class="col-sm-7 col-md-8 col-lg-9">
+
+                <div class="filters-block">
+
+                    <div class="m-2 small">
+                        <div class="parameter-block text-muted">
+                            <span>Материал</span>
+                            <i class="fas fa-angle-right mx-1 align-middle"></i>
+                            <span class="font-weight-bold text-dark">Дерево</span>
+                            <a href="#" class="text-decoration-none text-danger h4 align-middle">×</a>
+                        </div>
+
+                        <div class="parameter-block text-muted">
+                            <span>Цвет</span>
+                            <i class="fas fa-angle-right mx-1 align-middle"></i>
+                            <span class="font-weight-bold text-dark">Крем-брюле</span>
+                            <a href="#" class="text-decoration-none text-danger h4 align-middle">×</a>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 card-block">
+
+                    {% set x = 1 %}
+                    {% set arr = [1,2,3,4,5,6] %}
+                    {% for x in arr %}
+                        <div class="col pb-3">
+                            <div class="card card-product h-100 position-relative rounded-0">
+                                <div class="position-relative">
+                                    <a href="#"><img src="https://images.ua.prom.st/1105824121_w640_h640_1105824121.jpg" class="card-img-top rounded-0" alt="..."></a>
+                                    <div class="gift-block">
+                                        <div class="gift font-weight-bold small">Доставка в подарок</div>
+                                    </div>
+                                </div>
+                                <div class="card-body pb-1">
+                                    <div class="card-title-expansion">
+                                        <a href="#" class="text-dark text-decoration-none d-block a-title">Кровать двухспальная с мягким изголовьем</a>
+                                        <div class="card-text text-muted small">Код товара: <strong>2134</strong></div>
+                                    </div>
+
+                                    <div class="pt-3">
+                                        <div class="small">
+                                            <span class="text-success">В наличии</span>
+                                            <span class="text-muted">(доставка до 3 дней)</span>
+                                        </div>
+                                        <a class="btn btn-link" data-toggle="collapse" href="#collapseExample-{{ x }}" aria-expanded="false" aria-controls="collapseExample" role="button">Характеристики<i class="fas fa-angle-down ml-1"></i></a>
+                                        <div class="collapse small" id="collapseExample-{{ x }}">
+                                            <ul class="list-group list-group-flush">
+                                                <li class="list-group-item py-1">Размер: <strong>1200x600</strong></li>
+                                                <li class="list-group-item py-1">Материалы: <strong>дерево, металл</strong></li>
+                                                <li class="list-group-item py-1">Цвет: <strong>крем</strong></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <div class="price-block mb-2">
+                                        <div class="price-old-percent">-15%</div>
+                                        <span class="price-old"><s>24000 грн.</s></span>
+                                        <span>23100 грн.</span>
+                                    </div>
+
+                                    <a href="#" class="card-link btn btn-primary align-middle" role="button"><i class="fad fa-info-circle mr-2"></i>Больше</a>
+                                    <a href="#" class="card-link h2 text-muted align-middle"><i class="fad fa-cart-arrow-down"></i></a>
+
+                                    <div class="tag-block">
+                                        <div class="mb-1"><a href="#" class="text-muted"><i class="fad fa-flag mr-2"></i>Прикормки</a></div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        {% set x = x + 1 %}
+                    {% endfor %}
+
+                </div>
+
+                <nav aria-label="Page navigation" class="mt-3">
+                    <ul class="pagination pagination-lg justify-content-center">
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" tabindex="-1" aria-disabled="true"><i class="fas fa-angle-left"></i></a>
+                        </li>
+                        <li class="page-item active" aria-current="page">
+                            <span class="page-link">1<span class="sr-only">(current)</span></span>
+                        </li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="#"><i class="fas fa-angle-right"></i></a>
+                        </li>
+                    </ul>
+                </nav>
+
+                <div class="block-title mt-4">
+                    <strong>Часто спрашивают</strong>
+                </div>
+
+                <div class="accordion mt-3" id="accordionExample">
+                    <div class="card">
+                        <div class="card-header" id="heading1">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse1" aria-expanded="true" aria-controls="collapse1">
+                                    <i class="fad fa-question-square fa-2x mr-2 align-middle"></i><span class="d-inline align-middle">Разворачиваемая панель #1</span>
+                                </button>
+                            </h5>
+                        </div>
+
+                        <div id="collapse1" class="collapse show" aria-labelledby="heading1" data-parent="#accordionExample">
+                            <div class="card-body">
+                                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                            </div>
+                        </div>
+                    </div>
+
+                    {% set x = 2 %}
+                    {% set arr = [2,3,4] %}
+                    {% for x in arr %}
+
+                        <div class="card">
+                            <div class="card-header" id="heading{{ x }}">
+                                <h5 class="mb-0">
+                                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapse{{ x }}" aria-expanded="false" aria-controls="collapse{{ x }}">
+                                        <i class="fad fa-question-square fa-2x mr-2 align-middle"></i><span class="d-inline align-middle">Разворачиваемая панель #{{ x }}</span>
+                                    </button>
+                                </h5>
+                            </div>
+                            <div id="collapse{{ x }}" class="collapse" aria-labelledby="heading{{ x }}" data-parent="#accordionExample">
+                                <div class="card-body">
+                                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                                </div>
+                            </div>
+                        </div>
+
+                        {% set x = x + 1 %}
+                    {% endfor %}
+
+                </div>
+
+                <div class="block-title mt-4">
+                    <strong>Информация</strong>
+                </div>
+
+                <article class="text-muted mt-3">
+                    <h2>Мебель для спальни на City Market Place</h2>
+                    <p>Мебель является неизменным атрибутом любого помещения. Именно она задает ему правильную атмосферу, делая пространство уютным и комфортным, создавая благоприятные условия для продуктивной работы или помогая отдохнуть после тяжелого дня. Все чаще клиенты предпочитают оформлять заказ в интернет магазине мебели , когда можно в сводное время сесть за компьютер, рассмотреть мебель на фото и спокойно купить мебель в Одессе, которая вам понравилась. Интернет магазин Табуретка имеет большой каталог мебели: в наличии имеется как мебель Львов для дома, так и для офиса. </p>
+                    <h2>Покупка мебели онлайн</h2>
+                    <p>На сайте мебели Табуретка Вы найдете богатый ассортимент мебели различного назначения: </p>
+                    <p>Садовая мебель. Современная и практичная мебель Винница выполнена из качественных материалов и прослужит Вам не один десяток лет. Красивые и аккуратные кресла, функциональные столики – в каталоге нашего магазина Вы найдете много мебели, которая обеспечит комфортный отдых в саду, а цены на мебель порадуют своей демократичностью. В продаже также имеются наборы мебели Житомир для открытых террас, шезлонги и качели с навесным тентом. Вся садовая мебель Хмельницкий легко моется, ее можно без труда сложить и спрятать на хранение, она не боится влаги и прямых солнечных лучей. </p>
+                    <p>Мебель для офиса. Такая мебель Николаев должна приносить комфорт и создавать продуктивную атмосферу в офисе, но при этом выглядеть стильно и солидно. Офисная мебель Черкассы бывает корпусной и мягкой. К корпусной можно отнести шкафы и стеллажи для хранения документов, стойки и столы. В отличие от мебели Белая Церковь для дома, офисные экземпляры имеют лаконичный дизайн и являются очень функциональными. Мягкая мебель Одесса для офиса отличается износостойкостью и непритязательна в уходе. </p>
+                    <p>Мебель для кухни. Магазин мебели Киев предлагает большой ассортимент мебели для кухни. Все гарнитуры имеют разную комплектацию, благодаря этому клиенты смогут выбрать мебель, которая будет иметь подходящие габариты и вместит всю кухонную утварь. В интернет магазине мебели официальный сайт Табуретка Вы сможете приобрести не только полноценный гарнитур, но и отдельные модули для кухни. </p>
+                    <p>Мебель для дома. Каждая квартира начинается с прихожей – там необходимо оборудовать место для хранения одежды. Можно выбрать вместительный шкаф-купе или отдать предпочтение стандартному угловому, либо обычному шкафу. В мебельном интернет магазине Табуретка есть возможность купить мебель для прихожей с доставкой по доступной цене. </p>
+                    <p>Для гостиной отлично подойдут мягкие диваны и кресла, а также небольшие тумбы и стеллажи для различных мелочей. В ассортименте присутствует как мебель Полтава из сруба дерева, так и более доступный ее аналог – мебель Киев из ДСП, практичность которой сложно переоценить. </p>
+                    <p>В качестве мебели Чернигов для спальни магазин предлагает кровати различного дизайна. В наличии имеются двуспальные и односпальные кровати, на сайте также можно купить мебель Киев для детей от 1 года. В дополнение к ним можно приобрести матрас – нужно только выбрать ту модель, которая соответствует параметрам основания кровати. </p>
+                </article>
+
+            </div>
+        </div>
+
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('owl_carousel') }}
+{% endblock %}

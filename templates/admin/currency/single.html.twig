@@ -21,7 +21,13 @@
                         <div class="h2 px-2">{{ currency.name }}</div>
                     </div>
                     <div class="tab-pane fade" id="uk-name" role="tabpanel" aria-labelledby="uk-name-tab">
-                        <div class="h2 px-2">{{ translation['uk']['name'] }}</div>
+                        <div class="h2 px-2">
+                            {% if translation['uk']['name'] is defined and translation['uk']['name'] %}
+                                {{ translation['uk']['name'] }}
+                            {% else %}
+                                <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -40,7 +46,12 @@
                         <div class="px-2">{{ currency.short }}</div>
                     </div>
                     <div class="tab-pane fade" id="uk-short" role="tabpanel" aria-labelledby="uk-short-tab">
-                        <div class="px-2">{{ translation['uk']['short'] }}</div>
+                        <div class="px-2">
+                            {% if translation['uk']['short'] is defined and translation['uk']['short'] %}
+                                {{ translation['uk']['short'] }}
+                            {% else %}
+                                <span class="small text-muted">{{ 'нет'|trans|raw }}</span>
+                            {% endif %}</div>
                     </div>
                 </div>
             </div>

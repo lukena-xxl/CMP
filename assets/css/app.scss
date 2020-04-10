@@ -1,12 +1,22 @@
-$primary: darken(#4b7d8d, 1%);
+$primary: darken(#E37529, 1%);
+$info: darken(#666, 1%);
 $danger: darken(#CD5C5C, 1%);
 $warning: darken(#EC962C, 1%);
 $secondary: darken(#d7e0df, 1%);
+$success: darken(#86C429, 1%);
 $enable-responsive-font-sizes: true;
+$breadcrumb-divider: quote("›");
 
 @import "~bootstrap/scss/bootstrap";
-@import "~@fortawesome/fontawesome-free/css/all.css";
+@import "~@fortawesome/fontawesome-pro/css/all.css";
 @import "~jquery-confirm/css/jquery-confirm.css";
+
+@import '~cropperjs/dist/cropper.css';
+
+@import "component-nav.css";
+@import '~owl.carousel/dist/assets/owl.carousel.css';
+@import '~owl.carousel/dist/assets/owl.theme.default.css';
+@import "fotorama.css";
 
 @import "~rfs/scss";
 
@@ -26,12 +36,22 @@ body {
 
 /*Админ*/
 .admin-h1 {
-  color: $dark;
-  margin-bottom: 1rem;
+  background-color: $light;
+  color: $gray-900;
+  margin-bottom: 1.2rem;
+  display: inline-block;
+  font-size: 1.5rem !important;
+  border-bottom: 1px dashed $secondary;
+  border-left: 1px dashed $secondary;
+  --notchSize: 30px;
+  padding: 1rem calc(var(--notchSize) + 5%) 1rem 1rem;
+  clip-path: polygon(0% 0px, 0px 0%, calc(100% - var(--notchSize)) 0%, 100% var(--notchSize), 100% calc(100% - var(--notchSize)), calc(100% - var(--notchSize)) 100%, 0px 100%, 0% 0px);
 }
 
 .admin-h3 {
-  color: $primary;
+  color: $dark;
+  text-transform: uppercase;
+  font-size: 1.2rem;
   margin-bottom: 1rem;
 }
 
@@ -43,8 +63,16 @@ body {
   min-width: 300px!important;
 }
 
+.min-width-150 {
+  min-width: 150px!important;
+}
+
 .max-width-50 {
   max-width: 50px!important;
+}
+
+.max-width-100 {
+  max-width: 100px!important;
 }
 
 label {
@@ -74,14 +102,187 @@ select option[value=""] {
   border-color: #dee2e6 #dee2e6 $light!important;
 }
 
-.menu-arrow::after {
-  font-family: "Font Awesome 5 Free";
-  content: '\f054';
-  margin-left: .5rem;
-  text-align: right;
-  float: right;
+.pulse {
+  box-shadow: 0 0 0 rgba(255,255,255, 0.4);
+  animation: pulse 2s infinite;
+}
+.pulse:hover {
+  animation: none;
 }
 
+@-webkit-keyframes pulse {
+  0% {
+    -webkit-box-shadow: 0 0 0 0 rgba(255,255,255, 0.4);
+  }
+  70% {
+    -webkit-box-shadow: 0 0 0 10px rgba(255,255,255, 0);
+  }
+  100% {
+    -webkit-box-shadow: 0 0 0 0 rgba(255,255,255, 0);
+  }
+}
+@keyframes pulse {
+  0% {
+    -moz-box-shadow: 0 0 0 0 rgba(255,255,255, 0.4);
+    box-shadow: 0 0 0 0 rgba(255,255,255, 0.4);
+  }
+  70% {
+    -moz-box-shadow: 0 0 0 10px rgba(255,255,255, 0);
+    box-shadow: 0 0 0 10px rgba(255,255,255, 0);
+  }
+  100% {
+    -moz-box-shadow: 0 0 0 0 rgba(255,255,255, 0);
+    box-shadow: 0 0 0 0 rgba(255,255,255, 0);
+  }
+}
+
+.menu-arrow {
+  position: relative;
+}
+
+.menu-arrow::after {
+  font-family: "Font Awesome 5 Pro";
+  content: '\f105';
+  margin-left: .5rem;
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+}
+
+.navbar-main {
+  border-bottom: 1px dotted $white;
+}
+
+.form-inline select {
+  margin: 2px;
+}
+
+::-webkit-input-placeholder {
+  color: $gray-400!important;
+}
+
+:-ms-input-placeholder {
+  color: $gray-400!important;
+}
+
+::placeholder {
+  color: $gray-400!important;
+}
+
+
+.navbar-frontend {
+  border-bottom: 4px solid $gray-300;
+}
+
+.navbar-frontend .dropdown-item {
+  white-space: normal!important;
+  min-width: 280px!important;
+}
+
+.navbar-frontend hr {
+  background-color: $primary;
+}
+
+.collection-widget-item {
+  list-style: none;
+  padding: 15px;
+  border: 3px dashed $secondary;
+  margin-bottom: 10px;
+  font-size: 90%;
+}
+
+.bg-light-opacity {
+  background: rgba(255,255,255,0.8) !important;;
+}
+
+.no-caret.dropdown-toggle::after{
+  display: none;
+}
+
+
+
+
+
+
+
+
+  /*Карусель*/
+.owl-carousel {
+}
+.owl-prev svg, .owl-next svg {
+  color: $white;
+  font-size: 3rem;
+}
+.owl-prev, .owl-next {
+  position: absolute;
+  top: 16%;
+  margin-top: -10px;
+  outline: none!important;
+  background: $info!important;
+  opacity: .6;
+}
+
+.owl-carousel .owl-nav button.owl-prev, .owl-carousel .owl-nav button.owl-next {
+  padding: 5px!important;
+}
+
+.owl-theme .owl-nav [class*='owl-']:hover {
+   background: $primary!important;
+}
+.owl-prev {
+  left: 5px;
+}
+.owl-next {
+  right: 5px;
+}
+/* Feel free to change duration  */
+.animated  {
+  -webkit-animation-duration : 1000ms  ;
+  animation-duration : 1000ms  ;
+  -webkit-animation-fill-mode : both  ;
+  animation-fill-mode : both  ;
+}
+/* .owl-animated-out - only for current item */
+/* This is very important class. Use z-index if you want move Out item above In item */
+.owl-animated-out {
+  z-index : 1
+}
+/* .owl-animated-in - only for upcoming item
+/* This is very important class. Use z-index if you want move In item above Out item */
+.owl-animated-in {
+  z-index : 0
+}
+/* .fadeOut is style taken from Animation.css and this is how it looks in owl.carousel.css:  */
+.fadeOut  {
+  -webkit-animation-name : fadeOut  ;
+  animation-name : fadeOut  ;
+}
+@-webkit-keyframes  fadeOut  {
+  0% {
+    opacity : 1   ;
+  }
+  100% {
+    opacity : 0   ;
+  }
+}
+@keyframes  fadeOut  {
+  0% {
+    opacity : 1   ;
+  }
+  100% {
+    opacity : 0   ;
+  }
+}
+
+/*Fotorama*/
+.fotorama__thumb-border {
+  border-style: dashed !important;
+  border-color: rgba(227,117,41,0.9) !important;
+}
+.fotorama__nav:after, .fotorama__stage:after, .fotorama__nav:before, .fotorama__stage:before {
+  background-image: none !important;
+}
 
 
 
@@ -98,7 +299,7 @@ select option[value=""] {
 
 .price-block {
   @include font-size(1.5rem);
-  color: $danger;
+  color: $dark;
 }
 
 .price-block .price-old {
@@ -106,29 +307,47 @@ select option[value=""] {
   color: $gray-500;
 }
 
+.saving-block {
+  @include font-size(.9rem);
+}
+
 .price-old-percent {
   position: absolute;
   top: -1px;
   left: -1px;
   padding: 3px 10px;
-  background-color: $danger;
+  background: rgba(227,117,41,0.8);
   color: $white;
-  opacity: 0.8;
   border-radius: 0 0 15px 0;
 }
 
 .gift-block {
   position: absolute;
   bottom: 0;
-  right: -1px;
 }
 
 .gift-block .gift {
   padding: 2px 10px;
-  background-color: $info;
+  background: rgba(227,117,41,0.8);
   color: $white;
-  opacity: 0.8;
   margin-top: .3rem;
+}
+
+.category-name-block {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  background: rgba(227,117,41,0.8);
+  color: $white;
+  width: 100%;
+  padding: 2px 10px;
+  border-top: 5px solid $dark;
+}
+
+.category-name-block a {
+  color: $white!important;
+  text-decoration: none;
+  font-size: 1.2rem;
 }
 
 .card .list-group-item {
@@ -141,41 +360,10 @@ select option[value=""] {
   border-top: .1rem dotted $gray-300;
 }
 
-.tag-block .tag {
-  display: inline-block;
-  padding: .2rem .5rem;
-  background-color: $secondary;
-  color: $dark;
-  @include font-size(.7rem);
-  margin: .1rem;
-  text-decoration: none;
-}
-
-.tag-block .tag-big {
-  @include font-size(.9rem);
-}
-
-.tag-block .tag::before {
-  font-family: "Font Awesome 5 Free";
-  font-weight: 900;
-  content: "\f02b";
-  margin-right: .5rem;
-}
-
 .filters-block {
   padding: .2rem .5rem;
   margin-bottom: .5rem;
-  background-color: #FFFACD;
-}
-
-.filters-block label{
-  color: $primary;
-  font-weight: bold;
-}
-
-.filters-block a.name-block {
-  @include font-size(1.3rem);
-  text-decoration: none;
+  background-color: $light;
 }
 
 .parameter-block {
@@ -192,7 +380,7 @@ select option[value=""] {
   background-color: $gray-100;
 }
 
-.card-block .card-product:hover {
+.card-product:hover {
   box-shadow: $box-shadow;
 }
 
@@ -200,3 +388,164 @@ select option[value=""] {
   background-color: $gray-100;
   border: none;
 }
+
+.block-title {
+  position: relative;
+  border: 0;
+  border-bottom: 3px solid #3d3d3d;
+  padding: 0;
+  border-left: 7px solid #E37529;
+}
+.block-title strong {
+  display: inline-block;
+  font-size: 12px;
+  text-transform: uppercase;
+  position: relative;
+  color: #fff;
+  line-height: 48px;
+  padding: 0 18px;
+  background-color: #3d3d3d;
+  font-weight: 600;
+  text-align: center;
+}
+.block-title strong:before {
+  content: "";
+  display: inline-block;
+  position: absolute;
+  right: -20px;
+  top: 0px;
+  width: 0;
+  height: 0;
+  border-right: 20px solid transparent;
+  border-bottom: 48px solid #3d3d3d;
+}
+.block-right .custom-checkbox .custom-control-label::before {
+  border-radius: 0!important;
+}
+
+/*.text-blink {
+  background: -webkit-linear-gradient(left, $primary, $white, $primary);
+  background: linear-gradient(left, $primary, $white, $primary);
+  background-size: 3200px 200px;
+  color: transparent;
+  -webkit-background-clip: text;
+  -webkit-animation: animate-text-blink;
+  -webkit-animation-delay: 0;
+  -webkit-animation-duration: 7s;
+  -webkit-animation-timing-function: linear;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-fill-mode: forwards;
+  transition: font-size 500ms ease-in-out;
+}
+
+@-webkit-keyframes animate-text-blink {
+  0% {
+    background-position: 0 3200px;
+  }
+  100% {
+    background-position: 3200px 0;
+  }
+}*/
+
+
+.article-title-block {
+  background: $light;
+  margin-top: -5px;
+  --notchSize: 20px;
+  padding: 1rem calc(var(--notchSize) + 5%) 1rem 1rem;
+  clip-path: polygon(50% 0%, 100% 0, 100% calc(100% - var(--notchSize)), calc(100% - var(--notchSize)) 100%, var(--notchSize) 100%, 0 calc(100% - var(--notchSize)), 0 0);
+  border-top: 5px solid $primary;
+  border-bottom: 1px solid $secondary;
+}
+
+.category-list .list-group-item-action {
+  border-left: 3px solid transparent!important;
+  -webkit-transition: color 0.5s;
+  -moz-transition: color 0.5s;
+  transition: color 0.5s;
+  -webkit-transition-delay: 0.3s;
+  -moz-transition-delay: 0.3s;
+  transition-delay: 0.3s;
+}
+
+.category-list .list-group-item-action:hover {
+  color: $primary!important;
+  border-left: 3px solid $primary!important;
+}
+
+.catalog-menu .list-group-item {
+  min-width: 255px;
+  text-wrap: normal!important;
+  padding: 5px!important;
+}
+
+.card-block .carousel-caption {
+  background: rgba(227,117,41,0.5);
+}
+
+.img-check img {
+  border-width: 3px;
+  border-style: solid;
+  border-color: $gray-200;
+}
+.img-check img:hover {
+  border-color: $gray-300;
+  box-shadow: 0 0 17px -5px $gray-400;
+}
+.img-check img:active {
+  border-color: #86C429;
+}
+.img-check img.checked {
+  border-color: $primary;
+  box-shadow: 0 0 17px -5px $primary;
+}
+.product-order-block {
+  border: 1px solid $gray-300;
+  padding: 15px;
+}
+.product-items-block {
+  max-height: 400px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.product-order-block-title {
+  position: absolute;
+  bottom:-15px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: $white;
+  border: .8px solid $gray-300;
+  padding: 2px 5px;
+  color: $gray-600;
+}
+
+
+
+@media (max-width: 575px) {
+  .navbar-filter {
+    background: $light;
+  }
+
+  .main-price-block {
+    position:fixed;
+    bottom:0;
+    left:0;
+    background: #EEE;
+    border-top: 1px solid $secondary;
+    width: 100%;
+    padding: 5px;
+    z-index: 10;
+  }
+}
+
+// Малые девайсы («ландшафтные телефоны», >= 576px)
+@media (min-width: 576px) {  }
+
+// Средние девайсы («таблетки», >= 768px)
+@media (min-width: 768px) {  }
+
+// Большие девайсы (десктопы, >= 992px)
+@media (min-width: 992px) {  }
+
+// Экстрабольшие девайсы (большие десктопы, >= 1200px)
+@media (min-width: 1200px) {  }
